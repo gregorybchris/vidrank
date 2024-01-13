@@ -25,6 +25,8 @@ numpy = "^1.26.3"
 fastapi = "^0.109.0"
 uvicorn = "^0.25.0"
 pydantic = "^2.5.3"
+pendulum = "^3.0.0"
+httpx = "^0.26.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.12.1"
