@@ -8,6 +8,7 @@ from vidrank.lib.transaction import Transaction
 class TransactionTracker:
     def __init__(self, cache_dirpath: Path):
         self.dirpath = cache_dirpath / "transactions"
+        self.dirpath.mkdir(parents=True, exist_ok=True)
         self.filepath = self.dirpath / "transactions.json"
 
     def load(self) -> List[Transaction]:

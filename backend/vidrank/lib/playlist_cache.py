@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 class PlaylistCache:
     def __init__(self, cache_dirpath: Path):
         self.dirpath = cache_dirpath / "playlists"
+        self.dirpath.mkdir(parents=True, exist_ok=True)
 
     def get(self, playlist_id: str) -> Optional[Playlist]:
         filepath = self.dirpath / f"{playlist_id}.pkl"

@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 class VideoCache:
     def __init__(self, cache_dirpath: Path):
         self.dirpath = cache_dirpath / "videos"
+        self.dirpath.mkdir(parents=True, exist_ok=True)
 
     def get(self, video_id: str) -> Optional[Video]:
         filepath = self.dirpath / f"{video_id}.pkl"

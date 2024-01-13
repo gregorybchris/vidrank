@@ -27,26 +27,28 @@ class YouTubeClient:
 
     BASE_URL = "https://www.googleapis.com/youtube/v3/"
 
-    BATCH_SIZE = 50
+    DEFAULT_BATCH_SIZE = 50
 
-    def __init__(self, api_key: str):
+    def __init__(self, api_key: str, *, batch_size: int = DEFAULT_BATCH_SIZE):
         self.api_key = api_key
         self.http_client = HttpClient()
+        self.batch_size = batch_size
 
     # pylint: disable=redefined-builtin
     def iter_videos(self, video_ids: List[str], timeout: Optional[int] = None) -> Iterator[Video]:
-        logger.debug("Making request to YouTube API.")
-
-        n_chunks = math.ceil(len(video_ids) / self.BATCH_SIZE)
+        n_chunks = math.ceil(len(video_ids) / self.batch_size)
         for chunk_i in range(0, n_chunks):
-            chunk_ids = video_ids[chunk_i * self.BATCH_SIZE : (chunk_i + 1) * self.BATCH_SIZE]
+            chunk_ids = video_ids[chunk_i * self.batch_size : (chunk_i + 1) * self.batch_size]
+
+            print(f"Requesting {len(chunk_ids)} videos from the YouTube API.")
+
             concat_ids = ",".join(chunk_ids)
             params: Mapping[str, str | int | List[str]] = {
                 "id": concat_ids,
                 "key": self.api_key,
                 "hl": "en_US",
                 "part": self.VIDEO_PARTS,
-                "maxResults": self.BATCH_SIZE,
+                "maxResults": self.batch_size,
             }
 
             page_token = None
@@ -62,7 +64,7 @@ class YouTubeClient:
                     timeout=timeout,
                 )
 
-                logger.info("Request URL: %s" % response.request.url)
+                print(f"Request URL: {response.request.url}")
 
                 response_json = response.json()
                 if "error" in response_json:
@@ -91,13 +93,15 @@ class YouTubeClient:
             if page_token is not None:
                 request_params["pageToken"] = page_token
 
+            print("Requesting playlist items from the YouTube API.")
+
             request_url = self.BASE_URL + "playlistItems"
             response = self.http_client.get(
                 request_url,
                 timeout=timeout,
                 params=request_params,
             )
-            logger.info("Request URL: %s" % response.request.url)
+            print(f"Request URL: {response.request.url}")
 
             response_json = response.json()
 

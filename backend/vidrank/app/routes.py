@@ -35,9 +35,9 @@ def get_videos() -> JSONResponse:
     video_iterator = app_state.youtube_facade.iter_videos(video_ids)
     videos = list(islice(video_iterator, n_videos))
 
-    for video in videos:
-        print("===========")
-        print_video(video)
+    # for video in videos:
+    #     print("===========")
+    #     print_video(video)
 
     return JSONResponse({"videos": [video.serialize() for video in videos]})
 
