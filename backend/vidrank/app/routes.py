@@ -59,3 +59,8 @@ def get_videos() -> JSONResponse:
         print_video(video)
 
     return JSONResponse({"videos": [video.serialize() for video in videos]})
+
+
+@router.post(name="Select", description="Post selection.", path="/select")
+def post_select() -> JSONResponse:
+    return JSONResponse({"result": "selected"})
