@@ -7,6 +7,10 @@ from fastapi.responses import JSONResponse
 
 from vidrank import __version__ as package_version
 from vidrank.lib.playlist_cache import PlaylistCache
+from vidrank.lib.selection import Selection
+from vidrank.lib.transaction import Transaction
+from vidrank.lib.transaction_tracker import TransactionTracker
+from vidrank.lib.transaction_type import TransactionType
 from vidrank.lib.video_cache import VideoCache
 from vidrank.lib.video_utilities import print_video
 from vidrank.lib.youtube.youtube_client import YouTubeClient
@@ -62,7 +66,23 @@ def get_videos() -> JSONResponse:
 
 
 @router.post(name="Submit", description="Post submit.", path="/submit")
-def post_submit() -> JSONResponse:
+def post_submit(selection: Selection) -> JSONResponse:
+    api_key = os.getenv("YOUTUBE_API_KEY")
+    if api_key is None:
+        raise ValueError("YOUTUBE_API_KEY environment variable is not set.")
+
+    cache_dir_str = os.getenv("VIDRANK_CACHE_DIR")
+    if cache_dir_str is None:
+        raise ValueError("VIDRANK_CACHE_DIR environment variable is not set.")
+
+    cache_dirpath = Path(cache_dir_str)
+
+    transaction_tracker = TransactionTracker(cache_dirpath)
+    transaction = Transaction(
+        transaction_type=TransactionType.SUBMIT,
+        selection=selection,
+    )
+    transaction_tracker.add(transaction)
     return JSONResponse({"result": "submitted"})
 
 

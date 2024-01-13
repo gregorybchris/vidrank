@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { Client } from "@/lib/client";
 import { useKeyCombos } from "@/lib/keys";
+import { Selection } from "@/lib/selection";
 import { Video as VideoModel } from "@/lib/video";
 import { match } from "ts-pattern";
 import { Button } from "widgets/Button";
@@ -16,23 +17,23 @@ type Direction = "up" | "down" | "left" | "right";
 export function Selector() {
   const client = new Client();
   const [videos, setVideos] = useState<VideoModel[]>([]);
-  const [selected, setSelected] = useState<string[]>([]);
-  const [current, setCurrent] = useState<VideoModel>();
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [currentId, setCurrentId] = useState<string>();
 
   useKeyCombos(
     [
-      { pattern: "c", callback: () => clearSelections() },
+      { pattern: "c", callback: () => clearSelected() },
       { pattern: "u", callback: () => undoSubmit() },
       { pattern: "s", callback: () => skipVideoSet() },
       { pattern: "Enter", callback: () => submitVideoSet() },
-      { pattern: "Escape", callback: () => setCurrent(undefined) },
+      { pattern: "Escape", callback: () => setCurrentId(undefined) },
       { pattern: " ", callback: () => selectCurrentVideo() },
       { pattern: "ArrowUp", callback: () => offsetCurrentVideo("up") },
       { pattern: "ArrowDown", callback: () => offsetCurrentVideo("down") },
       { pattern: "ArrowLeft", callback: () => offsetCurrentVideo("left") },
       { pattern: "ArrowRight", callback: () => offsetCurrentVideo("right") },
     ],
-    [videos, current, selected],
+    [videos, currentId, selectedIds],
   );
 
   useEffect(() => {
@@ -43,14 +44,14 @@ export function Selector() {
     client.getVideos().then((videos) => {
       console.log("Fetched videos: ", videos);
       setVideos(videos);
-      setSelected([]);
-      setCurrent(undefined);
+      setSelectedIds([]);
+      setCurrentId(undefined);
     });
   }
 
   function onClickVideo(video: VideoModel) {
     console.log(`Clicked video: ${video.title}`);
-    selectVideo(video);
+    selectVideo(video.id);
   }
 
   function skipVideoSet() {
@@ -71,42 +72,49 @@ export function Selector() {
 
   function submitVideoSet() {
     console.log("Will submit");
-    if (selected.length > MAX_SELECTED_VIDEOS) {
+    if (selectedIds.length > MAX_SELECTED_VIDEOS) {
       console.log("Too many videos selected");
       // Use a toast to show this
       return;
     }
-    if (selected.length < MIN_SELECTED_VIDEOS) {
+    if (selectedIds.length < MIN_SELECTED_VIDEOS) {
       console.log("Not enough videos selected");
       // Use a toast to show this
       return;
     }
 
-    client.postSubmit().then((result) => {
+    const selection: Selection = {
+      videos: videos.map((video) => ({
+        video_id: video.id,
+        selected: selectedIds.includes(video.id),
+      })),
+    };
+
+    client.postSubmit(selection).then((result) => {
       console.log("Got result: ", result);
       // TODO: Get new videos
     });
   }
 
-  function selectVideo(video: VideoModel) {
-    if (selected.includes(video.id)) {
-      setSelected(selected.filter((id) => id !== video.id));
+  function selectVideo(videoId: string) {
+    if (selectedIds.includes(videoId)) {
+      setSelectedIds(selectedIds.filter((id) => id !== videoId));
     } else {
-      setSelected([...selected, video.id]);
+      setSelectedIds([...selectedIds, videoId]);
     }
   }
 
   function selectCurrentVideo() {
     console.log("Selecting current video");
-    if (current === undefined) {
+    if (currentId === undefined) {
       return;
     }
-    selectVideo(current);
+    selectVideo(currentId);
   }
 
-  function clearSelections() {
-    console.log("Clearing selections");
-    setSelected([]);
+  function clearSelected() {
+    console.log("Clearing selected videos");
+    setSelectedIds([]);
   }
 
   function offsetCurrentVideo(direction: Direction) {
@@ -123,20 +131,20 @@ export function Selector() {
       return;
     }
 
-    if (current === undefined) {
+    if (currentId === undefined) {
       console.log("No current video");
-      setCurrent(videos[0]);
+      setCurrentId(videos[0].id);
       return;
     }
 
-    const currentIndex = videos.findIndex((video) => video.id === current.id);
+    const currentIndex = videos.findIndex((video) => video.id === currentId);
     if (currentIndex == -1) {
-      setCurrent(videos[0]);
+      setCurrentId(videos[0].id);
       return;
     }
 
     let nextIndex = (currentIndex + offset + videos.length) % videos.length;
-    setCurrent(videos[nextIndex]);
+    setCurrentId(videos[nextIndex].id);
   }
 
   return (
@@ -150,8 +158,8 @@ export function Selector() {
                 key={i}
                 video={video}
                 onClick={onClickVideo}
-                isSelected={selected.includes(video.id)}
-                isCurrent={!!current && video.id === current.id}
+                isSelected={selectedIds.includes(video.id)}
+                isCurrent={!!currentId && video.id === currentId}
               />
             ))}
           </div>

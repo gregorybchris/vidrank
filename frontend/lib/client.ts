@@ -1,3 +1,4 @@
+import { Selection } from "./selection";
 import { Video } from "./video";
 
 export type GetVideosResponseBody = {
@@ -65,10 +66,12 @@ export class Client {
     return result;
   }
 
-  async postSubmit(): Promise<string> {
+  async postSubmit(selection: Selection): Promise<string> {
+    console.log(JSON.stringify(selection));
     const response = await fetch("http://localhost:8000/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(selection),
     });
 
     if (response.status !== 200) {
