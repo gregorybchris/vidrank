@@ -9,6 +9,8 @@ import { match } from "ts-pattern";
 import { Button } from "widgets/Button";
 import { Video } from "./Video";
 
+const MIN_SELECTED_VIDEOS = 2;
+const MAX_SELECTED_VIDEOS = 4;
 type Direction = "up" | "down" | "left" | "right";
 
 export function Selector() {
@@ -19,6 +21,7 @@ export function Selector() {
 
   useKeyCombos(
     [
+      { pattern: "c", callback: () => clearSelections() },
       { pattern: "u", callback: () => undoSubmit() },
       { pattern: "s", callback: () => skipVideoSet() },
       { pattern: "Enter", callback: () => submitVideoSet() },
@@ -47,11 +50,7 @@ export function Selector() {
 
   function onClickVideo(video: VideoModel) {
     console.log(`Clicked video: ${video.title}`);
-    if (selected.includes(video.id)) {
-      setSelected(selected.filter((id) => id !== video.id));
-    } else {
-      setSelected([...selected, video.id]);
-    }
+    selectVideo(video);
   }
 
   function skipVideoSet() {
@@ -64,6 +63,18 @@ export function Selector() {
 
   function submitVideoSet() {
     console.log("Will submit");
+    if (selected.length > MAX_SELECTED_VIDEOS) {
+    }
+    if (selected.length < MIN_SELECTED_VIDEOS) {
+    }
+  }
+
+  function selectVideo(video: VideoModel) {
+    if (selected.includes(video.id)) {
+      setSelected(selected.filter((id) => id !== video.id));
+    } else {
+      setSelected([...selected, video.id]);
+    }
   }
 
   function selectCurrentVideo() {
@@ -71,12 +82,12 @@ export function Selector() {
     if (current === undefined) {
       return;
     }
+    selectVideo(current);
+  }
 
-    if (selected.includes(current.id)) {
-      setSelected(selected.filter((id) => id !== current.id));
-    } else {
-      setSelected([...selected, current.id]);
-    }
+  function clearSelections() {
+    console.log("Clearing selections");
+    setSelected([]);
   }
 
   function offsetCurrentVideo(direction: Direction) {
