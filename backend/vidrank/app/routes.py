@@ -1,20 +1,14 @@
-import os
 from itertools import islice
-from pathlib import Path
 
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
 from vidrank import __version__ as package_version
-from vidrank.lib.playlist_cache import PlaylistCache
+from vidrank.app.app_state import AppState
 from vidrank.lib.selection import Selection
 from vidrank.lib.transaction import Transaction
-from vidrank.lib.transaction_tracker import TransactionTracker
 from vidrank.lib.transaction_type import TransactionType
-from vidrank.lib.video_cache import VideoCache
 from vidrank.lib.video_utilities import print_video
-from vidrank.lib.youtube.youtube_client import YouTubeClient
-from vidrank.lib.youtube_facade import YouTubeFacade
 
 router = APIRouter()
 
@@ -31,31 +25,14 @@ def get_version() -> JSONResponse:
 
 @router.get(name="Videos", description="Get videos.", path="/videos")
 def get_videos() -> JSONResponse:
-    api_key = os.getenv("YOUTUBE_API_KEY")
-    if api_key is None:
-        raise ValueError("YOUTUBE_API_KEY environment variable is not set.")
-
-    cache_dir_str = os.getenv("VIDRANK_CACHE_DIR")
-    if cache_dir_str is None:
-        raise ValueError("VIDRANK_CACHE_DIR environment variable is not set.")
-
-    cache_dirpath = Path(cache_dir_str)
-    youtube_client = YouTubeClient(api_key)
-    video_cache = VideoCache(cache_dirpath)
-    playlist_cache = PlaylistCache(cache_dirpath)
-    youtube_facade = YouTubeFacade(
-        youtube_client=youtube_client,
-        video_cache=video_cache,
-        playlist_cache=playlist_cache,
-    )
-
+    app_state = AppState.get()
     # playlist = youtube_facade.get_playlist("PL0KIGdjEQDyHGXlhUMndOPherxDmXDQxn", "Next")
     # playlist = youtube_facade.get_playlist("PL0KIGdjEQDyG2nMJRAevxBohq-Nschpma", "Hardware")
-    playlist = youtube_facade.get_playlist("PL0KIGdjEQDyFs9G4IWU8cbdGQuIGjCWYV", "Cooking")
+    playlist = app_state.youtube_facade.get_playlist("PL0KIGdjEQDyFs9G4IWU8cbdGQuIGjCWYV", "Cooking")
 
     n_videos = 6
     video_ids = playlist.video_ids
-    video_iterator = youtube_facade.iter_videos(video_ids)
+    video_iterator = app_state.youtube_facade.iter_videos(video_ids)
     videos = list(islice(video_iterator, n_videos))
 
     for video in videos:
@@ -67,22 +44,12 @@ def get_videos() -> JSONResponse:
 
 @router.post(name="Submit", description="Post submit.", path="/submit")
 def post_submit(selection: Selection) -> JSONResponse:
-    api_key = os.getenv("YOUTUBE_API_KEY")
-    if api_key is None:
-        raise ValueError("YOUTUBE_API_KEY environment variable is not set.")
-
-    cache_dir_str = os.getenv("VIDRANK_CACHE_DIR")
-    if cache_dir_str is None:
-        raise ValueError("VIDRANK_CACHE_DIR environment variable is not set.")
-
-    cache_dirpath = Path(cache_dir_str)
-
-    transaction_tracker = TransactionTracker(cache_dirpath)
+    app_state = AppState.get()
     transaction = Transaction(
         transaction_type=TransactionType.SUBMIT,
         selection=selection,
     )
-    transaction_tracker.add(transaction)
+    app_state.transaction_tracker.add(transaction)
     return JSONResponse({"result": "submitted"})
 
 
