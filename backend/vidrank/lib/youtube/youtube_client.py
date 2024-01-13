@@ -1,8 +1,11 @@
+import logging
 from typing import List, Mapping, Optional
 
 from httpx import Client as HttpClient
 
 from vidrank.lib.youtube.video import Video
+
+logger = logging.getLogger(__name__)
 
 
 class YouTubeClient:
@@ -23,6 +26,8 @@ class YouTubeClient:
 
     # pylint: disable=redefined-builtin
     def get_videos(self, video_ids: List[str], timeout: Optional[int] = None) -> List[Video]:
+        logger.debug("Making request to YouTube API.")
+
         id_param = ",".join(video_ids)
 
         params: Mapping[str, str | List[str]] = {

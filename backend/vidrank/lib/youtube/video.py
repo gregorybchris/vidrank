@@ -36,3 +36,15 @@ class Video(BaseModel):
             thumbnails=ThumbnailSet.from_dict(video_dict["snippet"]["thumbnails"]),
             stats=VideoStats.from_dict(video_dict["statistics"]),
         )
+
+    def serialize(self) -> Dict[str, Any]:
+        return {
+            "id": self.id,
+            "title": self.title,
+            "duration": self.duration.in_seconds(),
+            "channel": self.channel,
+            "publish_datetime": self.publish_datetime.to_iso8601_string(),
+            "tags": self.tags,
+            "thumbnails": self.thumbnails.model_dump(),
+            "stats": self.stats.model_dump(),
+        }

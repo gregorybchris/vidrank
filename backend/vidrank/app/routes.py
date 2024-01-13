@@ -1,10 +1,13 @@
 import os
+from pathlib import Path
 
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
 from vidrank import __version__ as package_version
-from vidrank.lib.youtube.video import Video
+from vidrank.lib.video_cache import VideoCache
+from vidrank.lib.video_facade import VideoFacade
+from vidrank.lib.video_utilities import print_video
 from vidrank.lib.youtube.youtube_client import YouTubeClient
 
 router = APIRouter()
@@ -26,34 +29,24 @@ def get_videos() -> JSONResponse:
     if api_key is None:
         raise ValueError("YOUTUBE_API_KEY environment variable is not set.")
 
-    client = YouTubeClient(api_key)
+    cache_dir_str = os.getenv("VIDRANK_CACHE_DIR")
+    if cache_dir_str is None:
+        raise ValueError("VIDRANK_CACHE_DIR environment variable is not set.")
+
+    cache_dirpath = Path(cache_dir_str)
+    video_cache = VideoCache(cache_dirpath)
+    youtube_client = YouTubeClient(api_key)
+    video_facade = VideoFacade(video_cache=video_cache, youtube_client=youtube_client)
+
     video_ids = [
         "ezOIBfZcwbQ",  # All-In
         "DNIvycJd6oM",  # Winklevoss
     ]
-    videos = client.get_videos(video_ids)
+
+    videos = list(video_facade.get_videos(video_ids))
 
     for video in videos:
         print("===========")
         print_video(video)
 
-    return JSONResponse({"videos": []})
-
-
-def print_video(video: Video) -> None:
-    print(f"ID: {video.id}")
-    print(f"URL: https://www.youtube.com/watch?v={video.id}")
-    print(f"Title: {video.title}")
-    print(f"Duration: {video.duration}")
-    print(f"Channel: {video.channel}")
-    print(f"Publish datetime: {video.publish_datetime.to_day_datetime_string()}")
-    # print(f"Tags: {video.tags}")
-    thumbnail = video.thumbnails.get_highest_resolution()
-    if thumbnail is not None:
-        print(f"Thumbnail URL: {thumbnail.url}")
-    print("Stats: ")
-    print(f"\tViews: {video.stats.n_views}")
-    print(f"\tFavorites: {video.stats.n_favorites}")
-    print(f"\tLikes: {video.stats.n_likes}")
-    print(f"\tDislikes: {video.stats.n_dislikes}")
-    print(f"\tComments: {video.stats.n_comments}")
+    return JSONResponse({"videos": [video.serialize() for video in videos]})
