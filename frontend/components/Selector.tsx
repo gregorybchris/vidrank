@@ -25,15 +25,15 @@ export function Selector() {
   }
 
   return (
-    <div>
+    <>
       {videos.length === 0 && <div>Loading videos...</div>}
       {videos.length > 0 && (
-        <div className="grid grid-cols-2">
+        <div className="flex flex-wrap justify-center">
           {videos.map((video, i) => (
             <Video key={i} video={video} onClick={onClickVideo} />
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 }

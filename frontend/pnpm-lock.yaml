@@ -5,9 +5,12 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  '@fontsource/roboto':
-    specifier: ^5.0.8
-    version: 5.0.8
+  '@fontsource-variable/manrope':
+    specifier: ^5.0.18
+    version: 5.0.18
+  '@fontsource-variable/work-sans':
+    specifier: ^5.0.17
+    version: 5.0.17
   '@types/node':
     specifier: ^18.11.9
     version: 18.16.12
@@ -97,8 +100,12 @@ packages:
       - supports-color
     dev: true
 
-  /@fontsource/roboto@5.0.8:
-    resolution: {integrity: sha512-XxPltXs5R31D6UZeLIV1td3wTXU3jzd3f2DLsXI8tytMGBkIsGcc9sIyiupRtA8y73HAhuSCeweOoBqf6DbWCA==}
+  /@fontsource-variable/manrope@5.0.18:
+    resolution: {integrity: sha512-BmTWanceVCX3/xAY0VhBLM9fwEwe+Z/jR3/EPDLxas6+b3gnBChI+MYh+vMxDPEavfpEhcQptCCNJ3kQxn07iw==}
+    dev: false
+
+  /@fontsource-variable/work-sans@5.0.17:
+    resolution: {integrity: sha512-5aZGlBgqWhFympHYv35OP8Slz3y90jUQhYoeIQDvanfkoP/mwj+6rDomerN6qvYWQxjReE+bPZhiuceJLXrgIQ==}
     dev: false
 
   /@humanwhocodes/config-array@0.9.5:

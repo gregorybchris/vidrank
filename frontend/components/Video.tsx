@@ -1,9 +1,9 @@
-import { formatNumberCompact } from "@/lib/formatUtilities";
+import { formatDateDiff, formatDuration, formatNumberCompact } from "@/lib/formatUtilities";
+
 import { cn } from "@/lib/styleUtilities";
 import { getLargestThumbnail } from "@/lib/thumbnailSet";
 import { Video as VideoModel } from "@/lib/video";
 import styles from "@/styles/video.module.css";
-import Image from "next/image";
 
 type VideoProps = {
   className?: string;
@@ -13,18 +13,19 @@ type VideoProps = {
 
 export function Video({ className, video, onClick }: VideoProps) {
   return (
-    <div className={cn("", className)} onClick={() => onClick(video)}>
-      <div className="px-4 py-2 transition-all">
-        <div className="flex items-start space-x-5 align-top">
-          <div className="w-48 shrink-0">
-            <Thumbnail video={video} />
-          </div>
+    <div className={cn("max-w-[300px]", className)} onClick={() => onClick(video)}>
+      <div className="px-4 py-2">
+        <div className="flex flex-col items-start space-y-3 align-top">
+          <Thumbnail video={video} />
 
           <div>
-            <div className={cn("text-lg", styles.videoTitle)}>{video.title}</div>
-            <div className="inline-block truncate transition-all">{video.channel}</div>
-            {/* <div className="">{formatDateDiff(video.publish_datetime)}</div> */}
-            <div>{formatNumberCompact(video.stats.n_views)} views</div>
+            <div className={cn("text-md", styles.videoTitle)}>{video.title}</div>
+            <div className="text-xs text-neutral-500 truncate">{video.channel}</div>
+            <div className="flex space-x-1 items-center">
+              <div className="text-xs text-neutral-500">{formatNumberCompact(video.stats.n_views)} views</div>
+              <div>{"•"}</div>
+              <div className="text-xs text-neutral-500">{formatDateDiff(video.publish_datetime)}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -34,15 +35,18 @@ export function Video({ className, video, onClick }: VideoProps) {
 
 function Thumbnail(props: { video: VideoModel }) {
   const url = getLargestThumbnail(props.video.thumbnails)?.url;
-  // const length = formatDuration(props.video.length);
+  const length = formatDuration(props.video.duration);
   return (
     <div>
       {!url && <div>No thumbnail found!</div>}
       {!!url && (
         <div className="relative">
-          <Image className="rounded-lg" src={url} alt="Video thumbnail" height={200} width={300} />
-          {/* <img className="rounded-xl" src={url} /> */}
-          {/* <div className="absolute bottom-2 right-2 bg-zinc-900 px-2 rounded-md">{length}</div> */}
+          {/* <img class="object-cover h-48 w-96 ..."> */}
+          {/* <Image className="rounded-lg" src={url} alt="Video thumbnail" height={200} width={300} /> */}
+          <img className="object-cover h-[150px] w-[400px] rounded-lg" src={url} />
+          <div className="text-sm absolute bottom-2 align-center right-2 bg-neutral-900/70 text-neutral-200 px-2 rounded-md">
+            {length}
+          </div>
         </div>
       )}
     </div>
