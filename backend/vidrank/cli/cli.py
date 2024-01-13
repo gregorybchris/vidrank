@@ -3,7 +3,7 @@ from typing import Any
 
 import click
 
-from vidrank.app import App
+from vidrank.app.app import App
 
 logger = logging.getLogger(__name__)
 

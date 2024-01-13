@@ -7,7 +7,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from vidrank.routes import router
+from vidrank.app.routes import router
 
 logger = logging.getLogger(__name__)
 
