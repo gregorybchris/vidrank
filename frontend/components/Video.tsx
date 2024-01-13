@@ -26,12 +26,12 @@ export function Video({ className, video, onClick, isSelected }: VideoProps) {
       className={cn("max-w-[300px]", className)}
       onClick={() => onClick(video)}
     >
-      <div className="select-none px-4 py-2">
+      <div className="cursor-pointer select-none px-4 py-2">
         <div className="flex flex-col items-start space-y-3 align-top">
           <div>
             {!thumbnailUrl && <div>No thumbnail found!</div>}
             {!!thumbnailUrl && (
-              <div className="relative cursor-pointer">
+              <div className="relative">
                 {/* <Image className="rounded-lg" src={url} alt="Video thumbnail" height={200} width={300} /> */}
                 <img
                   className="opacity h-[150px] w-[400px] rounded-lg object-cover"
