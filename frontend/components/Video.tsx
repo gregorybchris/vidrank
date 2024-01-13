@@ -4,19 +4,40 @@ import { cn } from "@/lib/styleUtilities";
 import { getLargestThumbnail } from "@/lib/thumbnailSet";
 import { Video as VideoModel } from "@/lib/video";
 import styles from "@/styles/video.module.css";
+import { CheckCircle } from "@phosphor-icons/react";
 
 type VideoProps = {
   className?: string;
   video: VideoModel;
   onClick: (video: VideoModel) => void;
+  isSelected: boolean;
 };
 
-export function Video({ className, video, onClick }: VideoProps) {
+export function Video({ className, video, onClick, isSelected }: VideoProps) {
+  const thumbnailUrl = getLargestThumbnail(video.thumbnails)?.url;
+  const length = formatDuration(video.duration);
+
   return (
     <div className={cn("max-w-[300px]", className)} onClick={() => onClick(video)}>
       <div className="px-4 py-2">
         <div className="flex flex-col items-start space-y-3 align-top">
-          <Thumbnail video={video} />
+          <div>
+            {!thumbnailUrl && <div>No thumbnail found!</div>}
+            {!!thumbnailUrl && (
+              <div className="relative cursor-pointer">
+                {/* <Image className="rounded-lg" src={url} alt="Video thumbnail" height={200} width={300} /> */}
+                <img className="opacity object-cover h-[150px] w-[400px] rounded-lg" src={thumbnailUrl} />
+                <div className="text-sm absolute bottom-2 align-center right-2 bg-neutral-900/70 text-neutral-200 px-2 rounded-md">
+                  {length}
+                </div>
+                {isSelected && (
+                  <div className="text-sm absolute top-0 align-center flex items-center justify-center left-0 bg-neutral-900/70 text-neutral-200 w-full h-full rounded-md transition-all">
+                    <CheckCircle size={64} color="#e0e0e0" />
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
 
           <div>
             <div className={cn("text-md", styles.videoTitle)}>{video.title}</div>
@@ -29,26 +50,6 @@ export function Video({ className, video, onClick }: VideoProps) {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-function Thumbnail(props: { video: VideoModel }) {
-  const url = getLargestThumbnail(props.video.thumbnails)?.url;
-  const length = formatDuration(props.video.duration);
-  return (
-    <div>
-      {!url && <div>No thumbnail found!</div>}
-      {!!url && (
-        <div className="relative">
-          {/* <img class="object-cover h-48 w-96 ..."> */}
-          {/* <Image className="rounded-lg" src={url} alt="Video thumbnail" height={200} width={300} /> */}
-          <img className="object-cover h-[150px] w-[400px] rounded-lg" src={url} />
-          <div className="text-sm absolute bottom-2 align-center right-2 bg-neutral-900/70 text-neutral-200 px-2 rounded-md">
-            {length}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

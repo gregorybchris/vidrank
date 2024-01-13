@@ -9,6 +9,7 @@ import { Video } from "./Video";
 export function Selector() {
   const client = new Client();
   const [videos, setVideos] = useState<VideoModel[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
 
   useEffect(() => {
     fetchVideos();
@@ -17,11 +18,17 @@ export function Selector() {
   function fetchVideos() {
     client.getVideos().then((videos) => {
       setVideos(videos);
+      setSelected([]);
     });
   }
 
   function onClickVideo(video: VideoModel) {
     console.log(`Clicked video: ${video.title}`);
+    if (selected.includes(video.id)) {
+      setSelected(selected.filter((id) => id !== video.id));
+    } else {
+      setSelected([...selected, video.id]);
+    }
   }
 
   return (
@@ -30,7 +37,7 @@ export function Selector() {
       {videos.length > 0 && (
         <div className="flex flex-wrap justify-center">
           {videos.map((video, i) => (
-            <Video key={i} video={video} onClick={onClickVideo} />
+            <Video key={i} video={video} onClick={onClickVideo} isSelected={selected.includes(video.id)} />
           ))}
         </div>
       )}
