@@ -39,8 +39,14 @@ def get_videos() -> JSONResponse:
     video_facade = VideoFacade(video_cache=video_cache, youtube_client=youtube_client)
 
     video_ids = [
-        "ezOIBfZcwbQ",  # All-In
-        "DNIvycJd6oM",  # Winklevoss
+        # "ezOIBfZcwbQ",  # All-In
+        # "DNIvycJd6oM",  # Winklevoss
+        "axJtywd9Tbo",
+        "3rWsdUkQ_-0",
+        "40CB12cj_aM",
+        "fLMZAHyrpyo",
+        "B2PJh2K-jdU",
+        "7s0SzcUnzZo",
     ]
 
     videos = list(video_facade.get_videos(video_ids))
