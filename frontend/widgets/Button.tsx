@@ -10,7 +10,7 @@ export function Button({ className, text, onClick }: ButtonProps) {
   return (
     <div
       className={cn(
-        "cursor-pointer rounded-md px-3 py-1 transition-all hover:bg-stone-300",
+        "cursor-pointer rounded px-4 py-1 transition-all hover:bg-stone-300",
         "select-none tracking-wider text-stone-600 hover:text-stone-800",
         className,
       )}
