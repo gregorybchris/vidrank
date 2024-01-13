@@ -173,6 +173,10 @@ export function Selector() {
             <Button text="Undo" onClick={undoSubmit} />
             <Button text="Submit" onClick={submitVideoSet} />
           </div>
+
+          <div className="flex w-full flex-row justify-center">
+            <div className="w-[450px] border-t border-stone-900/20"></div>
+          </div>
         </div>
       )}
     </>
