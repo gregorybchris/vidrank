@@ -33,13 +33,23 @@ export function Selector() {
     }
   }
 
-  function onClickSubmit() {}
+  function onClickSubmit() {
+    console.log("Will submit");
+  }
+
+  function onClickUndo() {
+    console.log("Will undo");
+  }
+
+  function onClickSkip() {
+    console.log("Will skip");
+  }
 
   return (
     <>
       {videos.length === 0 && <div>Loading videos...</div>}
       {videos.length > 0 && (
-        <div className="flex flex-col justify-center space-y-5">
+        <div className="flex flex-col justify-center space-y-4">
           <div className="flex flex-wrap justify-center">
             {videos.map((video, i) => (
               <Video
@@ -50,15 +60,15 @@ export function Selector() {
               />
             ))}
           </div>
+
           <div className="flex w-full flex-row justify-center">
-            <div className="w-[450px] border-t border-neutral-900/30"></div>
+            <div className="w-[450px] border-t border-stone-900/20"></div>
           </div>
 
           <div className="flex flex-row justify-center space-x-5">
+            <Button text="Skip" onClick={onClickSkip} />
+            <Button text="Undo" onClick={onClickUndo} />
             <Button text="Submit" onClick={onClickSubmit} />
-            <Button text="Undo" onClick={onClickSubmit} />
-            <Button text="Skip" onClick={onClickSubmit} />
-            {/* <div className="bg-red-400">{"hello!"}</div> */}
           </div>
         </div>
       )}
