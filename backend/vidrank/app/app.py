@@ -72,19 +72,16 @@ class App:
         youtube_client = YouTubeClient(api_key)
         video_cache = VideoCache(cache_dirpath)
         playlist_cache = PlaylistCache(cache_dirpath)
-        transaction_tracker = TransactionTracker(cache_dirpath)
         youtube_facade = YouTubeFacade(
             youtube_client=youtube_client,
             video_cache=video_cache,
             playlist_cache=playlist_cache,
         )
+        transaction_tracker = TransactionTracker(cache_dirpath)
 
         AppState.init(
-            youtube_client=youtube_client,
-            video_cache=video_cache,
-            playlist_cache=playlist_cache,
-            transaction_tracker=transaction_tracker,
             youtube_facade=youtube_facade,
+            transaction_tracker=transaction_tracker,
         )
 
     def start(self) -> None:

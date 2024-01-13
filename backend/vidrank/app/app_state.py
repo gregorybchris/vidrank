@@ -1,9 +1,6 @@
 from dataclasses import dataclass
 
-from vidrank.lib.playlist_cache import PlaylistCache
 from vidrank.lib.transaction_tracker import TransactionTracker
-from vidrank.lib.video_cache import VideoCache
-from vidrank.lib.youtube.youtube_client import YouTubeClient
 from vidrank.lib.youtube_facade import YouTubeFacade
 
 
@@ -11,28 +8,19 @@ from vidrank.lib.youtube_facade import YouTubeFacade
 class AppState:
     _INSTANCE = None
 
-    youtube_client: YouTubeClient
-    video_cache: VideoCache
-    playlist_cache: PlaylistCache
-    transaction_tracker: TransactionTracker
     youtube_facade: YouTubeFacade
+    transaction_tracker: TransactionTracker
 
     @classmethod
     def init(
         cls,
         *,
-        youtube_client: YouTubeClient,
-        video_cache: VideoCache,
-        playlist_cache: PlaylistCache,
-        transaction_tracker: TransactionTracker,
         youtube_facade: YouTubeFacade,
+        transaction_tracker: TransactionTracker,
     ) -> None:
         cls._INSTANCE = cls(
-            youtube_client=youtube_client,
-            video_cache=video_cache,
-            playlist_cache=playlist_cache,
-            transaction_tracker=transaction_tracker,
             youtube_facade=youtube_facade,
+            transaction_tracker=transaction_tracker,
         )
 
     @classmethod
