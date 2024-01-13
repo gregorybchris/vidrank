@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, cast
+from typing import Any, Dict, cast
 
 import pendulum
 from pendulum import DateTime, Duration
@@ -15,7 +15,6 @@ class Video(BaseModel):
     duration: Duration
     channel: str
     publish_datetime: DateTime
-    tags: List[str]
     thumbnails: ThumbnailSet
     stats: VideoStats
 
@@ -32,7 +31,6 @@ class Video(BaseModel):
             duration=cast(Duration, duration),
             channel=video_dict["snippet"]["channelTitle"],
             publish_datetime=cast(DateTime, publish_datetime),
-            tags=video_dict["snippet"]["tags"],
             thumbnails=ThumbnailSet.from_dict(video_dict["snippet"]["thumbnails"]),
             stats=VideoStats.from_dict(video_dict["statistics"]),
         )
@@ -44,7 +42,6 @@ class Video(BaseModel):
             "duration": self.duration.in_seconds(),
             "channel": self.channel,
             "publish_datetime": self.publish_datetime.to_iso8601_string(),
-            "tags": self.tags,
             "thumbnails": self.thumbnails.model_dump(),
             "stats": self.stats.model_dump(),
         }

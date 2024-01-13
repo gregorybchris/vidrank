@@ -7,7 +7,6 @@ export type Video = {
   duration: number;
   channel: string;
   publish_datetime: number;
-  tags: string[];
   thumbnails: ThumbnailSet;
   stats: VideoStats;
 };
