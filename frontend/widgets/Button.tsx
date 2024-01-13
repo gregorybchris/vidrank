@@ -8,16 +8,14 @@ type ButtonProps = {
 
 export function Button({ className, text, onClick }: ButtonProps) {
   return (
-    <div className="bg-neutral-600 p-[3px] rounded">
-      <div
-        className={cn(
-          "border-b-4 border-neutral-600 rounded-sm bg-neutral-500 w-20 text-center py-1 cursor-pointer transition-all active:bg-stone-500 active:border-t-4 active:border-stone-500 active:border-b-0",
-          className
-        )}
-        onClick={onClick}
-      >
-        <span className="select-none font-bold text-neutral-900">{text}</span>
-      </div>
+    <div
+      className={cn(
+        "cursor-pointer rounded px-2 py-1 transition-all hover:bg-neutral-500",
+        className,
+      )}
+      onClick={onClick}
+    >
+      <div className="select-none tracking-widest">{text}</div>
     </div>
   );
 }

@@ -19,7 +19,7 @@ export function Video({ className, video, onClick, isSelected }: VideoProps) {
 
   return (
     <div className={cn("max-w-[300px]", className)} onClick={() => onClick(video)}>
-      <div className="px-4 py-2">
+      <div className="px-4 py-2 select-none">
         <div className="flex flex-col items-start space-y-3 align-top">
           <div>
             {!thumbnailUrl && <div>No thumbnail found!</div>}
@@ -30,11 +30,15 @@ export function Video({ className, video, onClick, isSelected }: VideoProps) {
                 <div className="text-sm absolute bottom-2 align-center right-2 bg-neutral-900/70 text-neutral-200 px-2 rounded-md">
                   {length}
                 </div>
-                {isSelected && (
-                  <div className="text-sm absolute top-0 align-center flex items-center justify-center left-0 bg-neutral-900/70 text-neutral-200 w-full h-full rounded-md transition-all">
-                    <CheckCircle size={64} color="#e0e0e0" />
-                  </div>
-                )}
+
+                <div
+                  className={cn(
+                    "text-sm absolute top-0 align-center flex items-center justify-center left-0 text-neutral-200 w-full h-full rounded-md transition-all",
+                    isSelected ? "bg-neutral-900/70" : "bg-neutral-900/0 opacity-0"
+                  )}
+                >
+                  <CheckCircle size={64} color="#e0e0e0" />
+                </div>
               </div>
             )}
           </div>
