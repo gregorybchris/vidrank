@@ -61,6 +61,16 @@ def get_videos() -> JSONResponse:
     return JSONResponse({"videos": [video.serialize() for video in videos]})
 
 
-@router.post(name="Select", description="Post selection.", path="/select")
-def post_select() -> JSONResponse:
-    return JSONResponse({"result": "selected"})
+@router.post(name="Submit", description="Post submit.", path="/submit")
+def post_submit() -> JSONResponse:
+    return JSONResponse({"result": "submitted"})
+
+
+@router.post(name="Undo", description="Post undo.", path="/undo")
+def post_undo() -> JSONResponse:
+    return JSONResponse({"result": "undone"})
+
+
+@router.post(name="Skip", description="Post skip.", path="/skip")
+def post_skip() -> JSONResponse:
+    return JSONResponse({"result": "skipped"})

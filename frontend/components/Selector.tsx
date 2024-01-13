@@ -55,18 +55,37 @@ export function Selector() {
 
   function skipVideoSet() {
     console.log("Will skip");
+    client.postSkip().then((result) => {
+      console.log("Got result: ", result);
+      // TODO: Get new videos
+    });
   }
 
   function undoSubmit() {
     console.log("Will undo");
+    client.postUndo().then((result) => {
+      console.log("Got result: ", result);
+      // TODO: Get new videos
+    });
   }
 
   function submitVideoSet() {
     console.log("Will submit");
     if (selected.length > MAX_SELECTED_VIDEOS) {
+      console.log("Too many videos selected");
+      // Use a toast to show this
+      return;
     }
     if (selected.length < MIN_SELECTED_VIDEOS) {
+      console.log("Not enough videos selected");
+      // Use a toast to show this
+      return;
     }
+
+    client.postSubmit().then((result) => {
+      console.log("Got result: ", result);
+      // TODO: Get new videos
+    });
   }
 
   function selectVideo(video: VideoModel) {
