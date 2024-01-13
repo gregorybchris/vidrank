@@ -9,7 +9,9 @@ export type ThumbnailSet = {
   maxres: Optional<Thumbnail>;
 };
 
-export function getLargestThumbnail(thumbnailSet: ThumbnailSet): Optional<Thumbnail> {
+export function getLargestThumbnail(
+  thumbnailSet: ThumbnailSet,
+): Optional<Thumbnail> {
   const thumbnails = [
     thumbnailSet.maxres,
     thumbnailSet.high,
