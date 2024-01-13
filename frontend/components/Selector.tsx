@@ -17,6 +17,7 @@ export function Selector() {
 
   function fetchVideos() {
     client.getVideos().then((videos) => {
+      console.log("got videos: ", videos);
       setVideos(videos);
       setSelected([]);
     });

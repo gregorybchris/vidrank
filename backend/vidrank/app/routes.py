@@ -49,7 +49,12 @@ def get_videos() -> JSONResponse:
         "7s0SzcUnzZo",
     ]
 
-    videos = list(video_facade.get_videos(video_ids))
+    # playlist_name, playlist_id = "Hardware", "PL0KIGdjEQDyG2nMJRAevxBohq-Nschpma"  # Hardware
+    # playlist_name, playlist_id = "Next", "PL0KIGdjEQDyHGXlhUMndOPherxDmXDQxn"  # Next
+    playlist_name, playlist_id = "Cooking", "PL0KIGdjEQDyFs9G4IWU8cbdGQuIGjCWYV"  # Cooking
+
+    videos = list(video_facade.iter_playlist_videos(playlist_id))
+    # videos = list(video_facade.iter_videos(video_ids))
 
     for video in videos:
         print("===========")
