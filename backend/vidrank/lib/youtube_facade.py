@@ -1,17 +1,26 @@
 import logging
 from typing import Iterator, List
 
+from vidrank.lib.playlist_cache import PlaylistCache
 from vidrank.lib.video_cache import VideoCache
+from vidrank.lib.youtube.playlist import Playlist
 from vidrank.lib.youtube.video import Video
 from vidrank.lib.youtube.youtube_client import YouTubeClient
 
 logger = logging.getLogger(__name__)
 
 
-class VideoFacade:
-    def __init__(self, *, video_cache: VideoCache, youtube_client: YouTubeClient):
-        self.video_cache = video_cache
+class YouTubeFacade:
+    def __init__(
+        self,
+        *,
+        youtube_client: YouTubeClient,
+        video_cache: VideoCache,
+        playlist_cache: PlaylistCache,
+    ):
         self.youtube_client = youtube_client
+        self.video_cache = video_cache
+        self.playlist_cache = playlist_cache
 
     def iter_videos(self, video_ids: List[str]) -> Iterator[Video]:
         uncached_ids = []
@@ -28,7 +37,14 @@ class VideoFacade:
             self.video_cache.add_all(videos)
             yield from videos
 
-    def iter_playlist_videos(self, playlist_id: str) -> Iterator[Video]:
+    def get_playlist(self, playlist_id: str, name: str) -> Playlist:
+        playlist = self.playlist_cache.get(playlist_id)
+        if playlist is not None:
+            return playlist
+
         video_ids = list(self.youtube_client.iter_playlist_video_ids(playlist_id))
-        logger.info("Found %s videos in the playlist" % len(video_ids))
-        yield from self.iter_videos(video_ids)
+        playlist = Playlist(id=playlist_id, name=name, video_ids=video_ids)
+
+        self.playlist_cache.add(playlist)
+
+        return playlist

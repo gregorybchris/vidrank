@@ -10,20 +10,19 @@ logger = logging.getLogger(__name__)
 
 class VideoCache:
     def __init__(self, cache_dirpath: Path):
-        self.cache_dirpath = cache_dirpath
+        self.dirpath = cache_dirpath / "videos"
 
     def get(self, video_id: str) -> Optional[Video]:
-        video_filepath = self.cache_dirpath / f"{video_id}.pkl"
-        if not video_filepath.exists():
+        filepath = self.dirpath / f"{video_id}.pkl"
+        if not filepath.exists():
             return None
 
-        with video_filepath.open("rb") as fp:
-            video = pickle.load(fp)
-            return video
+        with filepath.open("rb") as fp:
+            return pickle.load(fp)
 
     def add(self, video: Video) -> None:
-        video_filepath = self.cache_dirpath / f"{video.id}.pkl"
-        with video_filepath.open("wb") as fp:
+        filepath = self.dirpath / f"{video.id}.pkl"
+        with filepath.open("wb") as fp:
             pickle.dump(video, fp)
 
     def add_all(self, videos: List[Video]) -> None:
@@ -31,5 +30,5 @@ class VideoCache:
             self.add(video)
 
     def has(self, video_id: str) -> bool:
-        video_filepath = self.cache_dirpath / f"{video_id}.pkl"
-        return video_filepath.exists()
+        filepath = self.dirpath / f"{video_id}.pkl"
+        return filepath.exists()

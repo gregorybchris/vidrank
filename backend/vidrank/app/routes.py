@@ -1,14 +1,16 @@
 import os
+from itertools import islice
 from pathlib import Path
 
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
 from vidrank import __version__ as package_version
+from vidrank.lib.playlist_cache import PlaylistCache
 from vidrank.lib.video_cache import VideoCache
-from vidrank.lib.video_facade import VideoFacade
 from vidrank.lib.video_utilities import print_video
 from vidrank.lib.youtube.youtube_client import YouTubeClient
+from vidrank.lib.youtube_facade import YouTubeFacade
 
 router = APIRouter()
 
@@ -34,27 +36,23 @@ def get_videos() -> JSONResponse:
         raise ValueError("VIDRANK_CACHE_DIR environment variable is not set.")
 
     cache_dirpath = Path(cache_dir_str)
-    video_cache = VideoCache(cache_dirpath)
     youtube_client = YouTubeClient(api_key)
-    video_facade = VideoFacade(video_cache=video_cache, youtube_client=youtube_client)
+    video_cache = VideoCache(cache_dirpath)
+    playlist_cache = PlaylistCache(cache_dirpath)
+    youtube_facade = YouTubeFacade(
+        youtube_client=youtube_client,
+        video_cache=video_cache,
+        playlist_cache=playlist_cache,
+    )
 
-    video_ids = [
-        # "ezOIBfZcwbQ",  # All-In
-        # "DNIvycJd6oM",  # Winklevoss
-        "axJtywd9Tbo",
-        "3rWsdUkQ_-0",
-        "40CB12cj_aM",
-        "fLMZAHyrpyo",
-        "B2PJh2K-jdU",
-        "7s0SzcUnzZo",
-    ]
+    # playlist = youtube_facade.get_playlist("PL0KIGdjEQDyHGXlhUMndOPherxDmXDQxn", "Next")
+    # playlist = youtube_facade.get_playlist("PL0KIGdjEQDyG2nMJRAevxBohq-Nschpma", "Hardware")
+    playlist = youtube_facade.get_playlist("PL0KIGdjEQDyFs9G4IWU8cbdGQuIGjCWYV", "Cooking")
 
-    # playlist_name, playlist_id = "Hardware", "PL0KIGdjEQDyG2nMJRAevxBohq-Nschpma"  # Hardware
-    # playlist_name, playlist_id = "Next", "PL0KIGdjEQDyHGXlhUMndOPherxDmXDQxn"  # Next
-    playlist_name, playlist_id = "Cooking", "PL0KIGdjEQDyFs9G4IWU8cbdGQuIGjCWYV"  # Cooking
-
-    videos = list(video_facade.iter_playlist_videos(playlist_id))
-    # videos = list(video_facade.iter_videos(video_ids))
+    n_videos = 6
+    video_ids = playlist.video_ids
+    video_iterator = youtube_facade.iter_videos(video_ids)
+    videos = list(islice(video_iterator, n_videos))
 
     for video in videos:
         print("===========")
