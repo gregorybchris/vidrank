@@ -14,6 +14,7 @@ import { Video } from "./Video";
 const MIN_SELECTED_VIDEOS = 2;
 const MAX_SELECTED_VIDEOS = 4;
 type Direction = "up" | "down" | "left" | "right";
+type SubmitStatus = { message: string } | true;
 
 export function Selector() {
   const client = new Client();
@@ -66,8 +67,6 @@ export function Selector() {
     console.log(`Clicked video: ${video.title}`);
     selectVideo(video.id);
   }
-
-  type SubmitStatus = { message: string } | true;
 
   function getSubmitStatus(): SubmitStatus {
     const numActed = selectedIds.length + removedIds.length;
