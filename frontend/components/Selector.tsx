@@ -77,7 +77,7 @@ export function Selector() {
 
   function getSubmitStatus(): SubmitStatus {
     const numActed = selectedIds.length + removedIds.length;
-    if (numActed > MAX_SELECTED_VIDEOS) {
+    if (selectedIds.length > MAX_SELECTED_VIDEOS) {
       return { message: "Too many videos selected" };
     }
     if (numActed < MIN_SELECTED_VIDEOS) {
