@@ -71,6 +71,10 @@ class App:
         if cache_dir_str is None:
             raise ValueError("VIDRANK_CACHE_DIR environment variable is not set.")
 
+        playlist_id = os.getenv("VIDRANK_PLAYLIST_ID")
+        if playlist_id is None:
+            raise ValueError("VIDRANK_PLAYLIST_ID environment variable is not set.")
+
         cache_dirpath = Path(cache_dir_str)
         youtube_client = YouTubeClient(api_key)
         video_cache = VideoCache(cache_dirpath)
@@ -86,6 +90,7 @@ class App:
         AppState.init(
             youtube_facade=youtube_facade,
             transaction_tracker=transaction_tracker,
+            playlist_id=playlist_id,
             rng=rng,
         )
 

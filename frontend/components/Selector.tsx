@@ -84,10 +84,16 @@ export function Selector() {
     }
 
     const selection: Selection = {
-      videos: videos.map((video) => ({
-        video_id: video.id,
-        selected: selectedIds.includes(video.id),
-      })),
+      videos: videos.map((video) => {
+        const action: Action = match(selectedIds.includes(video.id))
+          .with(true, (): Action => "select")
+          .with(false, (): Action => "nothing")
+          .exhaustive();
+        return {
+          video_id: video.id,
+          action: action,
+        };
+      }),
     };
 
     client.postSubmit(selection).then((result) => {
@@ -95,6 +101,7 @@ export function Selector() {
       // TODO: Get new videos
     });
   }
+  ``;
 
   function selectVideo(videoId: string) {
     if (selectedIds.includes(videoId)) {

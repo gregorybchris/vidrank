@@ -1,5 +1,3 @@
-from itertools import islice
-
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
@@ -10,6 +8,8 @@ from vidrank.lib.transaction import Transaction
 from vidrank.lib.transaction_type import TransactionType
 
 router = APIRouter()
+
+N_VIDEOS_PER_RESPONSE = 6
 
 
 @router.get(name="Status", description="Get the API status.", path="/")
@@ -25,12 +25,9 @@ def get_version() -> JSONResponse:
 @router.get(name="Videos", description="Get videos.", path="/videos")
 def get_videos() -> JSONResponse:
     app_state = AppState.get()
-    # playlist = app_state.youtube_facade.get_playlist("PL0KIGdjEQDyHGXlhUMndOPherxDmXDQxn", "Next")
-    playlist = app_state.youtube_facade.get_playlist("PL0KIGdjEQDyFs9G4IWU8cbdGQuIGjCWYV", "Cooking")
-
-    n_videos = 6
+    playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
     playlist_video_ids = playlist.video_ids
-    video_ids = app_state.rng.choice(playlist_video_ids, n_videos, replace=False)
+    video_ids = app_state.rng.choice(playlist_video_ids, N_VIDEOS_PER_RESPONSE, replace=False)
     video_iterator = app_state.youtube_facade.iter_videos(video_ids)
     videos = list(video_iterator)
 

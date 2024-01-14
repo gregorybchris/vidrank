@@ -12,6 +12,7 @@ class AppState:
 
     youtube_facade: YouTubeFacade
     transaction_tracker: TransactionTracker
+    playlist_id: str
     rng: np.random.Generator
 
     @classmethod
@@ -20,11 +21,13 @@ class AppState:
         *,
         youtube_facade: YouTubeFacade,
         transaction_tracker: TransactionTracker,
+        playlist_id: str,
         rng: np.random.Generator,
     ) -> None:
         cls._INSTANCE = cls(
             youtube_facade=youtube_facade,
             transaction_tracker=transaction_tracker,
+            playlist_id=playlist_id,
             rng=rng,
         )
 

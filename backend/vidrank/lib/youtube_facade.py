@@ -37,13 +37,13 @@ class YouTubeFacade:
                 self.video_cache.add(video)
                 yield video
 
-    def get_playlist(self, playlist_id: str, name: str) -> Playlist:
+    def get_playlist(self, playlist_id: str) -> Playlist:
         playlist = self.playlist_cache.get(playlist_id)
         if playlist is not None:
             return playlist
 
         video_ids = list(self.youtube_client.iter_playlist_video_ids(playlist_id))
-        playlist = Playlist(id=playlist_id, name=name, video_ids=video_ids)
+        playlist = Playlist(id=playlist_id, video_ids=video_ids)
 
         self.playlist_cache.add(playlist)
 
