@@ -1,12 +1,12 @@
 "use client";
 
+import { ClockCountdown, WarningOctagon } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 
 import { Client } from "@/lib/client";
 import { useKeyCombos } from "@/lib/keys";
 import { Selection } from "@/lib/selection";
 import { Video as VideoModel } from "@/lib/video";
-import { ClockCountdown } from "@phosphor-icons/react";
 import { match } from "ts-pattern";
 import { Button } from "widgets/Button";
 import { Video } from "./Video";
@@ -23,7 +23,7 @@ export function Selector() {
   const [removedIds, setRemovedIds] = useState<string[]>([]);
   const [currentId, setCurrentId] = useState<string>();
   const [recordIds, setRecordIds] = useState<string[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useKeyCombos(
     [
@@ -49,11 +49,17 @@ export function Selector() {
 
   function fetchVideos() {
     setLoading(true);
-    client.getVideos().then((response) => {
-      console.log("Fetched videos: ", response.videos);
-      updateWithVideos(response.videos);
-      setLoading(false);
-    });
+    client
+      .getVideos()
+      .then((response) => {
+        console.log("Fetched videos: ", response.videos);
+        updateWithVideos(response.videos);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch videos: ", error);
+        setLoading(false);
+      });
   }
 
   function updateWithVideos(videos: VideoModel[]) {
@@ -102,12 +108,18 @@ export function Selector() {
     };
 
     setLoading(true);
-    client.postSubmit(selection).then((response) => {
-      console.log("Submit successful: ", response.record_id);
-      setRecordIds([...recordIds, response.record_id]);
-      updateWithVideos(response.videos);
-      setLoading(false);
-    });
+    client
+      .postSubmit(selection)
+      .then((response) => {
+        console.log("Submit successful: ", response.record_id);
+        setRecordIds([...recordIds, response.record_id]);
+        updateWithVideos(response.videos);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Failed to submit: ", error);
+        setLoading(false);
+      });
   }
 
   function getVideoAction(video: VideoModel): Action {
@@ -129,12 +141,18 @@ export function Selector() {
     }
     const recordId = recordIds[recordIds.length - 1];
     setLoading(true);
-    client.postUndo(recordId).then((response) => {
-      console.log("Got videos: ", response.videos);
-      updateWithVideos(response.videos);
-      setRecordIds(recordIds.slice(0, recordIds.length - 1));
-      setLoading(false);
-    });
+    client
+      .postUndo(recordId)
+      .then((response) => {
+        console.log("Got videos: ", response.videos);
+        updateWithVideos(response.videos);
+        setRecordIds(recordIds.slice(0, recordIds.length - 1));
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Failed to undo: ", error);
+        setLoading(false);
+      });
   }
 
   function skipVideoSet() {
@@ -150,12 +168,18 @@ export function Selector() {
     };
 
     setLoading(true);
-    client.postSkip(selection).then((response) => {
-      console.log("Got videos: ", response.videos);
-      setRecordIds([...recordIds, response.record_id]);
-      updateWithVideos(response.videos);
-      setLoading(false);
-    });
+    client
+      .postSkip(selection)
+      .then((response) => {
+        console.log("Got videos: ", response.videos);
+        setRecordIds([...recordIds, response.record_id]);
+        updateWithVideos(response.videos);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Failed to skip: ", error);
+        setLoading(false);
+      });
   }
 
   function selectVideo(videoId: string) {
@@ -235,15 +259,20 @@ export function Selector() {
   return (
     <>
       {loading && (
-        <div>
-          <div>Loading</div>
-          <div>
-            <ClockCountdown size={80} color="#3e8fda" />
-          </div>
+        <div className="flex flex-col items-center space-y-5 text-stone-600">
+          <div className="text-4xl font-bold">Loading</div>
+          <ClockCountdown size={80} color="#3e8fda" />
         </div>
       )}
-      {videos.length === 0 && <div>Loading videos...</div>}
-      {videos.length > 0 && (
+
+      {!loading && videos.length === 0 && (
+        <div className="flex flex-col items-center space-y-5 text-stone-600">
+          <div className="text-4xl font-bold">Failed to fetch videos</div>
+          <WarningOctagon size={80} color="#f08080" />
+        </div>
+      )}
+
+      {!loading && videos.length > 0 && (
         <div className="flex flex-col justify-center space-y-4">
           <div className="flex flex-wrap justify-center">
             {videos.map((video, i) => (
