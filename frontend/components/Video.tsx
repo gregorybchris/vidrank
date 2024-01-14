@@ -1,3 +1,4 @@
+import { CheckCircle, XCircle } from "@phosphor-icons/react";
 /* eslint-disable @next/next/no-img-element */
 import {
   formatDateDiff,
@@ -9,13 +10,12 @@ import { cn } from "@/lib/styleUtilities";
 import { getLargestThumbnail } from "@/lib/thumbnailSet";
 import { Video as VideoModel } from "@/lib/video";
 import styles from "@/styles/video.module.css";
-import { CheckCircle } from "@phosphor-icons/react";
 
 type VideoProps = {
   className?: string;
   video: VideoModel;
   onClick: (video: VideoModel) => void;
-  isSelected: boolean;
+  action: Action;
   isCurrent: boolean;
 };
 
@@ -23,7 +23,7 @@ export function Video({
   className,
   video,
   onClick,
-  isSelected,
+  action,
   isCurrent,
 }: VideoProps) {
   const thumbnailUrl = getLargestThumbnail(video.thumbnails)?.url;
@@ -51,18 +51,25 @@ export function Video({
                     src={thumbnailUrl}
                     alt="Video thumbnail"
                   />
+
                   <div className="align-center absolute bottom-2 right-2 rounded-md bg-stone-900/70 px-2 text-sm text-stone-200">
                     {length}
                   </div>
+
                   <div
                     className={cn(
                       "align-center absolute left-0 top-0 flex h-full w-full items-center justify-center rounded-md text-sm text-stone-200 transition-all",
-                      isSelected
+                      action === "select" || action === "remove"
                         ? "bg-stone-900/70"
                         : "bg-stone-900/0 opacity-0",
                     )}
                   >
-                    <CheckCircle size={64} color="#e0e0e0" />
+                    {action === "select" && (
+                      <CheckCircle size={64} color="#80f080" />
+                    )}
+                    {action === "remove" && (
+                      <XCircle size={64} color="#f08080" />
+                    )}
                   </div>
                 </div>
               )}

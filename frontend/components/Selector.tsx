@@ -18,13 +18,15 @@ export function Selector() {
   const client = new Client();
   const [videos, setVideos] = useState<VideoModel[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [removedIds, setRemovedIds] = useState<string[]>([]);
   const [currentId, setCurrentId] = useState<string>();
 
   useKeyCombos(
     [
-      { pattern: "c", callback: () => clearSelected() },
+      { pattern: "c", callback: () => clearActions() },
       { pattern: "u", callback: () => undoSubmit() },
       { pattern: "s", callback: () => skipVideoSet() },
+      { pattern: "r", callback: () => removeCurrentVideo() },
       { pattern: "Enter", callback: () => submitVideoSet() },
       { pattern: "Escape", callback: () => setCurrentId(undefined) },
       { pattern: " ", callback: () => selectCurrentVideo() },
@@ -33,7 +35,7 @@ export function Selector() {
       { pattern: "ArrowLeft", callback: () => offsetCurrentVideo("left") },
       { pattern: "ArrowRight", callback: () => offsetCurrentVideo("right") },
     ],
-    [videos, currentId, selectedIds],
+    [videos, currentId, selectedIds, removedIds],
   );
 
   useEffect(() => {
@@ -45,6 +47,7 @@ export function Selector() {
       console.log("Fetched videos: ", videos);
       setVideos(videos);
       setSelectedIds([]);
+      setRemovedIds([]);
       setCurrentId(undefined);
     });
   }
@@ -70,14 +73,28 @@ export function Selector() {
     });
   }
 
+  function getVideoAction(video: VideoModel): Action {
+    const selected = selectedIds.includes(video.id);
+    const removed = removedIds.includes(video.id);
+
+    return match([selected, removed])
+      .with([true, true], (): Action => "remove")
+      .with([true, false], (): Action => "select")
+      .with([false, true], (): Action => "remove")
+      .with([false, false], (): Action => "nothing")
+      .exhaustive();
+  }
+
   function submitVideoSet() {
     console.log("Will submit");
-    if (selectedIds.length > MAX_SELECTED_VIDEOS) {
+    const numActed = selectedIds.length + removedIds.length;
+
+    if (numActed > MAX_SELECTED_VIDEOS) {
       console.log("Too many videos selected");
       // Use a toast to show this
       return;
     }
-    if (selectedIds.length < MIN_SELECTED_VIDEOS) {
+    if (numActed < MIN_SELECTED_VIDEOS) {
       console.log("Not enough videos selected");
       // Use a toast to show this
       return;
@@ -85,13 +102,9 @@ export function Selector() {
 
     const selection: Selection = {
       videos: videos.map((video) => {
-        const action: Action = match(selectedIds.includes(video.id))
-          .with(true, (): Action => "select")
-          .with(false, (): Action => "nothing")
-          .exhaustive();
         return {
           video_id: video.id,
-          action: action,
+          action: getVideoAction(video),
         };
       }),
     };
@@ -107,7 +120,21 @@ export function Selector() {
     if (selectedIds.includes(videoId)) {
       setSelectedIds(selectedIds.filter((id) => id !== videoId));
     } else {
+      if (removedIds.includes(videoId)) {
+        setRemovedIds(removedIds.filter((id) => id !== videoId));
+      }
       setSelectedIds([...selectedIds, videoId]);
+    }
+  }
+
+  function removeVideo(videoId: string) {
+    if (removedIds.includes(videoId)) {
+      setRemovedIds(removedIds.filter((id) => id !== videoId));
+    } else {
+      if (selectedIds.includes(videoId)) {
+        setSelectedIds(selectedIds.filter((id) => id !== videoId));
+      }
+      setRemovedIds([...removedIds, videoId]);
     }
   }
 
@@ -119,9 +146,18 @@ export function Selector() {
     selectVideo(currentId);
   }
 
-  function clearSelected() {
-    console.log("Clearing selected videos");
+  function removeCurrentVideo() {
+    console.log("Removing current video");
+    if (currentId === undefined) {
+      return;
+    }
+    removeVideo(currentId);
+  }
+
+  function clearActions() {
+    console.log("Clearing actions");
     setSelectedIds([]);
+    setRemovedIds([]);
   }
 
   function offsetCurrentVideo(direction: Direction) {
@@ -165,7 +201,7 @@ export function Selector() {
                 key={i}
                 video={video}
                 onClick={onClickVideo}
-                isSelected={selectedIds.includes(video.id)}
+                action={getVideoAction(video)}
                 isCurrent={!!currentId && video.id === currentId}
               />
             ))}
