@@ -25,15 +25,16 @@ export function Selector() {
   const [recordIds, setRecordIds] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  useKeyCombos(
+  const keys = useKeyCombos(
     [
       { pattern: "c", callback: () => clearActions() },
       { pattern: "u", callback: () => undoSubmit() },
       { pattern: "s", callback: () => skipVideoSet() },
-      { pattern: "r", callback: () => removeCurrentVideo() },
+      { pattern: "r", callback: () => {} },
       { pattern: "Enter", callback: () => submitVideoSet() },
       { pattern: "Escape", callback: () => setCurrentId(undefined) },
-      { pattern: " ", callback: () => selectCurrentVideo() },
+      { pattern: " ", callback: () => updateCurrentVideoAction() },
+      { pattern: "r+ ", callback: () => updateCurrentVideoAction() },
       { pattern: "ArrowUp", callback: () => offsetCurrentVideo("up") },
       { pattern: "ArrowDown", callback: () => offsetCurrentVideo("down") },
       { pattern: "ArrowLeft", callback: () => offsetCurrentVideo("left") },
@@ -71,7 +72,7 @@ export function Selector() {
 
   function onClickVideo(video: VideoModel) {
     console.log(`Clicked video: ${video.title}`);
-    selectVideo(video.id);
+    updateVideoAction(video);
   }
 
   function getSubmitStatus(): SubmitStatus {
@@ -96,6 +97,7 @@ export function Selector() {
     if (submitStatus !== true) {
       console.log("Submit status: ", submitStatus.message);
       // TODO: Use a toast to show this
+      return;
     }
 
     const selection: Selection = {
@@ -182,42 +184,43 @@ export function Selector() {
       });
   }
 
-  function selectVideo(videoId: string) {
-    if (selectedIds.includes(videoId)) {
-      setSelectedIds(selectedIds.filter((id) => id !== videoId));
-    } else {
-      if (removedIds.includes(videoId)) {
-        setRemovedIds(removedIds.filter((id) => id !== videoId));
-      }
-      setSelectedIds([...selectedIds, videoId]);
-    }
-  }
+  function setVideoAction(videoId: string, action: Action) {
+    setSelectedIds(selectedIds.filter((id) => id !== videoId));
+    setRemovedIds(removedIds.filter((id) => id !== videoId));
 
-  function removeVideo(videoId: string) {
-    if (removedIds.includes(videoId)) {
-      setRemovedIds(removedIds.filter((id) => id !== videoId));
-    } else {
-      if (selectedIds.includes(videoId)) {
-        setSelectedIds(selectedIds.filter((id) => id !== videoId));
-      }
+    if (action === "select") {
+      setSelectedIds([...selectedIds, videoId]);
+    } else if (action === "remove") {
       setRemovedIds([...removedIds, videoId]);
     }
   }
 
-  function selectCurrentVideo() {
-    console.log("Selecting current video");
-    if (currentId === undefined) {
-      return;
+  function updateVideoAction(video: VideoModel) {
+    const action = getVideoAction(video);
+
+    if (keys.includes("r")) {
+      setVideoAction(video.id, "remove");
+    } else {
+      if (action === "select" || action === "remove") {
+        setVideoAction(video.id, "nothing");
+      } else {
+        setVideoAction(video.id, "select");
+      }
     }
-    selectVideo(currentId);
   }
 
-  function removeCurrentVideo() {
-    console.log("Removing current video");
+  function updateCurrentVideoAction() {
+    console.log("Selecting/deselecting current video");
     if (currentId === undefined) {
       return;
     }
-    removeVideo(currentId);
+
+    const currentVideo = videos.find((video) => video.id === currentId);
+    if (currentVideo === undefined) {
+      return;
+    }
+
+    updateVideoAction(currentVideo);
   }
 
   function clearActions() {

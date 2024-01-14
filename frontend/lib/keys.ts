@@ -10,7 +10,7 @@ export interface Combo {
 export function useKeyCombos(
   combos: Combo[],
   dependencies: DependencyList,
-): void {
+): string[] {
   const [keys, setKeys] = useState<string[]>([]);
 
   function onDown(event: KeyboardEvent) {
@@ -56,4 +56,6 @@ export function useKeyCombos(
       window.removeEventListener("keyup", onUp);
     };
   }, [dependencies]);
+
+  return keys;
 }
