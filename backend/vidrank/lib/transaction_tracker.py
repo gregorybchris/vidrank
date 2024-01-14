@@ -8,8 +8,11 @@ from vidrank.lib.transaction import Transaction
 class TransactionTracker:
     def __init__(self, cache_dirpath: Path):
         self.dirpath = cache_dirpath / "transactions"
-        self.dirpath.mkdir(parents=True, exist_ok=True)
         self.filepath = self.dirpath / "transactions.json"
+        self.ensure_exists()
+
+    def ensure_exists(self) -> None:
+        self.dirpath.mkdir(parents=True, exist_ok=True)
 
     def load(self) -> List[Transaction]:
         if not self.filepath.exists():
@@ -19,6 +22,7 @@ class TransactionTracker:
             return [Transaction(**t) for t in transactions_json]
 
     def add(self, transaction: Transaction) -> None:
+        self.ensure_exists()
         transactions = self.load()
         transactions.append(transaction)
         transactions_json = [t.model_dump() for t in transactions]

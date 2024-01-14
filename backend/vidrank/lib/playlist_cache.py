@@ -11,6 +11,9 @@ logger = logging.getLogger(__name__)
 class PlaylistCache:
     def __init__(self, cache_dirpath: Path):
         self.dirpath = cache_dirpath / "playlists"
+        self.ensure_exists()
+
+    def ensure_exists(self) -> None:
         self.dirpath.mkdir(parents=True, exist_ok=True)
 
     def get(self, playlist_id: str) -> Optional[Playlist]:
@@ -22,6 +25,7 @@ class PlaylistCache:
             return pickle.load(fp)
 
     def add(self, playlist: Playlist) -> None:
+        self.ensure_exists()
         filepath = self.dirpath / f"{playlist.id}.pkl"
         with filepath.open("wb") as fp:
             pickle.dump(playlist, fp)

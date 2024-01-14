@@ -84,7 +84,7 @@ class YouTubeClient:
             "key": self.api_key,
             "hl": "en_US",
             "part": self.PLAYLIST_PARTS,
-            "maxResults": 50,
+            "maxResults": self.batch_size,
         }
 
         page_token = None

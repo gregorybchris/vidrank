@@ -3,8 +3,9 @@ import logging
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterator
+from typing import Iterator, Optional
 
+import numpy as np
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,6 +27,7 @@ class App:
     DEFAULT_HOST = "0.0.0.0"
     DEFAULT_PORT = 8000
     DEFAULT_LOG_LEVEL = logging.DEBUG
+    DEFAULT_RANDOM_SEED = 42
 
     fast_api: FastAPI
     host: str
@@ -40,11 +42,12 @@ class App:
         host: str = DEFAULT_HOST,
         port: int = DEFAULT_PORT,
         log_level: int = DEFAULT_LOG_LEVEL,
+        random_seed: Optional[int] = DEFAULT_RANDOM_SEED
     ) -> Iterator["App"]:
         fast_api = FastAPI()
         api = cls(fast_api=fast_api, host=host, port=port, log_level=log_level)
 
-        cls.load_app_state()
+        cls.load_app_state(random_seed=random_seed)
 
         fast_api.include_router(router)
 
@@ -59,7 +62,7 @@ class App:
         yield api
 
     @classmethod
-    def load_app_state(cls) -> None:
+    def load_app_state(cls, random_seed: Optional[int] = DEFAULT_RANDOM_SEED) -> None:
         api_key = os.getenv("YOUTUBE_API_KEY")
         if api_key is None:
             raise ValueError("YOUTUBE_API_KEY environment variable is not set.")
@@ -78,10 +81,12 @@ class App:
             playlist_cache=playlist_cache,
         )
         transaction_tracker = TransactionTracker(cache_dirpath)
+        rng = np.random.default_rng(random_seed)
 
         AppState.init(
             youtube_facade=youtube_facade,
             transaction_tracker=transaction_tracker,
+            rng=rng,
         )
 
     def start(self) -> None:
