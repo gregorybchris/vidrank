@@ -1,55 +1,113 @@
+from typing import Any, List
+from uuid import uuid4
+
 from fastapi import APIRouter
-from fastapi.responses import JSONResponse
+from fastapi import HTTPException as HttpException
+from pydantic import BaseModel
 
 from vidrank import __version__ as package_version
 from vidrank.app.app_state import AppState
+from vidrank.lib.record import Record
+from vidrank.lib.sample_utilities import sample_videos
 from vidrank.lib.selection import Selection
-from vidrank.lib.transaction import Transaction
-from vidrank.lib.transaction_type import TransactionType
 
 router = APIRouter()
 
 N_VIDEOS_PER_RESPONSE = 6
 
 
-@router.get(name="Status", description="Get the API status.", path="/")
-def get_status() -> JSONResponse:
-    return JSONResponse({"status": "healthy"})
+class GetStatusResponse(BaseModel):
+    status: str
 
 
-@router.get(name="Version", description="Get the API version.", path="/version")
-def get_version() -> JSONResponse:
-    return JSONResponse({"version": package_version})
+@router.get(name="Status", path="/", description="Get the API status.")
+def get_status() -> GetStatusResponse:
+    return GetStatusResponse(status="healthy")
 
 
-@router.get(name="Videos", description="Get videos.", path="/videos")
-def get_videos() -> JSONResponse:
+class GetVersionResponse(BaseModel):
+    version: str
+
+
+@router.get(name="Version", path="/version", description="Get the API version.")
+def get_version() -> GetVersionResponse:
+    return GetVersionResponse(version=package_version)
+
+
+class GetVideosResponse(BaseModel):
+    videos: List[Any]
+
+
+@router.get(name="Videos", path="/videos", description="Get videos.")
+def get_videos() -> GetVideosResponse:
     app_state = AppState.get()
-    playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
-    playlist_video_ids = playlist.video_ids
-    video_ids = app_state.rng.choice(playlist_video_ids, N_VIDEOS_PER_RESPONSE, replace=False)
-    video_iterator = app_state.youtube_facade.iter_videos(video_ids)
-    videos = list(video_iterator)
+    next_videos = sample_videos(app_state, N_VIDEOS_PER_RESPONSE)
 
-    return JSONResponse({"videos": [video.serialize() for video in videos]})
+    return GetVideosResponse(videos=[video.serialize() for video in next_videos])
 
 
-@router.post(name="Submit", description="Post submit.", path="/submit")
-def post_submit(selection: Selection) -> JSONResponse:
+class PostSubmitRequest(BaseModel):
+    selection: Selection
+
+
+class PostSubmitResponse(BaseModel):
+    record_id: str
+    videos: List[Any]
+
+
+@router.post(name="Submit", path="/submit", description="Post submit.")
+def post_submit(request: PostSubmitRequest) -> PostSubmitResponse:
     app_state = AppState.get()
-    transaction = Transaction(
-        transaction_type=TransactionType.SUBMIT,
-        selection=selection,
+    next_videos = sample_videos(app_state, N_VIDEOS_PER_RESPONSE)
+
+    record_id = str(uuid4())
+    record = Record(
+        id=record_id,
+        selection=request.selection,
     )
-    app_state.transaction_tracker.add(transaction)
-    return JSONResponse({"result": "submitted"})
+    app_state.record_tracker.add(record)
+    return PostSubmitResponse(record_id=record_id, videos=[video.serialize() for video in next_videos])
 
 
-@router.post(name="Undo", description="Post undo.", path="/undo")
-def post_undo() -> JSONResponse:
-    return JSONResponse({"result": "undone"})
+class PostUndoRequest(BaseModel):
+    record_id: str
 
 
-@router.post(name="Skip", description="Post skip.", path="/skip")
-def post_skip() -> JSONResponse:
-    return JSONResponse({"result": "skipped"})
+class PostUndoResponse(BaseModel):
+    videos: List[Any]
+
+
+@router.post(name="Undo", path="/undo", description="Post undo.")
+def post_undo(request: PostUndoRequest) -> PostUndoResponse:
+    app_state = AppState.get()
+    record = app_state.record_tracker.pop(request.record_id)
+    if record is None:
+        raise HttpException(status_code=404, detail="Videos no longer available")
+
+    video_ids = [v.video_id for v in record.selection.videos]
+    next_videos = list(app_state.youtube_facade.iter_videos(video_ids))
+
+    return PostUndoResponse(videos=[video.serialize() for video in next_videos])
+
+
+class PostSkipRequest(BaseModel):
+    selection: Selection
+
+
+class PostSkipResponse(BaseModel):
+    record_id: str
+    videos: List[Any]
+
+
+@router.post(name="Skip", path="/skip", description="Post skip.")
+def post_skip(request: PostSkipRequest) -> PostSkipResponse:
+    app_state = AppState.get()
+    next_videos = sample_videos(app_state, N_VIDEOS_PER_RESPONSE)
+
+    record_id = str(uuid4())
+    record = Record(
+        id=record_id,
+        selection=request.selection,
+    )
+    app_state.record_tracker.add(record)
+    return PostSkipResponse(record_id=record_id, videos=[video.serialize() for video in next_videos])

@@ -6,6 +6,7 @@ import { Client } from "@/lib/client";
 import { useKeyCombos } from "@/lib/keys";
 import { Selection } from "@/lib/selection";
 import { Video as VideoModel } from "@/lib/video";
+import { ClockCountdown } from "@phosphor-icons/react";
 import { match } from "ts-pattern";
 import { Button } from "widgets/Button";
 import { Video } from "./Video";
@@ -20,6 +21,8 @@ export function Selector() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [removedIds, setRemovedIds] = useState<string[]>([]);
   const [currentId, setCurrentId] = useState<string>();
+  const [recordIds, setRecordIds] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useKeyCombos(
     [
@@ -40,16 +43,23 @@ export function Selector() {
 
   useEffect(() => {
     fetchVideos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function fetchVideos() {
-    client.getVideos().then((videos) => {
-      console.log("Fetched videos: ", videos);
-      setVideos(videos);
-      setSelectedIds([]);
-      setRemovedIds([]);
-      setCurrentId(undefined);
+    setLoading(true);
+    client.getVideos().then((response) => {
+      console.log("Fetched videos: ", response.videos);
+      updateWithVideos(response.videos);
+      setLoading(false);
     });
+  }
+
+  function updateWithVideos(videos: VideoModel[]) {
+    setVideos(videos);
+    setSelectedIds([]);
+    setRemovedIds([]);
+    setCurrentId(undefined);
   }
 
   function onClickVideo(video: VideoModel) {
@@ -57,19 +67,47 @@ export function Selector() {
     selectVideo(video.id);
   }
 
-  function skipVideoSet() {
-    console.log("Will skip");
-    client.postSkip().then((result) => {
-      console.log("Got result: ", result);
-      // TODO: Get new videos
-    });
+  type SubmitStatus = { message: string } | true;
+
+  function getSubmitStatus(): SubmitStatus {
+    const numActed = selectedIds.length + removedIds.length;
+    if (numActed > MAX_SELECTED_VIDEOS) {
+      return { message: "Too many videos selected" };
+    }
+    if (numActed < MIN_SELECTED_VIDEOS) {
+      return { message: "Not enough videos selected" };
+    }
+    return true;
   }
 
-  function undoSubmit() {
-    console.log("Will undo");
-    client.postUndo().then((result) => {
-      console.log("Got result: ", result);
-      // TODO: Get new videos
+  function canSubmit() {
+    return getSubmitStatus() === true;
+  }
+
+  function submitVideoSet() {
+    console.log("Will submit");
+
+    const submitStatus = getSubmitStatus();
+    if (submitStatus !== true) {
+      console.log("Submit status: ", submitStatus.message);
+      // TODO: Use a toast to show this
+    }
+
+    const selection: Selection = {
+      videos: videos.map((video) => {
+        return {
+          video_id: video.id,
+          action: getVideoAction(video),
+        };
+      }),
+    };
+
+    setLoading(true);
+    client.postSubmit(selection).then((response) => {
+      console.log("Submit successful: ", response.record_id);
+      setRecordIds([...recordIds, response.record_id]);
+      updateWithVideos(response.videos);
+      setLoading(false);
     });
   }
 
@@ -85,36 +123,41 @@ export function Selector() {
       .exhaustive();
   }
 
-  function submitVideoSet() {
-    console.log("Will submit");
-    const numActed = selectedIds.length + removedIds.length;
+  function undoSubmit() {
+    console.log("Will undo");
+    if (recordIds.length === 0) {
+      return;
+    }
+    const recordId = recordIds[recordIds.length - 1];
+    setLoading(true);
+    client.postUndo(recordId).then((response) => {
+      console.log("Got videos: ", response.videos);
+      updateWithVideos(response.videos);
+      setRecordIds(recordIds.slice(0, recordIds.length - 1));
+      setLoading(false);
+    });
+  }
 
-    if (numActed > MAX_SELECTED_VIDEOS) {
-      console.log("Too many videos selected");
-      // Use a toast to show this
-      return;
-    }
-    if (numActed < MIN_SELECTED_VIDEOS) {
-      console.log("Not enough videos selected");
-      // Use a toast to show this
-      return;
-    }
+  function skipVideoSet() {
+    console.log("Will skip");
 
     const selection: Selection = {
       videos: videos.map((video) => {
         return {
           video_id: video.id,
-          action: getVideoAction(video),
+          action: "nothing",
         };
       }),
     };
 
-    client.postSubmit(selection).then((result) => {
-      console.log("Got result: ", result);
-      // TODO: Get new videos
+    setLoading(true);
+    client.postSkip(selection).then((response) => {
+      console.log("Got videos: ", response.videos);
+      setRecordIds([...recordIds, response.record_id]);
+      updateWithVideos(response.videos);
+      setLoading(false);
     });
   }
-  ``;
 
   function selectVideo(videoId: string) {
     if (selectedIds.includes(videoId)) {
@@ -192,6 +235,14 @@ export function Selector() {
 
   return (
     <>
+      {loading && (
+        <div>
+          <div>Loading</div>
+          <div>
+            <ClockCountdown size={80} color="#3e8fda" />
+          </div>
+        </div>
+      )}
       {videos.length === 0 && <div>Loading videos...</div>}
       {videos.length > 0 && (
         <div className="flex flex-col justify-center space-y-4">
@@ -213,8 +264,16 @@ export function Selector() {
 
           <div className="flex flex-row justify-center space-x-2">
             <Button text="Skip" onClick={skipVideoSet} />
-            <Button text="Undo" onClick={undoSubmit} />
-            <Button text="Submit" onClick={submitVideoSet} />
+            <Button
+              text="Undo"
+              onClick={undoSubmit}
+              enabled={recordIds.length > 0}
+            />
+            <Button
+              text="Submit"
+              onClick={submitVideoSet}
+              enabled={canSubmit()}
+            />
           </div>
 
           <div className="flex w-full flex-row justify-center">

@@ -13,7 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from vidrank.app.app_state import AppState
 from vidrank.app.routes import router
 from vidrank.lib.playlist_cache import PlaylistCache
-from vidrank.lib.transaction_tracker import TransactionTracker
+from vidrank.lib.record_tracker import RecordTracker
 from vidrank.lib.video_cache import VideoCache
 from vidrank.lib.youtube.youtube_client import YouTubeClient
 from vidrank.lib.youtube_facade import YouTubeFacade
@@ -27,7 +27,7 @@ class App:
     DEFAULT_HOST = "0.0.0.0"
     DEFAULT_PORT = 8000
     DEFAULT_LOG_LEVEL = logging.DEBUG
-    DEFAULT_RANDOM_SEED = 42
+    DEFAULT_RANDOM_SEED = None
 
     fast_api: FastAPI
     host: str
@@ -84,12 +84,12 @@ class App:
             video_cache=video_cache,
             playlist_cache=playlist_cache,
         )
-        transaction_tracker = TransactionTracker(cache_dirpath)
+        record_tracker = RecordTracker(cache_dirpath)
         rng = np.random.default_rng(random_seed)
 
         AppState.init(
             youtube_facade=youtube_facade,
-            transaction_tracker=transaction_tracker,
+            record_tracker=record_tracker,
             playlist_id=playlist_id,
             rng=rng,
         )

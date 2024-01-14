@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from vidrank.lib.transaction_tracker import TransactionTracker
+from vidrank.lib.record_tracker import RecordTracker
 from vidrank.lib.youtube_facade import YouTubeFacade
 
 
@@ -11,7 +11,7 @@ class AppState:
     _INSTANCE = None
 
     youtube_facade: YouTubeFacade
-    transaction_tracker: TransactionTracker
+    record_tracker: RecordTracker
     playlist_id: str
     rng: np.random.Generator
 
@@ -20,13 +20,13 @@ class AppState:
         cls,
         *,
         youtube_facade: YouTubeFacade,
-        transaction_tracker: TransactionTracker,
+        record_tracker: RecordTracker,
         playlist_id: str,
         rng: np.random.Generator,
     ) -> None:
         cls._INSTANCE = cls(
             youtube_facade=youtube_facade,
-            transaction_tracker=transaction_tracker,
+            record_tracker=record_tracker,
             playlist_id=playlist_id,
             rng=rng,
         )
