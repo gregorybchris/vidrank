@@ -31,6 +31,10 @@ export type PostSkipResponseBody = {
   videos: Video[];
 };
 
+export type GetRankingsResponseBody = {
+  videos: Video[];
+};
+
 export class Client {
   async getVideos(): Promise<GetVideosResponseBody> {
     const response = await fetch("http://localhost:8000/videos", {
@@ -87,6 +91,21 @@ export class Client {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestBody),
+    });
+
+    if (response.status !== 200) {
+      const responseJson = await response.json();
+      console.error(responseJson);
+      throw Error(JSON.stringify(responseJson));
+    }
+
+    return await response.json();
+  }
+
+  async getRankings(): Promise<GetRankingsResponseBody> {
+    const response = await fetch("http://localhost:8000/rankings", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
     });
 
     if (response.status !== 200) {

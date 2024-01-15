@@ -276,7 +276,7 @@ export function Selector() {
       )}
 
       {!loading && videos.length > 0 && (
-        <div className="flex flex-col justify-center space-y-4">
+        <div className="flex flex-col justify-center space-y-4 lg:px-[150px]">
           <div className="flex flex-wrap justify-center">
             {videos.map((video, i) => (
               <Video

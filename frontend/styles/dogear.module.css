@@ -1,0 +1,9 @@
+.dogear {
+  background: linear-gradient(
+    to top right,
+    rgb(62, 143, 218, 0) 0%,
+    rgba(62, 143, 218, 0) 50%,
+    rgba(20, 20, 20, 1) 50%,
+    rgba(20, 20, 20, 1) 100%
+  );
+}
