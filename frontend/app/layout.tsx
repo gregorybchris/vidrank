@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   title,
   description,
   themeColor: "#FFF",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default async function RootLayout({
