@@ -28,7 +28,6 @@ def sample_videos_by_rating(app_state: AppState, n_videos: int) -> List[Video]:
     # Select one video randomly
     selected_index: int = app_state.rng.choice(np.arange(len(rankings)))
     selected = rankings[selected_index]
-    print("Selecting videos similar to: ", selected.rank)
 
     # Sort rankings based on distance to the selected video's rating
     sorted_rankings = sorted(rankings, key=lambda x: np.abs(selected.rating - x.rating))
@@ -41,9 +40,4 @@ def sample_videos_by_rating(app_state: AppState, n_videos: int) -> List[Video]:
         for video in app_state.youtube_facade.iter_videos([ranking.video_id]):
             videos.append(video)
 
-            print("======")
-            print("title: ", video.title)
-            print("id: ", video.id)
-            print("rating: ", ranking.rating)
-            print("rank: ", ranking.rank)
     return videos
