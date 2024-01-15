@@ -10,7 +10,7 @@ from vidrank.app.app_state import AppState
 from vidrank.lib.choice_set import ChoiceSet
 from vidrank.lib.ranking.ranker import Ranker
 from vidrank.lib.record import Record
-from vidrank.lib.sample_utilities import sample_videos
+from vidrank.lib.sample_utilities import sample_videos_by_rating
 
 router = APIRouter()
 
@@ -42,7 +42,7 @@ class GetVideosResponse(BaseModel):
 @router.get(name="Videos", path="/videos", description="Get videos.")
 def get_videos() -> GetVideosResponse:
     app_state = AppState.get()
-    next_videos = sample_videos(app_state, N_VIDEOS_PER_RESPONSE)
+    next_videos = sample_videos_by_rating(app_state, N_VIDEOS_PER_RESPONSE)
 
     return GetVideosResponse(videos=[video.serialize() for video in next_videos])
 
@@ -59,7 +59,7 @@ class PostSubmitResponse(BaseModel):
 @router.post(name="Submit", path="/submit", description="Post submit.")
 def post_submit(request: PostSubmitRequest) -> PostSubmitResponse:
     app_state = AppState.get()
-    next_videos = sample_videos(app_state, N_VIDEOS_PER_RESPONSE)
+    next_videos = sample_videos_by_rating(app_state, N_VIDEOS_PER_RESPONSE)
 
     record_id = str(uuid4())
     record = Record(
@@ -103,7 +103,7 @@ class PostSkipResponse(BaseModel):
 @router.post(name="Skip", path="/skip", description="Post skip.")
 def post_skip(request: PostSkipRequest) -> PostSkipResponse:
     app_state = AppState.get()
-    next_videos = sample_videos(app_state, N_VIDEOS_PER_RESPONSE)
+    next_videos = sample_videos_by_rating(app_state, N_VIDEOS_PER_RESPONSE)
 
     record_id = str(uuid4())
     record = Record(
@@ -117,7 +117,7 @@ def post_skip(request: PostSkipRequest) -> PostSkipResponse:
 class ResponseRanking(BaseModel):
     video: Any
     rank: int
-    score: float
+    rating: float
 
 
 class GetRankingsResponse(BaseModel):
@@ -140,7 +140,7 @@ def get_rankings() -> GetRankingsResponse:
         response_ranking = ResponseRanking(
             video=video.serialize(),
             rank=ranking.rank,
-            score=ranking.score,
+            rating=ranking.rating,
         )
         response_rankings.append(response_ranking)
 
