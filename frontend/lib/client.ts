@@ -1,4 +1,5 @@
 import { ChoiceSet } from "./choiceSet";
+import { Ranking } from "./ranking";
 import { Video } from "./video";
 
 export type GetVideosResponseBody = {
@@ -32,7 +33,7 @@ export type PostSkipResponseBody = {
 };
 
 export type GetRankingsResponseBody = {
-  videos: Video[];
+  rankings: Ranking[];
 };
 
 export class Client {

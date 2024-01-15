@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from vidrank import __version__ as package_version
 from vidrank.app.app_state import AppState
 from vidrank.lib.choice_set import ChoiceSet
-from vidrank.lib.rank.ranker import Ranker
+from vidrank.lib.ranking.ranker import Ranker
 from vidrank.lib.record import Record
 from vidrank.lib.sample_utilities import sample_videos
 
@@ -114,15 +114,34 @@ def post_skip(request: PostSkipRequest) -> PostSkipResponse:
     return PostSkipResponse(record_id=record_id, videos=[video.serialize() for video in next_videos])
 
 
+class ResponseRanking(BaseModel):
+    video: Any
+    rank: int
+    score: float
+
+
 class GetRankingsResponse(BaseModel):
-    videos: List[Any]
+    rankings: List[ResponseRanking]
 
 
 @router.get(name="Rankings", path="/rankings", description="Get rankings.")
-def get_rankings() -> GetVideosResponse:
+def get_rankings() -> GetRankingsResponse:
     app_state = AppState.get()
 
     records = app_state.record_tracker.load()
-    videos = Ranker.rank(records, youtube_facade=app_state.youtube_facade)
+    rankings = Ranker.rank(records)
+    video_ids = [ranking.video_id for ranking in rankings]
+    videos = list(app_state.youtube_facade.iter_videos(video_ids))
+    video_map = {video.id: video for video in videos}
 
-    return GetVideosResponse(videos=[video.serialize() for video in videos])
+    response_rankings = []
+    for ranking in rankings:
+        video = video_map[ranking.video_id]
+        response_ranking = ResponseRanking(
+            video=video.serialize(),
+            rank=ranking.rank,
+            score=ranking.score,
+        )
+        response_rankings.append(response_ranking)
+
+    return GetRankingsResponse(rankings=response_rankings)
