@@ -139,6 +139,7 @@ export function Selector() {
   function undoSubmit() {
     console.log("Will undo");
     if (recordIds.length === 0) {
+      console.warn("No records to undo");
       return;
     }
     const recordId = recordIds[recordIds.length - 1];
@@ -276,7 +277,7 @@ export function Selector() {
       )}
 
       {!loading && videos.length > 0 && (
-        <div className="flex flex-col justify-center space-y-4 lg:px-[150px]">
+        <div className="flex flex-col justify-center space-y-10 lg:px-[150px]">
           <div className="flex flex-wrap justify-center">
             {videos.map((video, i) => (
               <Video
@@ -289,26 +290,28 @@ export function Selector() {
             ))}
           </div>
 
-          <div className="flex w-full flex-row justify-center">
-            <div className="w-[450px] border-t border-stone-900/20"></div>
-          </div>
+          <div className="flex flex-col justify-center space-y-3">
+            <div className="flex w-full flex-row justify-center">
+              <div className="w-[450px] border-t border-stone-900/20"></div>
+            </div>
 
-          <div className="flex flex-row justify-center space-x-2">
-            <Button text="Skip" onClick={skipVideoSet} />
-            <Button
-              text="Undo"
-              onClick={undoSubmit}
-              enabled={recordIds.length > 0}
-            />
-            <Button
-              text="Submit"
-              onClick={submitVideoSet}
-              enabled={canSubmit()}
-            />
-          </div>
+            <div className="flex flex-row justify-center space-x-2">
+              <Button text="Skip" onClick={skipVideoSet} />
+              <Button
+                text="Undo"
+                onClick={undoSubmit}
+                enabled={recordIds.length > 0}
+              />
+              <Button
+                text="Submit"
+                onClick={submitVideoSet}
+                enabled={canSubmit()}
+              />
+            </div>
 
-          <div className="flex w-full flex-row justify-center">
-            <div className="w-[450px] border-t border-stone-900/20"></div>
+            <div className="flex w-full flex-row justify-center">
+              <div className="w-[450px] border-t border-stone-900/20"></div>
+            </div>
           </div>
         </div>
       )}
