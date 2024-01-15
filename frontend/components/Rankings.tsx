@@ -32,10 +32,6 @@ export function Rankings() {
       });
   }
 
-  function onClickVideo(video: VideoModel) {
-    const url = `https://www.youtube.com/watch?v=${video.id}`;
-  }
-
   return (
     <>
       {loading && (
@@ -55,13 +51,18 @@ export function Rankings() {
       {!loading && videos.length > 0 && (
         <div className="flex flex-wrap justify-center py-10">
           {videos.map((video, i) => (
-            <Video
+            <a
               key={i}
-              video={video}
-              onClick={onClickVideo}
-              action="nothing"
-              isCurrent={false}
-            />
+              href={`https://www.youtube.com/watch?v=${video.id}`}
+              target="_blank"
+            >
+              <Video
+                video={video}
+                onClick={() => {}}
+                action="nothing"
+                isCurrent={false}
+              />
+            </a>
           ))}
         </div>
       )}

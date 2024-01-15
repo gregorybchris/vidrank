@@ -11,8 +11,8 @@ import { match } from "ts-pattern";
 import { Button } from "widgets/Button";
 import { Video } from "./Video";
 
-const MIN_SELECTED_VIDEOS = 2;
-const MAX_SELECTED_VIDEOS = 4;
+const MIN_ACTED_VIDEOS = 1;
+const MAX_SELECTED_VIDEOS = 5;
 type Direction = "up" | "down" | "left" | "right";
 type SubmitStatus = { message: string } | true;
 
@@ -80,7 +80,7 @@ export function Selector() {
     if (selectedIds.length > MAX_SELECTED_VIDEOS) {
       return { message: "Too many videos selected" };
     }
-    if (numActed < MIN_SELECTED_VIDEOS) {
+    if (numActed < MIN_ACTED_VIDEOS) {
       return { message: "Not enough videos selected" };
     }
     return true;

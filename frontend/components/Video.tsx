@@ -1,10 +1,10 @@
-import { CheckCircle, XCircle } from "@phosphor-icons/react";
 /* eslint-disable @next/next/no-img-element */
 import {
   formatDateDiff,
   formatDuration,
   formatNumberCompact,
 } from "@/lib/formatUtilities";
+import { CheckCircle, XCircle } from "@phosphor-icons/react";
 
 import { cn } from "@/lib/styleUtilities";
 import { getLargestThumbnail } from "@/lib/thumbnailSet";

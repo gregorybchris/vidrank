@@ -1,6 +1,6 @@
 "use client";
 
-import { ListNumbers, YoutubeLogo } from "@phosphor-icons/react";
+import { CheckCircle, ListNumbers } from "@phosphor-icons/react";
 
 import { cn } from "@/lib/styleUtilities";
 import styles from "@/styles/dogear.module.css";
@@ -21,7 +21,7 @@ export function Dogear({ className, link, icon }: DogearProps) {
       return <ListNumbers size={28} color="#f8f8f8" weight="duotone" />;
     }
     if (icon == "videos") {
-      return <YoutubeLogo size={28} color="#f8f8f8" weight="duotone" />;
+      return <CheckCircle size={28} color="#f8f8f8" weight="duotone" />;
     }
   }
 
