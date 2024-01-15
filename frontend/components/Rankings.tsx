@@ -62,7 +62,7 @@ export function Rankings() {
                   action="nothing"
                   isCurrent={false}
                 />
-                <div className="absolute right-0 top-0 h-10 w-10 rounded-full bg-stone-900 pt-2 text-center text-stone-100">
+                <div className="absolute right-0 top-0 h-10 w-10 rounded-full border-2 border-stone-200 bg-stone-900 pt-2 text-center text-stone-100">
                   {Math.floor(ranking.score)}
                 </div>
               </a>
