@@ -12,7 +12,7 @@ import { Button } from "widgets/Button";
 import { Video } from "./Video";
 
 const MIN_ACTED_VIDEOS = 1;
-const MAX_SELECTED_VIDEOS = 5;
+const MAX_SELECTED_VIDEOS = 4;
 type Direction = "up" | "down" | "left" | "right";
 type SubmitStatus = { message: string } | true;
 
