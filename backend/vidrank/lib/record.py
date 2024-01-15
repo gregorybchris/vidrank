@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
-from vidrank.lib.selection import Selection
+from vidrank.lib.choice_set import ChoiceSet
 
 
 class Record(BaseModel):
     id: str
-    selection: Selection
+    choice_set: ChoiceSet

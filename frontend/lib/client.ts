@@ -1,4 +1,4 @@
-import { Selection } from "./selection";
+import { ChoiceSet } from "./choiceSet";
 import { Video } from "./video";
 
 export type GetVideosResponseBody = {
@@ -6,7 +6,7 @@ export type GetVideosResponseBody = {
 };
 
 export type PostSubmitRequestBody = {
-  selection: Selection;
+  choice_set: ChoiceSet;
 };
 
 export type PostSubmitResponseBody = {
@@ -23,7 +23,7 @@ export type PostUndoResponseBody = {
 };
 
 export type PostSkipRequestBody = {
-  selection: Selection;
+  choice_set: ChoiceSet;
 };
 
 export type PostSkipResponseBody = {
@@ -51,8 +51,8 @@ export class Client {
     return await response.json();
   }
 
-  async postSubmit(selection: Selection): Promise<PostSubmitResponseBody> {
-    const requestBody: PostSubmitRequestBody = { selection: selection };
+  async postSubmit(choiceSet: ChoiceSet): Promise<PostSubmitResponseBody> {
+    const requestBody: PostSubmitRequestBody = { choice_set: choiceSet };
     const response = await fetch("http://localhost:8000/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -85,8 +85,8 @@ export class Client {
     return await response.json();
   }
 
-  async postSkip(selection: Selection): Promise<PostSkipResponseBody> {
-    const requestBody: PostSkipRequestBody = { selection: selection };
+  async postSkip(choiceSet: ChoiceSet): Promise<PostSkipResponseBody> {
+    const requestBody: PostSkipRequestBody = { choice_set: choiceSet };
     const response = await fetch("http://localhost:8000/skip", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

@@ -3,9 +3,9 @@
 import { ClockCountdown, WarningOctagon } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 
+import { ChoiceSet } from "@/lib/choiceSet";
 import { Client } from "@/lib/client";
 import { useKeyCombos } from "@/lib/keys";
-import { Selection } from "@/lib/selection";
 import { Video as VideoModel } from "@/lib/video";
 import { match } from "ts-pattern";
 import { Button } from "widgets/Button";
@@ -100,8 +100,8 @@ export function Selector() {
       return;
     }
 
-    const selection: Selection = {
-      videos: videos.map((video) => {
+    const choiceSet: ChoiceSet = {
+      choices: videos.map((video) => {
         return {
           video_id: video.id,
           action: getVideoAction(video),
@@ -111,7 +111,7 @@ export function Selector() {
 
     setLoading(true);
     client
-      .postSubmit(selection)
+      .postSubmit(choiceSet)
       .then((response) => {
         console.log("Submit successful: ", response.record_id);
         setRecordIds([...recordIds, response.record_id]);
@@ -160,8 +160,8 @@ export function Selector() {
   function skipVideoSet() {
     console.log("Will skip");
 
-    const selection: Selection = {
-      videos: videos.map((video) => {
+    const choiceSet: ChoiceSet = {
+      choices: videos.map((video) => {
         return {
           video_id: video.id,
           action: "nothing",
@@ -171,7 +171,7 @@ export function Selector() {
 
     setLoading(true);
     client
-      .postSkip(selection)
+      .postSkip(choiceSet)
       .then((response) => {
         console.log("Got videos: ", response.videos);
         setRecordIds([...recordIds, response.record_id]);

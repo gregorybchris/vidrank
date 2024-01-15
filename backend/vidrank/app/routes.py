@@ -7,10 +7,10 @@ from pydantic import BaseModel
 
 from vidrank import __version__ as package_version
 from vidrank.app.app_state import AppState
+from vidrank.lib.choice_set import ChoiceSet
 from vidrank.lib.rank.ranker import Ranker
 from vidrank.lib.record import Record
 from vidrank.lib.sample_utilities import sample_videos
-from vidrank.lib.selection import Selection
 
 router = APIRouter()
 
@@ -48,7 +48,7 @@ def get_videos() -> GetVideosResponse:
 
 
 class PostSubmitRequest(BaseModel):
-    selection: Selection
+    choice_set: ChoiceSet
 
 
 class PostSubmitResponse(BaseModel):
@@ -64,7 +64,7 @@ def post_submit(request: PostSubmitRequest) -> PostSubmitResponse:
     record_id = str(uuid4())
     record = Record(
         id=record_id,
-        selection=request.selection,
+        choice_set=request.choice_set,
     )
     app_state.record_tracker.add(record)
     return PostSubmitResponse(record_id=record_id, videos=[video.serialize() for video in next_videos])
@@ -85,14 +85,14 @@ def post_undo(request: PostUndoRequest) -> PostUndoResponse:
     if record is None:
         raise HttpException(status_code=404, detail="Videos no longer available")
 
-    video_ids = [v.video_id for v in record.selection.videos]
+    video_ids = [choice.video_id for choice in record.choice_set.choices]
     next_videos = list(app_state.youtube_facade.iter_videos(video_ids))
 
     return PostUndoResponse(videos=[video.serialize() for video in next_videos])
 
 
 class PostSkipRequest(BaseModel):
-    selection: Selection
+    choice_set: ChoiceSet
 
 
 class PostSkipResponse(BaseModel):
@@ -108,7 +108,7 @@ def post_skip(request: PostSkipRequest) -> PostSkipResponse:
     record_id = str(uuid4())
     record = Record(
         id=record_id,
-        selection=request.selection,
+        choice_set=request.choice_set,
     )
     app_state.record_tracker.add(record)
     return PostSkipResponse(record_id=record_id, videos=[video.serialize() for video in next_videos])

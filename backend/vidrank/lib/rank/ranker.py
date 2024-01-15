@@ -12,21 +12,21 @@ class Ranker:
         video_ids = set()
         to_remove = set()
         for record in records:
-            for video_a in record.selection.videos:
-                video_ids.add(video_a.video_id)
-                action_a = video_a.action
+            for choice_a in record.choice_set.choices:
+                video_ids.add(choice_a.video_id)
+                action_a = choice_a.action
                 if action_a == "remove":
-                    to_remove.add(video_a.video_id)
+                    to_remove.add(choice_a.video_id)
                     continue
-                for video_b in record.selection.videos:
-                    action_b = video_b.action
+                for choice_b in record.choice_set.choices:
+                    action_b = choice_b.action
                     if action_b == "remove":
                         continue
 
                     if (action_a, action_b) == ("select", "nothing"):
-                        constraints.append((video_a.video_id, video_b.video_id))
+                        constraints.append((choice_a.video_id, choice_b.video_id))
                     if (action_a, action_b) == ("nothing", "select"):
-                        constraints.append((video_b.video_id, video_a.video_id))
+                        constraints.append((choice_b.video_id, choice_a.video_id))
 
         selected_ids = set()
         for video_id, _ in constraints:
