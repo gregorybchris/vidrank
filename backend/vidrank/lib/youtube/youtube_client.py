@@ -40,7 +40,7 @@ class YouTubeClient:
         for chunk_i in range(0, n_chunks):
             chunk_ids = video_ids[chunk_i * self.batch_size : (chunk_i + 1) * self.batch_size]
 
-            print(f"Requesting {len(chunk_ids)} videos from the YouTube API.")
+            logger.debug(f"Requesting {len(chunk_ids)} videos from the YouTube API.")
 
             concat_ids = ",".join(chunk_ids)
             params: Mapping[str, str | int | List[str]] = {
@@ -64,7 +64,7 @@ class YouTubeClient:
                     timeout=timeout,
                 )
 
-                print(f"Request URL: {response.request.url}")
+                logger.debug(f"Request URL: {response.request.url}")
 
                 response_json = response.json()
                 if "error" in response_json:
@@ -93,7 +93,7 @@ class YouTubeClient:
             if page_token is not None:
                 request_params["pageToken"] = page_token
 
-            print("Requesting playlist items from the YouTube API.")
+            logger.debug("Requesting playlist items from the YouTube API.")
 
             request_url = self.BASE_URL + "playlistItems"
             response = self.http_client.get(
@@ -101,7 +101,7 @@ class YouTubeClient:
                 timeout=timeout,
                 params=request_params,
             )
-            print(f"Request URL: {response.request.url}")
+            logger.debug(f"Request URL: {response.request.url}")
 
             response_json = response.json()
 

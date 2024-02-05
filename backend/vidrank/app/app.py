@@ -26,7 +26,7 @@ class App:
     ALLOWED_ORIGINS = ["http://localhost:3000"]
     DEFAULT_HOST = "0.0.0.0"
     DEFAULT_PORT = 8000
-    DEFAULT_LOG_LEVEL = logging.DEBUG
+    DEFAULT_LOG_LEVEL = logging.INFO
     DEFAULT_RANDOM_SEED = None
 
     fast_api: FastAPI

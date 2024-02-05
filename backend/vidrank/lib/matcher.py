@@ -19,9 +19,9 @@ class Matcher:
     def match(cls, app_state: AppState, n_videos: int) -> List[Video]:
         r = app_state.rng.random()
         if r < 0.3:
-            print("Matching randomly")
+            logger.info("Matching randomly")
             return cls.match_random(app_state, n_videos)
-        print("Matching by ratings")
+        logger.info("Matching by ratings")
         return cls.match_by_rating(app_state, n_videos)
 
     @classmethod
@@ -41,7 +41,7 @@ class Matcher:
                 return videos
             for video in app_state.youtube_facade.iter_videos([video_id]):
                 videos.append(video)
-                print(f"Selected video: ({video.id}) {video.title}")
+                logger.info(f"Selected video: ({video.id}) {video.title}")
 
         return videos
 
@@ -54,13 +54,13 @@ class Matcher:
 
         # If there are not enough ranked videos, return a random selection
         if len(rankings) < n_videos:
-            print("Not enough ranked videos, will use random match")
+            logger.warning("Not enough ranked videos, will use random match")
             return cls.match_random(app_state, n_videos)
 
         # Select one video randomly
         selected_index: int = app_state.rng.choice(np.arange(len(rankings)))
         selected = rankings[selected_index]
-        print(f"Selecting videos similar to: rank={selected.rank}, rating={int(selected.rating)}")
+        logger.info(f"Selecting videos similar to: rank={selected.rank}, rating={int(selected.rating)}")
 
         # Sort rankings based on distance to the selected video's rating
         sorted_rankings = sorted(rankings, key=lambda x: np.abs(selected.rating - x.rating))
@@ -74,7 +74,9 @@ class Matcher:
                 return videos
             for video in app_state.youtube_facade.iter_videos([ranking.video_id]):
                 videos.append(video)
-                print(f"Selected video: rank={ranking.rank}, rating={int(ranking.rating)}: ({video.id}) {video.title}")
+                logger.info(
+                    f"Selected video: rank={ranking.rank}, rating={int(ranking.rating)}: ({video.id}) {video.title}"
+                )
 
         return videos
 
