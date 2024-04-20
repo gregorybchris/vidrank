@@ -12,12 +12,14 @@ export function useSettings(dependencies: DependencyList) {
   const [settings, setSettings] = useState<Settings | null>(null);
 
   useEffect(() => {
-    // Hydrate settings from storage
-    if (settings === null && storage !== null) {
-      setSettings(storage);
-      console.log("Set settings to storage", storage);
+    // Initialize settings and storage
+    if (settings === null && storage === null) {
+      const newSettings: Settings = { matchingStrategy: "balanced" };
+      setSettings(newSettings);
+      setStorage(newSettings);
+      console.log("Set storage to settings", settings);
     }
-    /// Save to storage for the first time
+    // Save to storage for the first time
     else if (settings !== null && storage === null) {
       setStorage(settings);
       console.log("Set storage to settings", settings);
@@ -36,7 +38,15 @@ export function useSettings(dependencies: DependencyList) {
         settings,
       );
     }
-  }, [settings, storage, setStorage]);
+  }, [settings]);
+
+  useEffect(() => {
+    // Hydrate settings from storage
+    if (settings === null && storage !== null) {
+      setSettings(storage);
+      console.log("Set settings to storage", storage);
+    }
+  }, [storage, setStorage]);
 
   return [settings, setSettings] as const;
 }
