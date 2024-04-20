@@ -12,6 +12,7 @@ from vidrank.lib.choice_set import ChoiceSet
 from vidrank.lib.matcher import Matcher
 from vidrank.lib.ranking.ranker import Ranker
 from vidrank.lib.record import Record
+from vidrank.lib.utilities.datetime_utilities import get_timestamp
 
 logger = logging.getLogger(__name__)
 
@@ -65,8 +66,10 @@ def post_submit(request: PostSubmitRequest) -> PostSubmitResponse:
     next_videos = Matcher.match(app_state, N_VIDEOS_PER_RESPONSE)
 
     record_id = str(uuid4())
+    created_at = get_timestamp()
     record = Record(
         id=record_id,
+        created_at=created_at,
         choice_set=request.choice_set,
     )
     app_state.record_tracker.add(record)
@@ -109,8 +112,10 @@ def post_skip(request: PostSkipRequest) -> PostSkipResponse:
     next_videos = Matcher.match(app_state, N_VIDEOS_PER_RESPONSE)
 
     record_id = str(uuid4())
+    created_at = get_timestamp()
     record = Record(
         id=record_id,
+        created_at=created_at,
         choice_set=request.choice_set,
     )
     app_state.record_tracker.add(record)
