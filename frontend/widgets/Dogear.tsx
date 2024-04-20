@@ -2,7 +2,7 @@
 
 import { CheckCircle, ListNumbers } from "@phosphor-icons/react";
 
-import { cn } from "@/lib/styleUtilities";
+import { cn } from "@/lib/utilities/styleUtilities";
 import styles from "@/styles/dogear.module.css";
 import Link from "next/link";
 import { match } from "ts-pattern";

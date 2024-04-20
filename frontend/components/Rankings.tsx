@@ -8,11 +8,11 @@ import {
 } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 
+import { Video } from "@/components/Video";
 import { Client } from "@/lib/client";
-import { Ranking } from "@/lib/ranking";
-import { cn } from "@/lib/styleUtilities";
+import { Ranking } from "@/lib/models/ranking";
+import { cn } from "@/lib/utilities/styleUtilities";
 import { Button } from "widgets/Button";
-import { Video } from "./Video";
 
 const PAGE_SIZE = 8;
 

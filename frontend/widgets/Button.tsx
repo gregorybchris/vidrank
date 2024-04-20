@@ -1,4 +1,4 @@
-import { cn } from "@/lib/styleUtilities";
+import { cn } from "@/lib/utilities/styleUtilities";
 
 type ButtonProps = {
   className?: string;

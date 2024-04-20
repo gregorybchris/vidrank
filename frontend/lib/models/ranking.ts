@@ -1,4 +1,4 @@
-import { Video } from "./video";
+import { Video } from "@/lib/models/video";
 
 export type Ranking = {
   video: Video;

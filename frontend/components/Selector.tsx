@@ -3,13 +3,13 @@
 import { ClockCountdown, WarningOctagon } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 
-import { ChoiceSet } from "@/lib/choiceSet";
+import { Video } from "@/components/Video";
 import { Client } from "@/lib/client";
 import { useKeyCombos } from "@/lib/keys";
-import { Video as VideoModel } from "@/lib/video";
+import { ChoiceSet } from "@/lib/models/choiceSet";
+import { Video as VideoModel } from "@/lib/models/video";
 import { match } from "ts-pattern";
 import { Button } from "widgets/Button";
-import { Video } from "./Video";
 
 const MIN_ACTED_VIDEOS = 1;
 const MAX_SELECTED_VIDEOS = 4;

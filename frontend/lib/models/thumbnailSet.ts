@@ -1,5 +1,5 @@
-import { Thumbnail } from "@/lib/thumbnail";
-import { Optional } from "./typeUtilities";
+import { Thumbnail } from "@/lib/models/thumbnail";
+import { Optional } from "@/lib/utilities/typeUtilities";
 
 export type ThumbnailSet = {
   default: Optional<Thumbnail>;

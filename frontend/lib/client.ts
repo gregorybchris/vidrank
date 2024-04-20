@@ -1,6 +1,6 @@
-import { ChoiceSet } from "./choiceSet";
-import { Ranking } from "./ranking";
-import { Video } from "./video";
+import { ChoiceSet } from "@/lib/models/choiceSet";
+import { Ranking } from "@/lib/models/ranking";
+import { Video } from "@/lib/models/video";
 
 export type GetVideosResponseBody = {
   videos: Video[];
@@ -43,12 +43,7 @@ export class Client {
       headers: { "Content-Type": "application/json" },
     });
 
-    if (response.status !== 200) {
-      const responseJson = await response.json();
-      console.error(responseJson);
-      throw Error(JSON.stringify(responseJson));
-    }
-
+    await this.throwOnError(response);
     return await response.json();
   }
 
@@ -60,12 +55,7 @@ export class Client {
       body: JSON.stringify(requestBody),
     });
 
-    if (response.status !== 200) {
-      const responseJson = await response.json();
-      console.error(responseJson);
-      throw Error(JSON.stringify(responseJson));
-    }
-
+    await this.throwOnError(response);
     return await response.json();
   }
 
@@ -77,12 +67,7 @@ export class Client {
       body: JSON.stringify(requestBody),
     });
 
-    if (response.status !== 200) {
-      const responseJson = await response.json();
-      console.error(responseJson);
-      throw Error(JSON.stringify(responseJson));
-    }
-
+    await this.throwOnError(response);
     return await response.json();
   }
 
@@ -94,12 +79,7 @@ export class Client {
       body: JSON.stringify(requestBody),
     });
 
-    if (response.status !== 200) {
-      const responseJson = await response.json();
-      console.error(responseJson);
-      throw Error(JSON.stringify(responseJson));
-    }
-
+    await this.throwOnError(response);
     return await response.json();
   }
 
@@ -109,12 +89,15 @@ export class Client {
       headers: { "Content-Type": "application/json" },
     });
 
+    await this.throwOnError(response);
+    return await response.json();
+  }
+
+  async throwOnError(response: Response): Promise<void> {
     if (response.status !== 200) {
       const responseJson = await response.json();
       console.error(responseJson);
       throw Error(JSON.stringify(responseJson));
     }
-
-    return await response.json();
   }
 }

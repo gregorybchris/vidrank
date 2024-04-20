@@ -3,12 +3,12 @@ import {
   formatDateDiff,
   formatDuration,
   formatNumberCompact,
-} from "@/lib/formatUtilities";
+} from "@/lib/utilities/formatUtilities";
 import { CheckCircle, XCircle } from "@phosphor-icons/react";
 
-import { cn } from "@/lib/styleUtilities";
-import { getLargestThumbnail } from "@/lib/thumbnailSet";
-import { Video as VideoModel } from "@/lib/video";
+import { getLargestThumbnail } from "@/lib/models/thumbnailSet";
+import { Video as VideoModel } from "@/lib/models/video";
+import { cn } from "@/lib/utilities/styleUtilities";
 import styles from "@/styles/video.module.css";
 
 type VideoProps = {
