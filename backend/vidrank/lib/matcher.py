@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from typing import ClassVar, List
 
 import numpy as np
 
@@ -13,12 +13,12 @@ logger = logging.getLogger(__name__)
 
 
 class Matcher:
-    PROB_RANDOM = 0.3
+    DEFAULT_PROB_RANDOM: ClassVar[float] = 0.8
 
     @classmethod
-    def match(cls, app_state: AppState, n_videos: int) -> List[Video]:
+    def match(cls, app_state: AppState, n_videos: int, prob_random: float = DEFAULT_PROB_RANDOM) -> List[Video]:
         r = app_state.rng.random()
-        if r < 0.3:
+        if r < prob_random:
             logger.info("Matching randomly")
             return cls.match_random(app_state, n_videos)
         logger.info("Matching by ratings")
