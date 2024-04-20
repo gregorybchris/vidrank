@@ -280,13 +280,14 @@ export function Selector() {
         <div className="flex flex-col justify-center space-y-10 lg:px-[150px]">
           <div className="flex flex-wrap justify-center">
             {videos.map((video, i) => (
-              <Video
-                key={i}
-                video={video}
-                onClick={onClickVideo}
-                action={getVideoAction(video)}
-                isCurrent={!!currentId && video.id === currentId}
-              />
+              <div key={i} className="cursor-pointer">
+                <Video
+                  video={video}
+                  onClick={onClickVideo}
+                  action={getVideoAction(video)}
+                  isCurrent={!!currentId && video.id === currentId}
+                />
+              </div>
             ))}
           </div>
 

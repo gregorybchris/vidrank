@@ -4,12 +4,18 @@ import {
   formatDuration,
   formatNumberCompact,
 } from "@/lib/utilities/formatUtilities";
-import { CheckCircle, XCircle } from "@phosphor-icons/react";
+import {
+  CheckCircle,
+  LinkSimpleHorizontal,
+  XCircle,
+} from "@phosphor-icons/react";
 
 import { getLargestThumbnail } from "@/lib/models/thumbnailSet";
 import { Video as VideoModel } from "@/lib/models/video";
 import { cn } from "@/lib/utilities/styleUtilities";
+import { urlFromId } from "@/lib/utilities/urlUtilities";
 import styles from "@/styles/video.module.css";
+import Link from "next/link";
 
 type VideoProps = {
   className?: string;
@@ -40,7 +46,7 @@ export function Video({
           isCurrent ? "bg-stone-300" : "bg-transparent",
         )}
       >
-        <div className="cursor-pointer select-none ">
+        <div className="group select-none">
           <div className="flex flex-col items-start space-y-3 align-top">
             <div>
               {!thumbnailUrl && <div>No thumbnail found!</div>}
@@ -82,13 +88,21 @@ export function Video({
               <div className="truncate text-xs text-stone-500">
                 {video.channel}
               </div>
-              <div className="flex items-center space-x-1">
-                <div className="text-xs text-stone-500">
-                  {formatNumberCompact(video.stats.n_views)} views
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
+                  <div className="text-xs text-stone-500">
+                    {formatNumberCompact(video.stats.n_views)} views
+                  </div>
+                  <div>{"•"}</div>
+                  <div className="text-xs text-stone-500">
+                    {formatDateDiff(video.publish_datetime)}
+                  </div>
                 </div>
-                <div>{"•"}</div>
-                <div className="text-xs text-stone-500">
-                  {formatDateDiff(video.publish_datetime)}
+
+                <div className="align-center rounded-md bg-stone-900/10 px-2 text-sm text-stone-200 transition-all hover:bg-stone-900/20">
+                  <Link href={urlFromId(video.id)} target="_blank">
+                    <LinkSimpleHorizontal size={20} color="#404040" />
+                  </Link>
                 </div>
               </div>
             </div>

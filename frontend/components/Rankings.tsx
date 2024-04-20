@@ -96,20 +96,15 @@ export function Rankings() {
           <div className="flex flex-wrap justify-center">
             {getPageRankings(currentPage).map((ranking, i) => (
               <div key={i} className="relative">
-                <a
-                  href={`https://www.youtube.com/watch?v=${ranking.video.id}`}
-                  target="_blank"
-                >
-                  <Video
-                    video={ranking.video}
-                    onClick={() => {}}
-                    action="nothing"
-                    isCurrent={false}
-                  />
-                  <div className="absolute right-3 top-2 flex h-8 w-8 flex-col items-center justify-center rounded-full bg-stone-900/70 text-center text-sm text-stone-100">
-                    {Math.floor(ranking.rating)}
-                  </div>
-                </a>
+                <Video
+                  video={ranking.video}
+                  onClick={() => {}}
+                  action="nothing"
+                  isCurrent={false}
+                />
+                <div className="absolute right-3 top-2 flex h-8 w-8 flex-col items-center justify-center rounded-full bg-stone-900/70 text-center text-sm text-stone-100">
+                  {Math.floor(ranking.rating)}
+                </div>
               </div>
             ))}
           </div>
