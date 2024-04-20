@@ -1,5 +1,6 @@
 import { Selector } from "@/components/Selector";
 import { Dogear } from "widgets/Dogear";
+import { SettingsButton } from "widgets/SettingsButton";
 
 export default function HomePage() {
   return (
@@ -9,6 +10,8 @@ export default function HomePage() {
       </div>
 
       <Dogear link="/rank" icon="rank" />
+
+      <SettingsButton />
     </div>
   );
 }

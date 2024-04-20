@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 
 import { Video } from "@/components/Video";
 import { Client } from "@/lib/client";
-import { useKeyCombos } from "@/lib/keys";
+import { useKeyCombos } from "@/lib/hooks/keys";
+import { useSettings } from "@/lib/hooks/settings";
 import { ChoiceSet } from "@/lib/models/choiceSet";
 import { Video as VideoModel } from "@/lib/models/video";
 import { match } from "ts-pattern";
@@ -24,6 +25,7 @@ export function Selector() {
   const [currentId, setCurrentId] = useState<string>();
   const [recordIds, setRecordIds] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [settings] = useSettings([]);
 
   const keys = useKeyCombos(
     [
@@ -44,14 +46,16 @@ export function Selector() {
   );
 
   useEffect(() => {
-    fetchVideos();
+    if (settings !== null) {
+      fetchVideos();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [settings]);
 
   function fetchVideos() {
     setLoading(true);
     client
-      .getVideos()
+      .getVideos(settings?.matchingStrategy || "balanced")
       .then((response) => {
         console.log("Fetched videos: ", response.videos);
         updateWithVideos(response.videos);

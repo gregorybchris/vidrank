@@ -1,4 +1,5 @@
 import { ChoiceSet } from "@/lib/models/choiceSet";
+import { MatchingStrategy } from "@/lib/models/matchingStrategy";
 import { Ranking } from "@/lib/models/ranking";
 import { Video } from "@/lib/models/video";
 
@@ -37,8 +38,12 @@ export type GetRankingsResponseBody = {
 };
 
 export class Client {
-  async getVideos(): Promise<GetVideosResponseBody> {
-    const response = await fetch("http://localhost:8000/videos", {
+  async getVideos(
+    matchingStrategy: MatchingStrategy,
+  ): Promise<GetVideosResponseBody> {
+    const params = new URLSearchParams({ matching_strategy: matchingStrategy });
+
+    const response = await fetch("http://localhost:8000/videos?" + params, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });

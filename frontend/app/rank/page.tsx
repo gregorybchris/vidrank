@@ -1,5 +1,6 @@
 import { Rankings } from "@/components/Rankings";
 import { Dogear } from "widgets/Dogear";
+import { SettingsButton } from "widgets/SettingsButton";
 
 export default function RankPage() {
   return (
@@ -9,6 +10,8 @@ export default function RankPage() {
       </div>
 
       <Dogear link="/" icon="videos" />
+
+      <SettingsButton />
     </div>
   );
 }

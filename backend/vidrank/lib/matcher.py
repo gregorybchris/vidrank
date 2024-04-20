@@ -1,10 +1,11 @@
 import logging
-from typing import ClassVar, List
+from typing import ClassVar, List, Optional
 
 import numpy as np
 
 from vidrank.app.app_state import AppState
 from vidrank.lib.action import Action
+from vidrank.lib.matching_strategy import MatchingStrategy
 from vidrank.lib.ranking.ranker import Ranker
 from vidrank.lib.record import Record
 from vidrank.lib.youtube.video import Video
@@ -16,13 +17,26 @@ class Matcher:
     DEFAULT_PROB_RANDOM: ClassVar[float] = 0.8
 
     @classmethod
-    def match(cls, app_state: AppState, n_videos: int, prob_random: float = DEFAULT_PROB_RANDOM) -> List[Video]:
-        r = app_state.rng.random()
-        if r < prob_random:
-            logger.info("Matching randomly")
+    def match(
+        cls,
+        app_state: AppState,
+        n_videos: int,
+        matching_strategy: Optional[MatchingStrategy] = None,
+        prob_random: float = DEFAULT_PROB_RANDOM,
+    ) -> List[Video]:
+        logger.info(f"Using matching strategy: {matching_strategy}")
+        if matching_strategy == MatchingStrategy.RANDOM:
             return cls.match_random(app_state, n_videos)
-        logger.info("Matching by ratings")
-        return cls.match_by_rating(app_state, n_videos)
+        if matching_strategy == MatchingStrategy.BY_RATING:
+            return cls.match_by_rating(app_state, n_videos)
+        if matching_strategy in [None, MatchingStrategy.BALANCED]:
+            r = app_state.rng.random()
+            if r < prob_random:
+                logger.info("Matching randomly")
+                return cls.match_random(app_state, n_videos)
+            logger.info("Matching by ratings")
+            return cls.match_by_rating(app_state, n_videos)
+        raise ValueError(f"Unknown matching strategy: {matching_strategy}")
 
     @classmethod
     def match_random(cls, app_state: AppState, n_videos: int) -> List[Video]:

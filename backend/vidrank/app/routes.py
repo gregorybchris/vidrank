@@ -1,5 +1,5 @@
 import logging
-from typing import Any, List
+from typing import Any, List, Optional
 
 from fastapi import APIRouter
 from fastapi import HTTPException as HttpException
@@ -9,6 +9,7 @@ from vidrank import __version__ as package_version
 from vidrank.app.app_state import AppState
 from vidrank.lib.choice_set import ChoiceSet
 from vidrank.lib.matcher import Matcher
+from vidrank.lib.matching_strategy import MatchingStrategy
 from vidrank.lib.ranking.ranker import Ranker
 from vidrank.lib.record import Record
 from vidrank.lib.utilities.datetime_utilities import get_timestamp
@@ -44,9 +45,9 @@ class GetVideosResponse(BaseModel):
 
 
 @router.get(name="Videos", path="/videos", description="Get videos.")
-def get_videos() -> GetVideosResponse:
+def get_videos(matching_strategy: Optional[MatchingStrategy] = None) -> GetVideosResponse:
     app_state = AppState.get()
-    next_videos = Matcher.match(app_state, N_VIDEOS_PER_RESPONSE)
+    next_videos = Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, matching_strategy=matching_strategy)
 
     return GetVideosResponse(videos=[video.serialize() for video in next_videos])
 
