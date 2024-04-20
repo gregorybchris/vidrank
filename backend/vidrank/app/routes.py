@@ -1,6 +1,5 @@
 import logging
 from typing import Any, List
-from uuid import uuid4
 
 from fastapi import APIRouter
 from fastapi import HTTPException as HttpException
@@ -13,6 +12,7 @@ from vidrank.lib.matcher import Matcher
 from vidrank.lib.ranking.ranker import Ranker
 from vidrank.lib.record import Record
 from vidrank.lib.utilities.datetime_utilities import get_timestamp
+from vidrank.lib.utilities.identifier_utilities import get_identifier
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +65,7 @@ def post_submit(request: PostSubmitRequest) -> PostSubmitResponse:
     app_state = AppState.get()
     next_videos = Matcher.match(app_state, N_VIDEOS_PER_RESPONSE)
 
-    record_id = str(uuid4())
+    record_id = get_identifier()
     created_at = get_timestamp()
     record = Record(
         id=record_id,
@@ -111,7 +111,7 @@ def post_skip(request: PostSkipRequest) -> PostSkipResponse:
     app_state = AppState.get()
     next_videos = Matcher.match(app_state, N_VIDEOS_PER_RESPONSE)
 
-    record_id = str(uuid4())
+    record_id = get_identifier()
     created_at = get_timestamp()
     record = Record(
         id=record_id,
