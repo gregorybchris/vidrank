@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, Iterator, List
 
 from trueskill import Rating, rate
 
@@ -15,11 +15,9 @@ class Comp:
 
 class Ranker:
     @classmethod
-    def rank(cls, records: List[Record]) -> List[Ranking]:
-        comps = cls.get_comps(records)
-
+    def iter_rankings(cls, records: List[Record]) -> Iterator[Ranking]:
         rating_map: Dict[str, Rating] = {}
-        for comp in comps:
+        for comp in cls._get_comps(records):
             if comp.winner_id not in rating_map:
                 rating_map[comp.winner_id] = Rating()
             if comp.loser_id not in rating_map:
@@ -33,16 +31,12 @@ class Ranker:
             rating_map.update(comp_ratings[0])
             rating_map.update(comp_ratings[1])
 
-        rankings = []
         sorted_ratings = sorted(rating_map.items(), key=lambda x: x[1].mu, reverse=True)
         for i, (video_id, rating) in enumerate(sorted_ratings):
-            rankings.append(Ranking(video_id=video_id, rank=i + 1, rating=rating.mu))
-
-        return rankings
+            yield Ranking(video_id=video_id, rank=i + 1, rating=rating.mu)
 
     @classmethod
-    def get_comps(cls, records: List[Record]) -> List[Comp]:
-        comps: List[Comp] = []
+    def _get_comps(cls, records: List[Record]) -> Iterator[Comp]:
         for record in records:
             for choice_a in record.choice_set.choices:
                 action_a = choice_a.action
@@ -50,7 +44,6 @@ class Ranker:
                     action_b = choice_b.action
 
                     if (action_a, action_b) == ("select", "nothing"):
-                        comps.append(Comp(choice_a.video_id, choice_b.video_id))
+                        yield Comp(choice_a.video_id, choice_b.video_id)
                     if (action_a, action_b) == ("nothing", "select"):
-                        comps.append(Comp(choice_b.video_id, choice_a.video_id))
-        return comps
+                        yield Comp(choice_b.video_id, choice_a.video_id)

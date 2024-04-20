@@ -138,7 +138,7 @@ def get_rankings() -> GetRankingsResponse:
     app_state = AppState.get()
 
     records = app_state.record_tracker.load()
-    rankings = Ranker.rank(records)
+    rankings = list(Ranker.iter_rankings(records))
     video_ids = [ranking.video_id for ranking in rankings]
     videos = list(app_state.youtube_facade.iter_videos(video_ids))
     video_map = {video.id: video for video in videos}

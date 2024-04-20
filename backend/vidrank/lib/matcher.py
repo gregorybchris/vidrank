@@ -64,7 +64,7 @@ class Matcher:
         records = app_state.record_tracker.load()
 
         # Rate all videos
-        rankings = Ranker.rank(records)
+        rankings = list(Ranker.iter_rankings(records))
 
         # If there are not enough ranked videos, return a random selection
         if len(rankings) < n_videos:
