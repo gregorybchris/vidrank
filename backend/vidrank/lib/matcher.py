@@ -1,5 +1,5 @@
 import logging
-from typing import ClassVar, List, Optional
+from typing import ClassVar, Iterator, List, Optional
 
 import numpy as np
 
@@ -23,23 +23,25 @@ class Matcher:
         n_videos: int,
         matching_strategy: Optional[MatchingStrategy] = None,
         prob_random: float = DEFAULT_PROB_RANDOM,
-    ) -> List[Video]:
+    ) -> Iterator[Video]:
         logger.info(f"Using matching strategy: {matching_strategy}")
         if matching_strategy == MatchingStrategy.RANDOM:
-            return cls.match_random(app_state, n_videos)
-        if matching_strategy == MatchingStrategy.BY_RATING:
-            return cls.match_by_rating(app_state, n_videos)
-        if matching_strategy in [None, MatchingStrategy.BALANCED]:
+            yield from cls.match_random(app_state, n_videos)
+        elif matching_strategy == MatchingStrategy.BY_RATING:
+            yield from cls.match_by_rating(app_state, n_videos)
+        elif matching_strategy in [None, MatchingStrategy.BALANCED]:
             r = app_state.rng.random()
             if r < prob_random:
                 logger.info("Matching randomly")
-                return cls.match_random(app_state, n_videos)
-            logger.info("Matching by ratings")
-            return cls.match_by_rating(app_state, n_videos)
-        raise ValueError(f"Unknown matching strategy: {matching_strategy}")
+                yield from cls.match_random(app_state, n_videos)
+            else:
+                logger.info("Matching by ratings")
+                yield from cls.match_by_rating(app_state, n_videos)
+        else:
+            raise ValueError(f"Unknown matching strategy: {matching_strategy}")
 
     @classmethod
-    def match_random(cls, app_state: AppState, n_videos: int) -> List[Video]:
+    def match_random(cls, app_state: AppState, n_videos: int) -> Iterator[Video]:
         playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
 
         records = app_state.record_tracker.load()
@@ -49,18 +51,17 @@ class Matcher:
         # NOTE: iter_videos can fail to find videos, so iterate until we have enough
         # or we run out of videos
         app_state.rng.shuffle(non_removed_ids)
-        videos: List[Video] = []
+        n_found = 0
         for video_id in non_removed_ids:
-            if len(videos) == n_videos:
-                return videos
+            if n_found == n_videos:
+                return
             for video in app_state.youtube_facade.iter_videos([video_id]):
-                videos.append(video)
                 logger.info(f"Selected video: ({video.id}) {video.title}")
-
-        return videos
+                n_found += 1
+                yield video
 
     @classmethod
-    def match_by_rating(cls, app_state: AppState, n_videos: int) -> List[Video]:
+    def match_by_rating(cls, app_state: AppState, n_videos: int) -> Iterator[Video]:
         records = app_state.record_tracker.load()
 
         # Rate all videos
@@ -69,7 +70,7 @@ class Matcher:
         # If there are not enough ranked videos, return a random selection
         if len(rankings) < n_videos:
             logger.warning("Not enough ranked videos, will use random match")
-            return cls.match_random(app_state, n_videos)
+            yield from cls.match_random(app_state, n_videos)
 
         # Select one video randomly
         selected_index: int = app_state.rng.choice(np.arange(len(rankings)))
@@ -82,17 +83,16 @@ class Matcher:
         # Fetch video metadata for the most similar videos
         # NOTE: iter_videos can fail to find videos, so iterate until we have enough
         # or we run out of videos in the rankings
-        videos: List[Video] = []
+        n_found = 0
         for ranking in sorted_rankings:
-            if len(videos) == n_videos:
-                return videos
+            if n_found == n_videos:
+                return
             for video in app_state.youtube_facade.iter_videos([ranking.video_id]):
-                videos.append(video)
                 logger.info(
                     f"Selected video: rank={ranking.rank}, rating={int(ranking.rating)}: ({video.id}) {video.title}"
                 )
-
-        return videos
+                n_found += 1
+                yield video
 
     @classmethod
     def get_non_removed(cls, video_ids: List[str], records: List[Record]) -> List[str]:
