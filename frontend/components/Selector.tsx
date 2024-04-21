@@ -332,6 +332,10 @@ export function Selector() {
                 text="Undo"
                 onClick={undoSubmit}
                 enabled={recordIds.length > 0}
+                onClickDisabled={() => {
+                  setToastDescription("Nothing to undo");
+                  setToastVisible(true);
+                }}
               />
               <Button
                 text="Submit"
