@@ -12,10 +12,8 @@ import { Video as VideoModel } from "@/lib/models/video";
 import { match } from "ts-pattern";
 import { Button } from "widgets/Button";
 
-const MIN_ACTED_VIDEOS = 1;
-const MAX_SELECTED_VIDEOS = 4;
 type Direction = "up" | "down" | "left" | "right";
-type SubmitStatus = { message: string } | true;
+type SubmitStatus = { canSubmit: boolean; message: string };
 
 export function Selector() {
   const client = new Client();
@@ -85,18 +83,28 @@ export function Selector() {
   }
 
   function getSubmitStatus(): SubmitStatus {
-    const numActed = selectedIds.length + removedIds.length;
-    if (selectedIds.length > MAX_SELECTED_VIDEOS) {
-      return { message: "Too many videos selected" };
+    const MIN_ACTIONS = 1;
+    const MAX_SELECTIONS = 4;
+
+    const numActions = selectedIds.length + removedIds.length;
+    const numSelected = selectedIds.length;
+    const numNothing = videos.length - numActions;
+
+    if (numSelected > MAX_SELECTIONS) {
+      return { canSubmit: false, message: "Too many videos selected" };
     }
-    if (numActed < MIN_ACTED_VIDEOS) {
-      return { message: "Not enough videos selected" };
+    if (numActions < MIN_ACTIONS) {
+      return { canSubmit: false, message: "Not enough actions taken" };
     }
-    return true;
+    if (numSelected > 0 && numNothing == 0) {
+      return { canSubmit: false, message: "Must have some videos unselected" };
+    }
+    return { canSubmit: true, message: "Ready to submit" };
   }
 
-  function canSubmit() {
-    return getSubmitStatus() === true;
+  function canSubmit(): boolean {
+    const { canSubmit } = getSubmitStatus();
+    return canSubmit;
   }
 
   function submitVideoSet() {
@@ -107,9 +115,9 @@ export function Selector() {
       return;
     }
 
-    const submitStatus = getSubmitStatus();
-    if (submitStatus !== true) {
-      console.log("Submit status: ", submitStatus.message);
+    const { canSubmit, message } = getSubmitStatus();
+    if (!canSubmit) {
+      console.error("Submit status: ", message);
       // TODO: Use a toast to show this
       return;
     }
