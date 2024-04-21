@@ -64,6 +64,8 @@ class Matcher:
     def match_by_rating(cls, app_state: AppState, n_videos: int) -> Iterator[Video]:
         records = app_state.record_tracker.load()
 
+        # TODO: Remove videos that have been removed, they should not be included in matches by ratings
+
         # Rate all videos
         rankings = list(Ranker.iter_rankings(records))
 
@@ -98,6 +100,6 @@ class Matcher:
     def get_non_removed(cls, video_ids: List[str], records: List[Record]) -> List[str]:
         ids_set = set(video_ids)
         for record in records:
-            ids_set -= set([c.video_id for c in record.choice_set.choices if c.action == Action.REMOVE])
+            ids_set -= set(c.video_id for c in record.choice_set.choices if c.action == Action.REMOVE)
         non_removed_ids = list(ids_set)
         return non_removed_ids
