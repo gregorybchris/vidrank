@@ -106,6 +106,8 @@ class YouTubeClient:
             response_json = response.json()
 
             if "error" in response_json:
+                if response_json["error"]["code"] == 404:
+                    raise ValueError(f"Playlist with ID {playlist_id} not found")
                 raise ValueError(response_json["error"]["message"])
 
             for item in response_json["items"]:

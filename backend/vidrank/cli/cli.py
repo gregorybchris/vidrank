@@ -5,6 +5,7 @@ import click
 
 from vidrank.app.app import App
 from vidrank.app.app_state import AppState
+from vidrank.lib.video_utilities import print_video
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +25,19 @@ def serve(debug: bool = False, **kwds: Any) -> None:
 
     with App.context(**kwds) as app:
         app.start()
+
+
+@main.command(name="video")
+@click.argument("video_id", type=str)
+@click.option("--use-cache/--no-cache", default=True)
+def get_video(video_id: str, use_cache: bool) -> None:
+    App.load_app_state()
+    app_state = AppState.get()
+    video = app_state.youtube_facade.get_video(video_id, use_cache=use_cache)
+    if video is None:
+        raise ValueError(f"Video with ID {video_id} not found")
+
+    print_video(video)
 
 
 @main.command(name="record")
