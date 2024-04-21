@@ -22,25 +22,26 @@ class YouTubeFacade:
         self.video_cache = video_cache
         self.playlist_cache = playlist_cache
 
-    def iter_videos(self, video_ids: Iterable[str]) -> Iterator[Video]:
-        uncached_ids = []
+    def iter_videos(self, video_ids: Iterable[str], use_cache: bool = True) -> Iterator[Video]:
+        video_ids_to_fetch = []
         for video_id in video_ids:
-            video = self.video_cache.get(video_id)
+            if use_cache:
+                video = self.video_cache.get(video_id)
+                if video is not None:
+                    yield video
+                    continue
+            video_ids_to_fetch.append(video_id)
 
-            if video is None:
-                uncached_ids.append(video_id)
-            else:
-                yield video
-
-        if len(uncached_ids) != 0:
-            for video in self.youtube_client.iter_videos(uncached_ids):
+        if len(video_ids_to_fetch) != 0:
+            for video in self.youtube_client.iter_videos(video_ids_to_fetch):
                 self.video_cache.add(video)
                 yield video
 
-    def get_playlist(self, playlist_id: str) -> Playlist:
-        playlist = self.playlist_cache.get(playlist_id)
-        if playlist is not None:
-            return playlist
+    def get_playlist(self, playlist_id: str, use_cache: bool = True) -> Playlist:
+        if use_cache:
+            playlist = self.playlist_cache.get(playlist_id)
+            if playlist is not None:
+                return playlist
 
         video_ids = list(self.youtube_client.iter_playlist_video_ids(playlist_id))
         playlist = Playlist(id=playlist_id, video_ids=video_ids)

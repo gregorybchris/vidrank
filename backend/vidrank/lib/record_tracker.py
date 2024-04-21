@@ -19,23 +19,22 @@ class RecordTracker:
             return []
         with self.filepath.open("r") as fp:
             records_json = json.load(fp)
-            return [Record(**t) for t in records_json]
+            return [Record(**r) for r in records_json]
 
     def add(self, record: Record) -> None:
         self.ensure_exists()
         records = self.load()
         records.append(record)
-        records_json = [t.model_dump() for t in records]
+        records_json = [r.model_dump() for r in records]
         with self.filepath.open("w") as fp:
             json.dump(records_json, fp)
 
     def pop(self, record_id: str) -> Optional[Record]:
         self.ensure_exists()
         records = self.load()
-        new_records = [r for r in records if r.id != record_id]
         for record in records:
             if record.id == record_id:
-                records_json = [t.model_dump() for t in new_records]
+                records_json = [r.model_dump() for r in records if r.id != record_id]
                 with self.filepath.open("w") as fp:
                     json.dump(records_json, fp)
                 return record
