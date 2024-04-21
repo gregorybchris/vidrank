@@ -4,7 +4,7 @@ import { useSettings } from "@/lib/hooks/settings";
 import { MatchingStrategy } from "@/lib/models/matchingStrategy";
 import { cn } from "@/lib/utilities/styleUtilities";
 import { ClockCountdown } from "@phosphor-icons/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "widgets/Button";
 import { Dogear } from "widgets/Dogear";
 import { SettingsButton } from "widgets/SettingsButton";
@@ -15,18 +15,27 @@ export default function SettingsPage() {
 
   const loading = settings === null;
 
-  function updateMatchingStrategy(strategy: MatchingStrategy) {
+  useEffect(() => {
     if (settings === null) return;
-    const settingsCopy = { ...settings };
-    settingsCopy.matching_settings.matching_strategy = strategy;
-    setSettings(settingsCopy);
+    setRandomFractionInput(settings.matching_settings.balanced_random_fraction);
+  }, [settings]);
+
+  function updateMatchingStrategy(strategy: MatchingStrategy) {
+    setSettings((settings) => {
+      if (settings === null) return settings;
+      const settingsCopy = { ...settings };
+      settingsCopy.matching_settings.matching_strategy = strategy;
+      return settingsCopy;
+    });
   }
 
   function updateRandomFraction(randomFraction: number) {
-    if (settings === null) return;
-    const settingsCopy = { ...settings };
-    settingsCopy.matching_settings.balanced_random_fraction = randomFraction;
-    setSettings(settingsCopy);
+    setSettings((settings) => {
+      if (settings === null) return settings;
+      const settingsCopy = { ...settings };
+      settingsCopy.matching_settings.balanced_random_fraction = randomFraction;
+      return settingsCopy;
+    });
   }
 
   return (
@@ -76,7 +85,7 @@ export default function SettingsPage() {
 
               {settings.matching_settings.matching_strategy == "balanced" && (
                 <div className="flex flex-row items-center space-x-2 text-sm">
-                  <div className="">Balanced random fraction:</div>
+                  <div className="font-bold">Balanced random fraction:</div>
                   <input
                     className="w-16 rounded bg-transparent px-2 py-1 outline-none"
                     type="number"
