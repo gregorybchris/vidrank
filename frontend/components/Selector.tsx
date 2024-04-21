@@ -25,7 +25,7 @@ export function Selector() {
   const [currentId, setCurrentId] = useState<string>();
   const [recordIds, setRecordIds] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [settings] = useSettings([]);
+  const [settings] = useSettings();
 
   const keys = useKeyCombos(
     [
@@ -53,9 +53,14 @@ export function Selector() {
   }, [settings]);
 
   function fetchVideos() {
+    if (settings === null) {
+      console.error("Settings have not loaded yet");
+      return;
+    }
+
     setLoading(true);
     client
-      .getVideos(settings?.matchingStrategy || "balanced")
+      .postVideos(settings)
       .then((response) => {
         console.log("Fetched videos: ", response.videos);
         updateWithVideos(response.videos);
@@ -97,6 +102,11 @@ export function Selector() {
   function submitVideoSet() {
     console.log("Will submit");
 
+    if (settings === null) {
+      console.error("Settings have not loaded yet");
+      return;
+    }
+
     const submitStatus = getSubmitStatus();
     if (submitStatus !== true) {
       console.log("Submit status: ", submitStatus.message);
@@ -115,7 +125,7 @@ export function Selector() {
 
     setLoading(true);
     client
-      .postSubmit(choiceSet)
+      .postSubmit(choiceSet, settings)
       .then((response) => {
         console.log("Submit successful: ", response.record_id);
         setRecordIds([...recordIds, response.record_id]);
@@ -172,6 +182,11 @@ export function Selector() {
   function skipVideoSet() {
     console.log("Will skip");
 
+    if (settings === null) {
+      console.error("Settings have not loaded yet");
+      return;
+    }
+
     const choiceSet: ChoiceSet = {
       choices: videos.map((video) => {
         return {
@@ -183,7 +198,7 @@ export function Selector() {
 
     setLoading(true);
     client
-      .postSkip(choiceSet)
+      .postSkip(choiceSet, settings)
       .then((response) => {
         console.log("Got videos: ", response.videos);
         setRecordIds([...recordIds, response.record_id]);

@@ -1,10 +1,11 @@
 import logging
-from typing import ClassVar, Iterator, List, Optional
+from typing import Iterator, List
 
 import numpy as np
 
 from vidrank.app.app_state import AppState
 from vidrank.lib.action import Action
+from vidrank.lib.matching_settings import MatchingSettings
 from vidrank.lib.matching_strategy import MatchingStrategy
 from vidrank.lib.ranking.ranker import Ranker
 from vidrank.lib.record import Record
@@ -14,31 +15,29 @@ logger = logging.getLogger(__name__)
 
 
 class Matcher:
-    DEFAULT_PROB_RANDOM: ClassVar[float] = 0.8
-
     @classmethod
     def match(
         cls,
         app_state: AppState,
         n_videos: int,
-        matching_strategy: Optional[MatchingStrategy] = None,
-        prob_random: float = DEFAULT_PROB_RANDOM,
+        settings: MatchingSettings,
     ) -> Iterator[Video]:
-        logger.info(f"Using matching strategy: {matching_strategy}")
-        if matching_strategy == MatchingStrategy.RANDOM:
+        logger.info(f"Using matching strategy: {settings.matching_strategy}")
+        if settings.matching_strategy == MatchingStrategy.RANDOM:
             yield from cls.match_random(app_state, n_videos)
-        elif matching_strategy == MatchingStrategy.BY_RATING:
+        elif settings.matching_strategy == MatchingStrategy.BY_RATING:
             yield from cls.match_by_rating(app_state, n_videos)
-        elif matching_strategy in [None, MatchingStrategy.BALANCED]:
+        elif settings.matching_strategy in [None, MatchingStrategy.BALANCED]:
+            logger.info(f"Using random fraction: {settings.balanced_random_fraction}")
             r = app_state.rng.random()
-            if r < prob_random:
+            if r < settings.balanced_random_fraction:
                 logger.info("Matching randomly")
                 yield from cls.match_random(app_state, n_videos)
             else:
                 logger.info("Matching by ratings")
                 yield from cls.match_by_rating(app_state, n_videos)
         else:
-            raise ValueError(f"Unknown matching strategy: {matching_strategy}")
+            raise ValueError(f"Unknown matching strategy: {settings.matching_strategy}")
 
     @classmethod
     def match_random(cls, app_state: AppState, n_videos: int) -> Iterator[Video]:

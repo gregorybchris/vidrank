@@ -1,14 +1,19 @@
 import { ChoiceSet } from "@/lib/models/choiceSet";
-import { MatchingStrategy } from "@/lib/models/matchingStrategy";
 import { Ranking } from "@/lib/models/ranking";
+import { Settings } from "@/lib/models/settings";
 import { Video } from "@/lib/models/video";
 
-export type GetVideosResponseBody = {
+export type PostVideosRequestBody = {
+  settings: Settings;
+};
+
+export type PostVideosResponseBody = {
   videos: Video[];
 };
 
 export type PostSubmitRequestBody = {
   choice_set: ChoiceSet;
+  settings: Settings;
 };
 
 export type PostSubmitResponseBody = {
@@ -27,6 +32,7 @@ export type PostUndoResponseBody = {
 
 export type PostSkipRequestBody = {
   choice_set: ChoiceSet;
+  settings: Settings;
 };
 
 export type PostSkipResponseBody = {
@@ -39,22 +45,27 @@ export type GetRankingsResponseBody = {
 };
 
 export class Client {
-  async getVideos(
-    matchingStrategy: MatchingStrategy,
-  ): Promise<GetVideosResponseBody> {
-    const params = new URLSearchParams({ matching_strategy: matchingStrategy });
-
-    const response = await fetch("http://localhost:8000/videos?" + params, {
-      method: "GET",
+  async postVideos(settings: Settings): Promise<PostVideosResponseBody> {
+    console.log("Posting videos with settings", settings);
+    const requestBody: PostVideosRequestBody = { settings: settings };
+    const response = await fetch("http://localhost:8000/videos?", {
+      method: "POST",
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestBody),
     });
 
     await this.throwOnError(response);
     return await response.json();
   }
 
-  async postSubmit(choiceSet: ChoiceSet): Promise<PostSubmitResponseBody> {
-    const requestBody: PostSubmitRequestBody = { choice_set: choiceSet };
+  async postSubmit(
+    choiceSet: ChoiceSet,
+    settings: Settings,
+  ): Promise<PostSubmitResponseBody> {
+    const requestBody: PostSubmitRequestBody = {
+      choice_set: choiceSet,
+      settings: settings,
+    };
     const response = await fetch("http://localhost:8000/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -77,8 +88,14 @@ export class Client {
     return await response.json();
   }
 
-  async postSkip(choiceSet: ChoiceSet): Promise<PostSkipResponseBody> {
-    const requestBody: PostSkipRequestBody = { choice_set: choiceSet };
+  async postSkip(
+    choiceSet: ChoiceSet,
+    settings: Settings,
+  ): Promise<PostSkipResponseBody> {
+    const requestBody: PostSkipRequestBody = {
+      choice_set: choiceSet,
+      settings: settings,
+    };
     const response = await fetch("http://localhost:8000/skip", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

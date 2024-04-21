@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Settings } from "@/lib/models/settings";
 import { deepEqual } from "@/lib/utilities/objectUtilities";
-import { DependencyList, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
 
-export function useSettings(dependencies: DependencyList) {
+export function useSettings() {
   const [storage, setStorage] = useLocalStorage<Settings | null>(
     "vidrank-settings",
     null,
@@ -14,9 +14,14 @@ export function useSettings(dependencies: DependencyList) {
   useEffect(() => {
     // Initialize settings and storage
     if (settings === null && storage === null) {
-      const newSettings: Settings = { matchingStrategy: "balanced" };
-      setSettings(newSettings);
-      setStorage(newSettings);
+      const defaultSettings: Settings = {
+        matching_settings: {
+          matching_strategy: "balanced",
+          balanced_random_fraction: 0.5,
+        },
+      };
+      setSettings(defaultSettings);
+      setStorage(defaultSettings);
       console.log("Set storage to settings", settings);
     }
     // Save to storage for the first time

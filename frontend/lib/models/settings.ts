@@ -1,5 +1,5 @@
-import { MatchingStrategy } from "./matchingStrategy";
+import { MatchingSettings } from "@/lib/models/matchingSettings";
 
 export type Settings = {
-  matchingStrategy: MatchingStrategy;
+  matching_settings: MatchingSettings;
 };

@@ -1,5 +1,5 @@
 import logging
-from typing import Any, List, Optional
+from typing import Any, List
 
 from fastapi import APIRouter
 from fastapi import HTTPException as HttpException
@@ -9,9 +9,9 @@ from vidrank import __version__ as package_version
 from vidrank.app.app_state import AppState
 from vidrank.lib.choice_set import ChoiceSet
 from vidrank.lib.matcher import Matcher
-from vidrank.lib.matching_strategy import MatchingStrategy
 from vidrank.lib.ranking.ranker import Ranker
 from vidrank.lib.record import Record
+from vidrank.lib.settings import Settings
 from vidrank.lib.utilities.datetime_utilities import get_timestamp
 from vidrank.lib.utilities.identifier_utilities import get_identifier
 
@@ -40,20 +40,26 @@ def get_version() -> GetVersionResponse:
     return GetVersionResponse(version=package_version)
 
 
-class GetVideosResponse(BaseModel):
+class PostVideosRequest(BaseModel):
+    settings: Settings
+
+
+class PostVideosResponse(BaseModel):
     videos: List[Any]
 
 
-@router.get(name="Videos", path="/videos", description="Get videos.")
-def get_videos(matching_strategy: Optional[MatchingStrategy] = None) -> GetVideosResponse:
+@router.post(name="Videos", path="/videos", description="Post videos.")
+def post_videos(request: PostVideosRequest) -> PostVideosResponse:
     app_state = AppState.get()
-    next_videos = Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, matching_strategy=matching_strategy)
 
-    return GetVideosResponse(videos=[video.serialize() for video in next_videos])
+    next_videos = Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, request.settings.matching_settings)
+
+    return PostVideosResponse(videos=[video.serialize() for video in next_videos])
 
 
 class PostSubmitRequest(BaseModel):
     choice_set: ChoiceSet
+    settings: Settings
 
 
 class PostSubmitResponse(BaseModel):
@@ -64,7 +70,7 @@ class PostSubmitResponse(BaseModel):
 @router.post(name="Submit", path="/submit", description="Post submit.")
 def post_submit(request: PostSubmitRequest) -> PostSubmitResponse:
     app_state = AppState.get()
-    next_videos = Matcher.match(app_state, N_VIDEOS_PER_RESPONSE)
+    next_videos = Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, request.settings.matching_settings)
 
     record_id = get_identifier()
     created_at = get_timestamp()
@@ -101,6 +107,7 @@ def post_undo(request: PostUndoRequest) -> PostUndoResponse:
 
 class PostSkipRequest(BaseModel):
     choice_set: ChoiceSet
+    settings: Settings
 
 
 class PostSkipResponse(BaseModel):
@@ -111,7 +118,7 @@ class PostSkipResponse(BaseModel):
 @router.post(name="Skip", path="/skip", description="Post skip.")
 def post_skip(request: PostSkipRequest) -> PostSkipResponse:
     app_state = AppState.get()
-    next_videos = Matcher.match(app_state, N_VIDEOS_PER_RESPONSE)
+    next_videos = Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, request.settings.matching_settings)
 
     record_id = get_identifier()
     created_at = get_timestamp()
