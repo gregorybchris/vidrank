@@ -5,6 +5,7 @@ import click
 
 from vidrank.app.app import App
 from vidrank.app.app_state import AppState
+from vidrank.lib.analytics.analytics import print_ratings_histogram
 from vidrank.lib.video_utilities import print_video
 
 logger = logging.getLogger(__name__)
@@ -68,3 +69,11 @@ def get_playlist(playlist_id: str, use_cache: bool) -> None:
         raise ValueError(f"Playlist with ID {playlist_id} not found")
 
     print(f"Loaded playlist: {playlist_id} with {len(playlist.video_ids)} videos")
+
+
+@main.command(name="analyze")
+def analyze_records() -> None:
+    App.load_app_state()
+    app_state = AppState.get()
+    records = app_state.record_tracker.load()
+    print_ratings_histogram(records, app_state.youtube_facade)
