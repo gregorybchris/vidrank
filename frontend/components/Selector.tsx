@@ -94,10 +94,16 @@ export function Selector() {
     const numNothing = videos.length - numActions;
 
     if (numSelected > MAX_SELECTIONS) {
-      return { canSubmit: false, message: "Too many videos selected" };
+      return {
+        canSubmit: false,
+        message: `Select at most ${MAX_SELECTIONS} videos`,
+      };
     }
     if (numActions < MIN_ACTIONS) {
-      return { canSubmit: false, message: "Not enough actions taken" };
+      return {
+        canSubmit: false,
+        message: `Perform at least ${MIN_ACTIONS} action`,
+      };
     }
     if (numSelected > 0 && numNothing == 0) {
       return { canSubmit: false, message: "Must have some videos unselected" };
