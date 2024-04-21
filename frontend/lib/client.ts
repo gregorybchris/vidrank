@@ -22,6 +22,7 @@ export type PostUndoRequestBody = {
 
 export type PostUndoResponseBody = {
   videos: Video[];
+  choice_set: ChoiceSet;
 };
 
 export type PostSkipRequestBody = {
@@ -64,7 +65,7 @@ export class Client {
     return await response.json();
   }
 
-  async postUndo(recordId: string): Promise<PostSkipResponseBody> {
+  async postUndo(recordId: string): Promise<PostUndoResponseBody> {
     const requestBody: PostUndoRequestBody = { record_id: recordId };
     const response = await fetch("http://localhost:8000/undo", {
       method: "POST",

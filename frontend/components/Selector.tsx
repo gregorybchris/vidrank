@@ -154,6 +154,13 @@ export function Selector() {
         console.log("Got videos: ", response.videos);
         updateWithVideos(response.videos);
         setRecordIds(recordIds.slice(0, recordIds.length - 1));
+        const choices = response.choice_set.choices;
+        setSelectedIds(
+          choices.filter((c) => c.action == "select").map((c) => c.video_id),
+        );
+        setRemovedIds(
+          choices.filter((c) => c.action == "remove").map((c) => c.video_id),
+        );
         setLoading(false);
       })
       .catch((error) => {

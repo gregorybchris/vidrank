@@ -83,6 +83,7 @@ class PostUndoRequest(BaseModel):
 
 class PostUndoResponse(BaseModel):
     videos: List[Any]
+    choice_set: ChoiceSet
 
 
 @router.post(name="Undo", path="/undo", description="Post undo.")
@@ -95,7 +96,7 @@ def post_undo(request: PostUndoRequest) -> PostUndoResponse:
     video_ids = [choice.video_id for choice in record.choice_set.choices]
     next_videos = list(app_state.youtube_facade.iter_videos(video_ids))
 
-    return PostUndoResponse(videos=[video.serialize() for video in next_videos])
+    return PostUndoResponse(videos=[video.serialize() for video in next_videos], choice_set=record.choice_set)
 
 
 class PostSkipRequest(BaseModel):

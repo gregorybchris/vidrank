@@ -42,7 +42,7 @@ export function Video({
     >
       <div
         className={cn(
-          "rounded-lg px-2 py-1 transition-all",
+          "rounded-lg p-2 transition-all",
           isCurrent ? "bg-stone-300" : "bg-transparent",
         )}
       >

@@ -102,7 +102,7 @@ export function Rankings() {
                   action="nothing"
                   isCurrent={false}
                 />
-                <div className="absolute right-3 top-2 flex h-8 w-8 flex-col items-center justify-center rounded-full bg-stone-900/70 text-center text-sm text-stone-100">
+                <div className="absolute right-3 top-3 flex h-8 w-8 flex-col items-center justify-center rounded-full bg-stone-900/70 text-center text-sm text-stone-100">
                   {Math.round(ranking.rating)}
                 </div>
               </div>
