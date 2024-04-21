@@ -64,8 +64,6 @@ class Matcher:
         playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
         records = app_state.record_tracker.load()
 
-        # TODO: Remove videos that have been removed, they should not be included in matches by ratings
-
         # Rate all videos
         rankings = list(Ranker.iter_rankings(records))
 

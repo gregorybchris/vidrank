@@ -5,14 +5,24 @@ type ButtonProps = {
   text: string;
   onClick: () => void;
   enabled?: boolean;
+  onClickDisabled?: () => void;
 };
 
-export function Button({ className, text, onClick, enabled }: ButtonProps) {
+export function Button({
+  className,
+  text,
+  onClick,
+  enabled,
+  onClickDisabled,
+}: ButtonProps) {
   const isEnabled = enabled ?? true;
 
   function handleClick() {
-    if (!isEnabled) return;
-    onClick();
+    if (isEnabled) {
+      onClick();
+    } else {
+      onClickDisabled && onClickDisabled();
+    }
   }
 
   return (

@@ -11,6 +11,7 @@ import { ChoiceSet } from "@/lib/models/choiceSet";
 import { Video as VideoModel } from "@/lib/models/video";
 import { match } from "ts-pattern";
 import { Button } from "widgets/Button";
+import { Toast } from "widgets/Toast";
 
 type Direction = "up" | "down" | "left" | "right";
 type SubmitStatus = { canSubmit: boolean; message: string };
@@ -23,6 +24,8 @@ export function Selector() {
   const [currentId, setCurrentId] = useState<string>();
   const [recordIds, setRecordIds] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [toastVisible, setToastVisible] = useState<boolean>(false);
+  const [toastDescription, setToastDescription] = useState<string>("");
   const [settings] = useSettings();
 
   const keys = useKeyCombos(
@@ -112,13 +115,6 @@ export function Selector() {
 
     if (settings === null) {
       console.error("Settings have not loaded yet");
-      return;
-    }
-
-    const { canSubmit, message } = getSubmitStatus();
-    if (!canSubmit) {
-      console.error("Submit status: ", message);
-      // TODO: Use a toast to show this
       return;
     }
 
@@ -341,6 +337,11 @@ export function Selector() {
                 text="Submit"
                 onClick={submitVideoSet}
                 enabled={canSubmit()}
+                onClickDisabled={() => {
+                  const { message } = getSubmitStatus();
+                  setToastDescription(message);
+                  setToastVisible(true);
+                }}
               />
             </div>
 
@@ -350,6 +351,14 @@ export function Selector() {
           </div>
         </div>
       )}
+
+      <Toast
+        visible={toastVisible}
+        setVisible={setToastVisible}
+        title="Cannot submit"
+        description={toastDescription}
+        buttonText="Ok"
+      />
     </>
   );
 }

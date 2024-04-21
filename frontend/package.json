@@ -10,6 +10,7 @@
     "@fontsource-variable/manrope": "^5.0.18",
     "@fontsource-variable/work-sans": "^5.0.17",
     "@phosphor-icons/react": "^2.0.15",
+    "@radix-ui/react-toast": "^1.1.5",
     "@types/node": "^18.11.9",
     "@types/react": "^18.0.25",
     "clsx": "^2.0.0",
