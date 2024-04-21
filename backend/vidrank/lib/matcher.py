@@ -61,12 +61,17 @@ class Matcher:
 
     @classmethod
     def match_by_rating(cls, app_state: AppState, n_videos: int) -> Iterator[Video]:
+        playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
         records = app_state.record_tracker.load()
 
         # TODO: Remove videos that have been removed, they should not be included in matches by ratings
 
         # Rate all videos
         rankings = list(Ranker.iter_rankings(records))
+
+        # Filter for rankings for videos that are not removed
+        non_removed_ids = cls.get_non_removed(playlist.video_ids, records)
+        rankings = [r for r in rankings if r.video_id in non_removed_ids]
 
         # If there are not enough ranked videos, return a random selection
         if len(rankings) < n_videos:
