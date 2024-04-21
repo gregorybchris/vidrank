@@ -58,7 +58,7 @@ export function Video({
                     alt="Video thumbnail"
                   />
 
-                  <div className="align-center absolute bottom-2 right-2 rounded-md bg-stone-900/70 px-2 text-sm text-stone-200">
+                  <div className="align-center absolute bottom-2 right-2 rounded-md bg-stone-900/70 px-2 text-sm text-stone-100">
                     {length}
                   </div>
 
