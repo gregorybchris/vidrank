@@ -32,3 +32,6 @@ class PickleCache(Generic[T]):
     def has(self, item_id: str) -> bool:
         filepath = self.dirpath / f"{item_id}.pkl"
         return filepath.exists()
+
+    def __len__(self) -> int:
+        return len(list(self.dirpath.glob("*.pkl")))

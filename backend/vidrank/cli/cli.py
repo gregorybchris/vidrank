@@ -112,3 +112,14 @@ def analyze_records() -> None:
     app_state = AppState.get()
     records = app_state.record_tracker.load()
     print_ratings_histogram(records, app_state.youtube_facade)
+
+
+@main.command(name="cache")
+def cache_info() -> None:
+    App.load_app_state()
+    app_state = AppState.get()
+    records = app_state.record_tracker.load()
+    print(f"Total records: {len(records)}")
+    print(f"Cached videos: {len(app_state.youtube_facade.video_cache)}")
+    print(f"Cached channels: {len(app_state.youtube_facade.channel_cache)}")
+    print(f"Cached playlists: {len(app_state.youtube_facade.playlist_cache)}")
