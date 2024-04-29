@@ -4,8 +4,7 @@ classifiers = [
     "Intended Audience :: Developers",
     "Topic :: Software Development",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 description = "Video ranking."
 keywords = ["video", "ranking"]
@@ -20,7 +19,7 @@ include = "vidrank"
 
 [tool.poetry.dependencies]
 click = "^8.1.7"
-python = ">=3.10"
+python = ">=3.12"
 numpy = "^1.26.4"
 fastapi = "^0.110.2"
 uvicorn = "^0.29.0"
