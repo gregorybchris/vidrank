@@ -2,8 +2,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from vidrank.lib.record_tracker import RecordTracker
-from vidrank.lib.youtube_facade import YouTubeFacade
+from vidrank.lib.caching.record_tracker import RecordTracker
+from vidrank.lib.youtube.youtube_facade import YouTubeFacade
 
 
 @dataclass

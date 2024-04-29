@@ -1,7 +1,7 @@
 import logging
 from typing import Iterable, Iterator
 
-from vidrank.lib.pickle_cache import PickleCache
+from vidrank.lib.caching.pickle_cache import PickleCache
 from vidrank.lib.youtube.channel import Channel
 from vidrank.lib.youtube.playlist import Playlist
 from vidrank.lib.youtube.video import Video

@@ -12,13 +12,13 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from vidrank.app.app_state import AppState
 from vidrank.app.routes import router
-from vidrank.lib.pickle_cache import PickleCache
-from vidrank.lib.record_tracker import RecordTracker
+from vidrank.lib.caching.pickle_cache import PickleCache
+from vidrank.lib.caching.record_tracker import RecordTracker
 from vidrank.lib.youtube.channel import Channel
 from vidrank.lib.youtube.playlist import Playlist
 from vidrank.lib.youtube.video import Video
 from vidrank.lib.youtube.youtube_client import YouTubeClient
-from vidrank.lib.youtube_facade import YouTubeFacade
+from vidrank.lib.youtube.youtube_facade import YouTubeFacade
 
 logger = logging.getLogger(__name__)
 

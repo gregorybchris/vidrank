@@ -7,11 +7,11 @@ from pydantic import BaseModel
 
 from vidrank import __version__ as package_version
 from vidrank.app.app_state import AppState
-from vidrank.lib.choice_set import ChoiceSet
-from vidrank.lib.matcher import Matcher
+from vidrank.lib.matching.matcher import Matcher
+from vidrank.lib.models.choice_set import ChoiceSet
+from vidrank.lib.models.record import Record
+from vidrank.lib.models.settings import Settings
 from vidrank.lib.ranking.ranker import Ranker
-from vidrank.lib.record import Record
-from vidrank.lib.settings import Settings
 from vidrank.lib.utilities.datetime_utilities import get_timestamp
 from vidrank.lib.utilities.identifier_utilities import get_identifier
 from vidrank.lib.youtube.video import Video

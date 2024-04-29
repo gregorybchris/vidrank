@@ -2,7 +2,7 @@ from typing import List
 
 from pydantic import BaseModel
 
-from vidrank.lib.choice import Choice
+from vidrank.lib.models.choice import Choice
 
 
 class ChoiceSet(BaseModel):

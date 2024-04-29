@@ -1,8 +1,8 @@
 from typing import Dict, List
 
-from vidrank.lib.action import Action
-from vidrank.lib.record import Record
-from vidrank.lib.youtube_facade import YouTubeFacade
+from vidrank.lib.models.action import Action
+from vidrank.lib.models.record import Record
+from vidrank.lib.youtube.youtube_facade import YouTubeFacade
 
 
 def print_ratings_histogram(records: List[Record], youtube_facade: YouTubeFacade) -> None:

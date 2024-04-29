@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from vidrank.lib.action import Action
+from vidrank.lib.models.action import Action
 
 
 class Choice(BaseModel):

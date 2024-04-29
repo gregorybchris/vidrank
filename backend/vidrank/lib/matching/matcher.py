@@ -4,11 +4,11 @@ from typing import Iterator, List
 import numpy as np
 
 from vidrank.app.app_state import AppState
-from vidrank.lib.action import Action
-from vidrank.lib.matching_settings import MatchingSettings
-from vidrank.lib.matching_strategy import MatchingStrategy
+from vidrank.lib.models.action import Action
+from vidrank.lib.models.matching_settings import MatchingSettings
+from vidrank.lib.models.matching_strategy import MatchingStrategy
+from vidrank.lib.models.record import Record
 from vidrank.lib.ranking.ranker import Ranker
-from vidrank.lib.record import Record
 from vidrank.lib.youtube.video import Video
 
 logger = logging.getLogger(__name__)

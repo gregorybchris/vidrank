@@ -3,9 +3,9 @@ from typing import Dict, Iterator, List
 
 from trueskill import Rating, rate
 
-from vidrank.lib.action import Action
+from vidrank.lib.models.action import Action
+from vidrank.lib.models.record import Record
 from vidrank.lib.ranking.ranking import Ranking
-from vidrank.lib.record import Record
 
 
 @dataclass

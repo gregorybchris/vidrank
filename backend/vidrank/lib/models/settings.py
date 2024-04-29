@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from vidrank.lib.matching_settings import MatchingSettings
+from vidrank.lib.models.matching_settings import MatchingSettings
 
 
 class Settings(BaseModel):
