@@ -12,6 +12,6 @@ class Video(BaseModel):
     duration: Duration
     channel_id: str
     channel: str
-    publish_datetime: DateTime
+    published_at: DateTime
     thumbnails: ThumbnailSet
     stats: VideoStats

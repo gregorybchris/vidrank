@@ -97,7 +97,7 @@ export function Video({
                   </div>
                   <div>{"•"}</div>
                   <div className="text-xs text-stone-500">
-                    {formatDateDiff(video.publish_datetime)}
+                    {formatDateDiff(video.published_at)}
                   </div>
                 </div>
 

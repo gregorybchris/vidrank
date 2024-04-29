@@ -6,7 +6,7 @@ import click
 from vidrank.app.app import App
 from vidrank.app.app_state import AppState
 from vidrank.lib.analytics.analytics import print_ratings_histogram
-from vidrank.lib.utilities.io_utilities import print_channel, print_video
+from vidrank.lib.utilities.io_utilities import print_channel, print_playlist, print_video
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +85,7 @@ def get_playlist(
     App.load_app_state()
     app_state = AppState.get()
     playlist = app_state.youtube_facade.get_playlist(playlist_id, use_cache=use_cache)
-    print(f"Loaded playlist: {playlist_id} with {len(playlist.items)} videos")
+    print_playlist(playlist)
 
 
 @main.command(name="channel")

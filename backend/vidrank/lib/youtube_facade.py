@@ -58,9 +58,7 @@ class YouTubeFacade:
                 return channel
 
         channel = self.youtube_client.get_channel(channel_id)
-
         self.channel_cache.add(channel.id, channel)
-
         return channel
 
     def get_playlist(self, playlist_id: str, use_cache: bool = True) -> Playlist:
@@ -69,9 +67,6 @@ class YouTubeFacade:
             if playlist is not None:
                 return playlist
 
-        items = list(self.youtube_client.iter_playlist_items(playlist_id))
-        playlist = Playlist(id=playlist_id, items=items)
-
+        playlist = self.youtube_client.get_playlist(playlist_id)
         self.playlist_cache.add(playlist.id, playlist)
-
         return playlist
