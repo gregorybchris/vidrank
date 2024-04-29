@@ -86,7 +86,7 @@ export function Video({
                 {video.title}
               </div>
               <Link href={urlFromChannelId(video.channel_id)} target="_blank">
-                <div className="truncate text-xs text-stone-500">
+                <div className="truncate text-xs text-stone-500 transition-all hover:text-stone-800">
                   {video.channel}
                 </div>
               </Link>
