@@ -13,7 +13,7 @@ import {
 import { getLargestThumbnail } from "@/lib/models/thumbnailSet";
 import { Video as VideoModel } from "@/lib/models/video";
 import { cn } from "@/lib/utilities/styleUtilities";
-import { urlFromId } from "@/lib/utilities/urlUtilities";
+import { urlFromChannelId, urlFromVideoId } from "@/lib/utilities/urlUtilities";
 import styles from "@/styles/video.module.css";
 import Link from "next/link";
 
@@ -85,9 +85,11 @@ export function Video({
               <div className={cn("text-md", styles.videoTitle)}>
                 {video.title}
               </div>
-              <div className="truncate text-xs text-stone-500">
-                {video.channel}
-              </div>
+              <Link href={urlFromChannelId(video.channel_id)} target="_blank">
+                <div className="truncate text-xs text-stone-500">
+                  {video.channel}
+                </div>
+              </Link>
               <div className="flex items-center space-x-2">
                 <div className="flex items-center space-x-1">
                   <div className="text-xs text-stone-500">
@@ -100,7 +102,7 @@ export function Video({
                 </div>
 
                 <div className="align-center rounded-md bg-stone-900/10 px-2 text-sm text-stone-200 transition-all hover:bg-stone-900/20">
-                  <Link href={urlFromId(video.id)} target="_blank">
+                  <Link href={urlFromVideoId(video.id)} target="_blank">
                     <LinkSimpleHorizontal size={20} color="#404040" />
                   </Link>
                 </div>
