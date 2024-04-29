@@ -1,8 +1,7 @@
-from typing import Dict, Optional
+from typing import Optional
 
 from pydantic import BaseModel
 
-from vidrank.lib.utilities.typing_utilities import JsonObject
 from vidrank.lib.youtube.thumbnail import Thumbnail
 
 
@@ -25,19 +24,3 @@ class ThumbnailSet(BaseModel):
         if self.default is not None:
             return self.default
         return None
-
-    @classmethod
-    def from_dict(cls, thumbnail_set_dict: JsonObject) -> "ThumbnailSet":
-        thumbnail_set_kwargs: Dict[str, Optional[Thumbnail]] = {}
-        for size in ["default", "standard", "medium", "high", "maxres"]:
-            if size in thumbnail_set_dict and thumbnail_set_dict[size] is not None:
-                thumbnail_dict = thumbnail_set_dict[size]
-                thumbnail = Thumbnail(
-                    width=thumbnail_dict["width"],
-                    height=thumbnail_dict["height"],
-                    url=thumbnail_dict["url"],
-                )
-                thumbnail_set_kwargs[size] = thumbnail
-            else:
-                thumbnail_set_kwargs[size] = None
-        return ThumbnailSet(**thumbnail_set_kwargs)

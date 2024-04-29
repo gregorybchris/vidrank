@@ -1,6 +1,6 @@
 import logging
 import math
-from typing import Iterator, List, Mapping, Optional, cast
+from typing import Dict, Iterator, List, Mapping, Optional, cast
 
 from httpx import Client as HttpClient
 from pydantic_extra_types.pendulum_dt import DateTime, Duration
@@ -8,6 +8,7 @@ from pydantic_extra_types.pendulum_dt import parse as pendulum_parse
 
 from vidrank.lib.utilities.typing_utilities import JsonObject
 from vidrank.lib.youtube.playlist_item import PlaylistItem
+from vidrank.lib.youtube.thumbnail import Thumbnail
 from vidrank.lib.youtube.thumbnail_set import ThumbnailSet
 from vidrank.lib.youtube.video import Video
 from vidrank.lib.youtube.video_stats import VideoStats
@@ -85,20 +86,6 @@ class YouTubeClient:
                 else:
                     break
 
-    @classmethod
-    def _video_from_response(cls, video_dict: JsonObject) -> "Video":
-        duration = pendulum_parse(video_dict["contentDetails"]["duration"])
-        publish_datetime = pendulum_parse(video_dict["snippet"]["publishedAt"])
-        return Video(
-            id=video_dict["id"],
-            title=video_dict["snippet"]["title"],
-            duration=cast(Duration, duration),
-            channel=video_dict["snippet"]["channelTitle"],
-            publish_datetime=cast(DateTime, publish_datetime),
-            thumbnails=ThumbnailSet.from_dict(video_dict["snippet"]["thumbnails"]),
-            stats=VideoStats.from_dict(video_dict["statistics"]),
-        )
-
     def iter_playlist_items(self, playlist_id: str, timeout: Optional[int] = None) -> Iterator[PlaylistItem]:
         params: Mapping[str, str | int | List[str]] = {
             "playlistId": playlist_id,
@@ -140,10 +127,56 @@ class YouTubeClient:
                 break
 
     @classmethod
-    def _playlist_item_from_response(cls, playlist_item_dict: JsonObject) -> "PlaylistItem":
+    def _playlist_item_from_response(cls, playlist_item_dict: JsonObject) -> PlaylistItem:
         video_id = playlist_item_dict["contentDetails"]["videoId"]
         added_at = pendulum_parse(playlist_item_dict["snippet"]["publishedAt"])
         return PlaylistItem(
             video_id=video_id,
             added_at=cast(DateTime, added_at),
         )
+
+    @classmethod
+    def _video_from_response(cls, video_dict: JsonObject) -> Video:
+        duration = pendulum_parse(video_dict["contentDetails"]["duration"])
+        publish_datetime = pendulum_parse(video_dict["snippet"]["publishedAt"])
+        return Video(
+            id=video_dict["id"],
+            title=video_dict["snippet"]["title"],
+            duration=cast(Duration, duration),
+            channel=video_dict["snippet"]["channelTitle"],
+            publish_datetime=cast(DateTime, publish_datetime),
+            thumbnails=cls._thumbnail_set_from_response(video_dict["snippet"]["thumbnails"]),
+            stats=cls._video_stats_from_response(video_dict["statistics"]),
+        )
+
+    @classmethod
+    def _thumbnail_set_from_response(cls, thumbnail_set_dict: JsonObject) -> ThumbnailSet:
+        thumbnail_set_kwargs: Dict[str, Optional[Thumbnail]] = {}
+        for size in ["default", "standard", "medium", "high", "maxres"]:
+            if size in thumbnail_set_dict and thumbnail_set_dict[size] is not None:
+                thumbnail_dict = thumbnail_set_dict[size]
+                thumbnail = Thumbnail(
+                    width=thumbnail_dict["width"],
+                    height=thumbnail_dict["height"],
+                    url=thumbnail_dict["url"],
+                )
+                thumbnail_set_kwargs[size] = thumbnail
+            else:
+                thumbnail_set_kwargs[size] = None
+        return ThumbnailSet(**thumbnail_set_kwargs)
+
+    @classmethod
+    def _video_stats_from_response(cls, stats_dict: JsonObject) -> VideoStats:
+        stats_kwargs = {}
+        stat_map = {
+            "favoriteCount": "n_favorites",
+            "commentCount": "n_comments",
+            "dislikeCount": "n_dislikes",
+            "likeCount": "n_likes",
+            "viewCount": "n_views",
+        }
+        for youtube_stat, video_stat in stat_map.items():
+            if youtube_stat not in stats_dict:
+                stats_dict[youtube_stat] = 0
+            stats_kwargs[video_stat] = stats_dict[youtube_stat]
+        return VideoStats(**stats_kwargs)
