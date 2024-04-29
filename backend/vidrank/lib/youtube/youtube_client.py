@@ -177,7 +177,6 @@ class ClientMarshaller:
     def parse_video(cls, video_dict: JsonObject) -> Video:
         duration = pendulum_parse(video_dict["contentDetails"]["duration"])
         publish_datetime = pendulum_parse(video_dict["snippet"]["publishedAt"])
-        print(video_dict)
         return Video(
             id=video_dict["id"],
             title=video_dict["snippet"]["title"],
