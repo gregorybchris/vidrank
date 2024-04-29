@@ -1,3 +1,4 @@
+from vidrank.lib.youtube.channel import Channel
 from vidrank.lib.youtube.video import Video
 
 
@@ -18,3 +19,16 @@ def print_video(video: Video) -> None:
     print(f"\tLikes: {video.stats.n_likes}")
     print(f"\tDislikes: {video.stats.n_dislikes}")
     print(f"\tComments: {video.stats.n_comments}")
+
+
+def print_channel(channel: Channel) -> None:
+    print(f"ID: {channel.id}")
+    print(f"URL: {channel.url}")
+    print(f"Name: {channel.name}")
+    thumbnail = channel.thumbnails.get_highest_resolution()
+    if thumbnail is not None:
+        print(f"Thumbnail URL: {thumbnail.url}")
+    print("Stats: ")
+    print(f"\tSubscribers: {channel.stats.subscribers}")
+    print(f"\tVideos: {channel.stats.videos}")
+    print(f"\tViews: {channel.stats.views}")

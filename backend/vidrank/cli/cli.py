@@ -6,7 +6,7 @@ import click
 from vidrank.app.app import App
 from vidrank.app.app_state import AppState
 from vidrank.lib.analytics.analytics import print_ratings_histogram
-from vidrank.lib.video_utilities import print_video
+from vidrank.lib.utilities.io_utilities import print_channel, print_video
 
 logger = logging.getLogger(__name__)
 
@@ -35,9 +35,6 @@ def get_video(video_id: str, use_cache: bool) -> None:
     App.load_app_state()
     app_state = AppState.get()
     video = app_state.youtube_facade.get_video(video_id, use_cache=use_cache)
-    if video is None:
-        raise ValueError(f"Video with ID {video_id} not found")
-
     print_video(video)
 
 
@@ -75,7 +72,7 @@ def get_channel(channel_id: str, use_cache: bool) -> None:
     App.load_app_state()
     app_state = AppState.get()
     channel = app_state.youtube_facade.get_channel(channel_id, use_cache=use_cache)
-    print(f"Loaded channel: {channel_id}: {channel.name}")
+    print_channel(channel)
 
 
 @main.command(name="analyze")
