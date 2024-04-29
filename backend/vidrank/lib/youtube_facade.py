@@ -1,9 +1,7 @@
 import logging
 from typing import Iterable, Iterator
 
-from vidrank.lib.channel_cache import ChannelCache
-from vidrank.lib.playlist_cache import PlaylistCache
-from vidrank.lib.video_cache import VideoCache
+from vidrank.lib.pickle_cache import PickleCache
 from vidrank.lib.youtube.channel import Channel
 from vidrank.lib.youtube.playlist import Playlist
 from vidrank.lib.youtube.video import Video
@@ -17,9 +15,9 @@ class YouTubeFacade:
         self,
         *,
         youtube_client: YouTubeClient,
-        video_cache: VideoCache,
-        channel_cache: ChannelCache,
-        playlist_cache: PlaylistCache,
+        video_cache: PickleCache[Video],
+        channel_cache: PickleCache[Channel],
+        playlist_cache: PickleCache[Playlist],
     ):
         self.youtube_client = youtube_client
         self.video_cache = video_cache
@@ -33,7 +31,7 @@ class YouTubeFacade:
                 return video
 
         for video in self.youtube_client.iter_videos([video_id]):
-            self.video_cache.add(video)
+            self.video_cache.add(video.id, video)
             return video
 
         raise ValueError(f"Video with ID {video_id} not found")
@@ -50,7 +48,7 @@ class YouTubeFacade:
 
         if len(video_ids_to_fetch) != 0:
             for video in self.youtube_client.iter_videos(video_ids_to_fetch):
-                self.video_cache.add(video)
+                self.video_cache.add(video.id, video)
                 yield video
 
     def get_channel(self, channel_id: str, use_cache: bool = True) -> Channel:
@@ -61,7 +59,7 @@ class YouTubeFacade:
 
         channel = self.youtube_client.get_channel(channel_id)
 
-        self.channel_cache.add(channel)
+        self.channel_cache.add(channel.id, channel)
 
         return channel
 
@@ -74,6 +72,6 @@ class YouTubeFacade:
         items = list(self.youtube_client.iter_playlist_items(playlist_id))
         playlist = Playlist(id=playlist_id, items=items)
 
-        self.playlist_cache.add(playlist)
+        self.playlist_cache.add(playlist.id, playlist)
 
         return playlist
