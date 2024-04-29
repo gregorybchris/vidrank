@@ -7,6 +7,8 @@ from pydantic_extra_types.pendulum_dt import DateTime, Duration
 from pydantic_extra_types.pendulum_dt import parse as pendulum_parse
 
 from vidrank.lib.utilities.typing_utilities import JsonObject
+from vidrank.lib.youtube.channel import Channel
+from vidrank.lib.youtube.channel_stats import ChannelStats
 from vidrank.lib.youtube.playlist_item import PlaylistItem
 from vidrank.lib.youtube.thumbnail import Thumbnail
 from vidrank.lib.youtube.thumbnail_set import ThumbnailSet
@@ -79,12 +81,46 @@ class YouTubeClient:
                     raise ValueError(response_json["error"]["message"])
 
                 for response_item in response_json["items"]:
-                    yield self._video_from_response(response_item)
+                    yield ClientMarshaller.parse_video(response_item)
 
                 if "nextPageToken" in response_json:
                     page_token = response_json["nextPageToken"]
                 else:
                     break
+
+    def get_channel(self, channel_id: str, timeout: Optional[int] = None) -> Channel:
+        params: Mapping[str, str | int | List[str]] = {
+            "id": channel_id,
+            "key": self.api_key,
+            "hl": "en_US",
+            "part": ["id", "snippet", "statistics"],
+        }
+
+        logger.debug("Requesting channel from the YouTube API.")
+
+        request_url = f"{self.BASE_URL}/channels"
+        response = self.http_client.get(
+            request_url,
+            params=params,
+            timeout=timeout,
+        )
+        logger.debug(f"Request URL: {response.request.url}")
+
+        response_json = response.json()
+        if "error" in response_json:
+            raise ValueError(response_json["error"]["message"])
+        if response_json["pageInfo"]["totalResults"] == 0:
+            raise ValueError(f"Channel with ID {channel_id} not found")
+
+        response_item = response_json["items"][0]
+        channel_id = response_item["id"]
+        return Channel(
+            id=channel_id,
+            name=response_item["snippet"]["title"],
+            url=f"https://www.youtube.com/channel/{channel_id}",
+            thumbnails=ClientMarshaller.parse_thumbnail_set(response_item["snippet"]["thumbnails"]),
+            stats=ClientMarshaller.parse_channel_stats(response_item["statistics"]),
+        )
 
     def iter_playlist_items(self, playlist_id: str, timeout: Optional[int] = None) -> Iterator[PlaylistItem]:
         params: Mapping[str, str | int | List[str]] = {
@@ -112,22 +148,24 @@ class YouTubeClient:
             logger.debug(f"Request URL: {response.request.url}")
 
             response_json = response.json()
-
             if "error" in response_json:
                 if response_json["error"]["code"] == 404:
                     raise ValueError(f"Playlist with ID {playlist_id} not found")
                 raise ValueError(response_json["error"]["message"])
 
             for response_item in response_json["items"]:
-                yield self._playlist_item_from_response(response_item)
+                yield ClientMarshaller.parse_playlist_item(response_item)
 
             if "nextPageToken" in response_json:
                 page_token = response_json["nextPageToken"]
             else:
                 break
 
+
+class ClientMarshaller:
+
     @classmethod
-    def _playlist_item_from_response(cls, playlist_item_dict: JsonObject) -> PlaylistItem:
+    def parse_playlist_item(cls, playlist_item_dict: JsonObject) -> PlaylistItem:
         video_id = playlist_item_dict["contentDetails"]["videoId"]
         added_at = pendulum_parse(playlist_item_dict["snippet"]["publishedAt"])
         return PlaylistItem(
@@ -136,21 +174,23 @@ class YouTubeClient:
         )
 
     @classmethod
-    def _video_from_response(cls, video_dict: JsonObject) -> Video:
+    def parse_video(cls, video_dict: JsonObject) -> Video:
         duration = pendulum_parse(video_dict["contentDetails"]["duration"])
         publish_datetime = pendulum_parse(video_dict["snippet"]["publishedAt"])
+        print(video_dict)
         return Video(
             id=video_dict["id"],
             title=video_dict["snippet"]["title"],
             duration=cast(Duration, duration),
+            channel_id=video_dict["snippet"]["channelId"],
             channel=video_dict["snippet"]["channelTitle"],
             publish_datetime=cast(DateTime, publish_datetime),
-            thumbnails=cls._thumbnail_set_from_response(video_dict["snippet"]["thumbnails"]),
-            stats=cls._video_stats_from_response(video_dict["statistics"]),
+            thumbnails=cls.parse_thumbnail_set(video_dict["snippet"]["thumbnails"]),
+            stats=cls.parse_video_stats(video_dict["statistics"]),
         )
 
     @classmethod
-    def _thumbnail_set_from_response(cls, thumbnail_set_dict: JsonObject) -> ThumbnailSet:
+    def parse_thumbnail_set(cls, thumbnail_set_dict: JsonObject) -> ThumbnailSet:
         thumbnail_set_kwargs: Dict[str, Optional[Thumbnail]] = {}
         for size in ["default", "standard", "medium", "high", "maxres"]:
             if size in thumbnail_set_dict and thumbnail_set_dict[size] is not None:
@@ -166,7 +206,7 @@ class YouTubeClient:
         return ThumbnailSet(**thumbnail_set_kwargs)
 
     @classmethod
-    def _video_stats_from_response(cls, stats_dict: JsonObject) -> VideoStats:
+    def parse_video_stats(cls, stats_dict: JsonObject) -> VideoStats:
         stats_kwargs = {}
         stat_map = {
             "favoriteCount": "n_favorites",
@@ -180,3 +220,11 @@ class YouTubeClient:
                 stats_dict[youtube_stat] = 0
             stats_kwargs[video_stat] = stats_dict[youtube_stat]
         return VideoStats(**stats_kwargs)
+
+    @classmethod
+    def parse_channel_stats(cls, stats_dict: JsonObject) -> ChannelStats:
+        return ChannelStats(
+            subscribers=stats_dict["subscriberCount"],
+            videos=stats_dict["videoCount"],
+            views=stats_dict["viewCount"],
+        )

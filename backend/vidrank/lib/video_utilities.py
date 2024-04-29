@@ -6,6 +6,7 @@ def print_video(video: Video) -> None:
     print(f"URL: https://www.youtube.com/watch?v={video.id}")
     print(f"Title: {video.title}")
     print(f"Duration: {video.duration}")
+    print(f"Channel ID: {video.channel_id}")
     print(f"Channel: {video.channel}")
     print(f"Publish datetime: {video.publish_datetime.to_day_datetime_string()}")
     thumbnail = video.thumbnails.get_highest_resolution()

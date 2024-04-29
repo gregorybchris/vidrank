@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from vidrank.app.app_state import AppState
 from vidrank.app.routes import router
+from vidrank.lib.channel_cache import ChannelCache
 from vidrank.lib.playlist_cache import PlaylistCache
 from vidrank.lib.record_tracker import RecordTracker
 from vidrank.lib.video_cache import VideoCache
@@ -78,10 +79,12 @@ class App:
         cache_dirpath = Path(cache_dir_str)
         youtube_client = YouTubeClient(api_key)
         video_cache = VideoCache(cache_dirpath)
+        channel_cache = ChannelCache(cache_dirpath)
         playlist_cache = PlaylistCache(cache_dirpath)
         youtube_facade = YouTubeFacade(
             youtube_client=youtube_client,
             video_cache=video_cache,
+            channel_cache=channel_cache,
             playlist_cache=playlist_cache,
         )
         record_tracker = RecordTracker(cache_dirpath)

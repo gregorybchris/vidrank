@@ -65,10 +65,17 @@ def get_playlist(playlist_id: str, use_cache: bool) -> None:
     App.load_app_state()
     app_state = AppState.get()
     playlist = app_state.youtube_facade.get_playlist(playlist_id, use_cache=use_cache)
-    if playlist is None:
-        raise ValueError(f"Playlist with ID {playlist_id} not found")
-
     print(f"Loaded playlist: {playlist_id} with {len(playlist.items)} videos")
+
+
+@main.command(name="channel")
+@click.argument("channel_id", type=str)
+@click.option("--use-cache/--no-cache", default=True)
+def get_channel(channel_id: str, use_cache: bool) -> None:
+    App.load_app_state()
+    app_state = AppState.get()
+    channel = app_state.youtube_facade.get_channel(channel_id, use_cache=use_cache)
+    print(f"Loaded channel: {channel_id}: {channel.name}")
 
 
 @main.command(name="analyze")

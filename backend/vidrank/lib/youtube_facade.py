@@ -1,8 +1,10 @@
 import logging
 from typing import Iterable, Iterator
 
+from vidrank.lib.channel_cache import ChannelCache
 from vidrank.lib.playlist_cache import PlaylistCache
 from vidrank.lib.video_cache import VideoCache
+from vidrank.lib.youtube.channel import Channel
 from vidrank.lib.youtube.playlist import Playlist
 from vidrank.lib.youtube.video import Video
 from vidrank.lib.youtube.youtube_client import YouTubeClient
@@ -16,10 +18,12 @@ class YouTubeFacade:
         *,
         youtube_client: YouTubeClient,
         video_cache: VideoCache,
+        channel_cache: ChannelCache,
         playlist_cache: PlaylistCache,
     ):
         self.youtube_client = youtube_client
         self.video_cache = video_cache
+        self.channel_cache = channel_cache
         self.playlist_cache = playlist_cache
 
     def get_video(self, video_id: str, use_cache: bool = True) -> Video:
@@ -48,6 +52,18 @@ class YouTubeFacade:
             for video in self.youtube_client.iter_videos(video_ids_to_fetch):
                 self.video_cache.add(video)
                 yield video
+
+    def get_channel(self, channel_id: str, use_cache: bool = True) -> Channel:
+        if use_cache:
+            channel = self.channel_cache.get(channel_id)
+            if channel is not None:
+                return channel
+
+        channel = self.youtube_client.get_channel(channel_id)
+
+        self.channel_cache.add(channel)
+
+        return channel
 
     def get_playlist(self, playlist_id: str, use_cache: bool = True) -> Playlist:
         if use_cache:
