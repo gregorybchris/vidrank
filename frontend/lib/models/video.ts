@@ -4,7 +4,7 @@ import { VideoStats } from "@/lib/models/videoStats";
 export type Video = {
   id: string;
   title: string;
-  duration: number;
+  duration: string;
   channel: string;
   publish_datetime: string;
   thumbnails: ThumbnailSet;

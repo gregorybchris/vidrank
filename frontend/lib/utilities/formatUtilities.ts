@@ -1,4 +1,4 @@
-import { DateTime } from "luxon";
+import { DateTime, Duration } from "luxon";
 
 export function formatDate(date: string) {
   const datetime = DateTime.fromISO(date);
@@ -12,15 +12,17 @@ export function formatDateDiff(date: string) {
   return DateTime.fromISO(date).toRelative(DateTime.now());
 }
 
-function durationInSecondsToStruct(duration: number) {
-  const hours = Math.floor(duration / 3600);
-  const minutes = Math.floor((duration % 3600) / 60);
-  const seconds = duration % 60;
-  return { hours, minutes, seconds };
+function durationToStruct(duration: Duration) {
+  return {
+    hours: duration.hours,
+    minutes: duration.minutes,
+    seconds: duration.seconds,
+  };
 }
 
-export function formatDuration(duration: number) {
-  const d = durationInSecondsToStruct(duration);
+export function formatDuration(durationString: string) {
+  const duration = Duration.fromISO(durationString);
+  const d = durationToStruct(duration);
   function pad(n: number) {
     const s = `0${n}`;
     return s.substring(s.length - 2);
