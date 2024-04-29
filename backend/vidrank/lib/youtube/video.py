@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pydantic import BaseModel
 from pydantic_extra_types.pendulum_dt import DateTime, Duration
 
@@ -12,7 +10,7 @@ class Video(BaseModel):
     id: str
     title: str
     duration: Duration
-    channel_id: Optional[str] = None
+    channel_id: str
     channel: str
     publish_datetime: DateTime
     thumbnails: ThumbnailSet
