@@ -31,7 +31,15 @@ def serve(debug: bool = False, **kwds: Any) -> None:
 @main.command(name="video")
 @click.argument("video_id", type=str)
 @click.option("--use-cache/--no-cache", default=True)
-def get_video(video_id: str, use_cache: bool) -> None:
+@click.option("--debug", type=bool, default=False, is_flag=True)
+def get_video(
+    video_id: str,
+    use_cache: bool,
+    debug: bool = False,
+) -> None:
+    if debug:
+        logging.basicConfig(level=logging.INFO)
+
     App.load_app_state()
     app_state = AppState.get()
     video = app_state.youtube_facade.get_video(video_id, use_cache=use_cache)
@@ -40,7 +48,14 @@ def get_video(video_id: str, use_cache: bool) -> None:
 
 @main.command(name="record")
 @click.argument("record_id", type=str)
-def get_record(record_id: str) -> None:
+@click.option("--debug", type=bool, default=False, is_flag=True)
+def get_record(
+    record_id: str,
+    debug: bool = False,
+) -> None:
+    if debug:
+        logging.basicConfig(level=logging.INFO)
+
     App.load_app_state()
     app_state = AppState.get()
     records = app_state.record_tracker.load()
@@ -58,7 +73,15 @@ def get_record(record_id: str) -> None:
 @main.command(name="playlist")
 @click.argument("playlist_id", type=str)
 @click.option("--use-cache/--no-cache", default=True)
-def get_playlist(playlist_id: str, use_cache: bool) -> None:
+@click.option("--debug", type=bool, default=False, is_flag=True)
+def get_playlist(
+    playlist_id: str,
+    use_cache: bool,
+    debug: bool = False,
+) -> None:
+    if debug:
+        logging.basicConfig(level=logging.INFO)
+
     App.load_app_state()
     app_state = AppState.get()
     playlist = app_state.youtube_facade.get_playlist(playlist_id, use_cache=use_cache)
@@ -68,7 +91,15 @@ def get_playlist(playlist_id: str, use_cache: bool) -> None:
 @main.command(name="channel")
 @click.argument("channel_id", type=str)
 @click.option("--use-cache/--no-cache", default=True)
-def get_channel(channel_id: str, use_cache: bool) -> None:
+@click.option("--debug", type=bool, default=False, is_flag=True)
+def get_channel(
+    channel_id: str,
+    use_cache: bool,
+    debug: bool = False,
+) -> None:
+    if debug:
+        logging.basicConfig(level=logging.INFO)
+
     App.load_app_state()
     app_state = AppState.get()
     channel = app_state.youtube_facade.get_channel(channel_id, use_cache=use_cache)
