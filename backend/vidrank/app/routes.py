@@ -1,5 +1,5 @@
 import logging
-from typing import Any, List
+from typing import List
 
 from fastapi import APIRouter
 from fastapi import HTTPException as HttpException
@@ -14,6 +14,7 @@ from vidrank.lib.record import Record
 from vidrank.lib.settings import Settings
 from vidrank.lib.utilities.datetime_utilities import get_timestamp
 from vidrank.lib.utilities.identifier_utilities import get_identifier
+from vidrank.lib.youtube.video import Video
 
 logger = logging.getLogger(__name__)
 
@@ -45,16 +46,16 @@ class PostVideosRequest(BaseModel):
 
 
 class PostVideosResponse(BaseModel):
-    videos: List[Any]
+    videos: List[Video]
 
 
 @router.post(name="Videos", path="/videos", description="Post videos.")
 def post_videos(request: PostVideosRequest) -> PostVideosResponse:
     app_state = AppState.get()
 
-    next_videos = Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, request.settings.matching_settings)
+    videos = list(Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, request.settings.matching_settings))
 
-    return PostVideosResponse(videos=[video.serialize() for video in next_videos])
+    return PostVideosResponse(videos=videos)
 
 
 class PostSubmitRequest(BaseModel):
@@ -64,13 +65,13 @@ class PostSubmitRequest(BaseModel):
 
 class PostSubmitResponse(BaseModel):
     record_id: str
-    videos: List[Any]
+    videos: List[Video]
 
 
 @router.post(name="Submit", path="/submit", description="Post submit.")
 def post_submit(request: PostSubmitRequest) -> PostSubmitResponse:
     app_state = AppState.get()
-    next_videos = Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, request.settings.matching_settings)
+    videos = list(Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, request.settings.matching_settings))
 
     record_id = get_identifier()
     created_at = get_timestamp()
@@ -80,7 +81,7 @@ def post_submit(request: PostSubmitRequest) -> PostSubmitResponse:
         choice_set=request.choice_set,
     )
     app_state.record_tracker.add(record)
-    return PostSubmitResponse(record_id=record_id, videos=[video.serialize() for video in next_videos])
+    return PostSubmitResponse(record_id=record_id, videos=videos)
 
 
 class PostUndoRequest(BaseModel):
@@ -88,7 +89,7 @@ class PostUndoRequest(BaseModel):
 
 
 class PostUndoResponse(BaseModel):
-    videos: List[Any]
+    videos: List[Video]
     choice_set: ChoiceSet
 
 
@@ -100,9 +101,9 @@ def post_undo(request: PostUndoRequest) -> PostUndoResponse:
         raise HttpException(status_code=404, detail="Videos no longer available")
 
     video_ids = [choice.video_id for choice in record.choice_set.choices]
-    next_videos = list(app_state.youtube_facade.iter_videos(video_ids))
+    videos = list(app_state.youtube_facade.iter_videos(video_ids))
 
-    return PostUndoResponse(videos=[video.serialize() for video in next_videos], choice_set=record.choice_set)
+    return PostUndoResponse(videos=videos, choice_set=record.choice_set)
 
 
 class PostSkipRequest(BaseModel):
@@ -112,13 +113,13 @@ class PostSkipRequest(BaseModel):
 
 class PostSkipResponse(BaseModel):
     record_id: str
-    videos: List[Any]
+    videos: List[Video]
 
 
 @router.post(name="Skip", path="/skip", description="Post skip.")
 def post_skip(request: PostSkipRequest) -> PostSkipResponse:
     app_state = AppState.get()
-    next_videos = Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, request.settings.matching_settings)
+    videos = list(Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, request.settings.matching_settings))
 
     record_id = get_identifier()
     created_at = get_timestamp()
@@ -128,11 +129,11 @@ def post_skip(request: PostSkipRequest) -> PostSkipResponse:
         choice_set=request.choice_set,
     )
     app_state.record_tracker.add(record)
-    return PostSkipResponse(record_id=record_id, videos=[video.serialize() for video in next_videos])
+    return PostSkipResponse(record_id=record_id, videos=videos)
 
 
 class ResponseRanking(BaseModel):
-    video: Any
+    video: Video
     rank: int
     rating: float
 
@@ -155,7 +156,7 @@ def get_rankings() -> GetRankingsResponse:
     for ranking in rankings:
         video = video_map[ranking.video_id]
         response_ranking = ResponseRanking(
-            video=video.serialize(),
+            video=video,
             rank=ranking.rank,
             rating=ranking.rating,
         )

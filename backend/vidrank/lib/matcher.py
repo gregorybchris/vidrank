@@ -44,7 +44,8 @@ class Matcher:
         playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
 
         records = app_state.record_tracker.load()
-        non_removed_ids = cls.get_non_removed(playlist.video_ids, records)
+        playlist_video_ids = [item.video_id for item in playlist.items]
+        non_removed_ids = cls.get_non_removed(playlist_video_ids, records)
 
         # Find videos that can be found in the YouTube API
         # NOTE: iter_videos can fail to find videos, so iterate until we have enough
@@ -68,7 +69,8 @@ class Matcher:
         rankings = list(Ranker.iter_rankings(records))
 
         # Filter for rankings for videos that are not removed
-        non_removed_ids = cls.get_non_removed(playlist.video_ids, records)
+        playlist_video_ids = [item.video_id for item in playlist.items]
+        non_removed_ids = cls.get_non_removed(playlist_video_ids, records)
         rankings = [r for r in rankings if r.video_id in non_removed_ids]
 
         # If there are not enough ranked videos, return a random selection

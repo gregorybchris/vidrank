@@ -2,7 +2,9 @@ from typing import List
 
 from pydantic import BaseModel
 
+from vidrank.lib.youtube.playlist_item import PlaylistItem
+
 
 class Playlist(BaseModel):
     id: str
-    video_ids: List[str]
+    items: List[PlaylistItem]

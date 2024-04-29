@@ -1,6 +1,6 @@
-from typing import Any, Dict
-
 from pydantic import BaseModel
+
+from vidrank.lib.utilities.typing_utilities import JsonObject
 
 
 class VideoStats(BaseModel):
@@ -11,7 +11,7 @@ class VideoStats(BaseModel):
     n_views: int
 
     @classmethod
-    def from_dict(cls, stats_dict: Dict[str, Any]) -> "VideoStats":
+    def from_dict(cls, stats_dict: JsonObject) -> "VideoStats":
         stats_kwargs = {}
         stat_map = {
             "favoriteCount": "n_favorites",

@@ -68,7 +68,7 @@ def get_playlist(playlist_id: str, use_cache: bool) -> None:
     if playlist is None:
         raise ValueError(f"Playlist with ID {playlist_id} not found")
 
-    print(f"Loaded playlist: {playlist_id} with {len(playlist.video_ids)} videos")
+    print(f"Loaded playlist: {playlist_id} with {len(playlist.items)} videos")
 
 
 @main.command(name="analyze")

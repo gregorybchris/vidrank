@@ -55,8 +55,8 @@ class YouTubeFacade:
             if playlist is not None:
                 return playlist
 
-        video_ids = list(self.youtube_client.iter_playlist_video_ids(playlist_id))
-        playlist = Playlist(id=playlist_id, video_ids=video_ids)
+        items = list(self.youtube_client.iter_playlist_items(playlist_id))
+        playlist = Playlist(id=playlist_id, items=items)
 
         self.playlist_cache.add(playlist)
 
