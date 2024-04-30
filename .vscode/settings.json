@@ -20,5 +20,6 @@
   "mypy-type-checker.args": ["--config-file", "backend/pyproject.toml"],
   "prettier.printWidth": 120,
   "pylint.path": ["pylint"],
-  "pylint.args": ["--rcfile", "backend/pyproject.toml"]
+  "pylint.args": ["--rcfile", "backend/pyproject.toml"],
+  "python.analysis.extraPaths": ["backend"]
 }
