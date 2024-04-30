@@ -1,3 +1,4 @@
+from vidrank.lib.utilities.url_utilities import url_from_channel_id, url_from_playlist_id, url_from_video_id
 from vidrank.lib.youtube.channel import Channel
 from vidrank.lib.youtube.playlist import Playlist
 from vidrank.lib.youtube.video import Video
@@ -5,7 +6,7 @@ from vidrank.lib.youtube.video import Video
 
 def print_video(video: Video) -> None:
     print(f"ID: {video.id}")
-    print(f"URL: https://www.youtube.com/watch?v={video.id}")
+    print(f"URL: {url_from_video_id(video.id)}")
     print(f"Title: {video.title}")
     print(f"Duration: {video.duration}")
     print(f"Channel ID: {video.channel_id}")
@@ -24,7 +25,7 @@ def print_video(video: Video) -> None:
 
 def print_channel(channel: Channel) -> None:
     print(f"ID: {channel.id}")
-    print(f"URL: {channel.url}")
+    print(f"URL: {url_from_channel_id(channel.id)}")
     print(f"Name: {channel.name}")
     thumbnail = channel.thumbnails.get_highest_resolution()
     if thumbnail is not None:
@@ -37,7 +38,7 @@ def print_channel(channel: Channel) -> None:
 
 def print_playlist(playlist: Playlist) -> None:
     print(f"ID: {playlist.id}")
-    print(f"URL: https://www.youtube.com/playlist?list={playlist.id}")
+    print(f"URL: {url_from_playlist_id(playlist.id)}")
     print(f"Title: {playlist.title}")
     print(f"Created at: {playlist.created_at.to_day_datetime_string()}")
     thumbnail = playlist.thumbnails.get_highest_resolution()

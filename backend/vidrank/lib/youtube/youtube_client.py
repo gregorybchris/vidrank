@@ -239,7 +239,6 @@ class ClientMarshaller:
         return Channel(
             id=channel_id,
             name=channel_dict["snippet"]["title"],
-            url=f"https://www.youtube.com/channel/{channel_id}",
             thumbnails=ClientMarshaller.parse_thumbnail_set(channel_dict["snippet"]["thumbnails"]),
             stats=ClientMarshaller.parse_channel_stats(channel_dict["statistics"]),
         )
