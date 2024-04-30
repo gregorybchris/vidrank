@@ -78,10 +78,12 @@ def get_record(
 @click.argument("playlist_id", type=str)
 @click.option("--use-cache/--no-cache", default=True)
 @click.option("--debug", type=bool, default=False, is_flag=True)
+@click.option("--n-videos", type=int, default=0)
 def get_playlist(
     playlist_id: str,
     use_cache: bool,
     debug: bool = False,
+    n_videos: int = 0,
 ) -> None:
     if debug:
         logging.basicConfig(level=logging.INFO)
@@ -90,6 +92,13 @@ def get_playlist(
     app_state = AppState.get()
     playlist = app_state.youtube_facade.get_playlist(playlist_id, use_cache=use_cache)
     print_playlist(playlist)
+
+    if n_videos > 0:
+        items = sorted(playlist.items, key=lambda x: x.added_at, reverse=True)
+        for item in islice(items, n_videos):
+            video = app_state.youtube_facade.get_video(item.video_id)
+            print("= = = = = = = = = = = =")
+            print_video(video)
 
 
 @main.command(name="channel")
