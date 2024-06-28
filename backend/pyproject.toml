@@ -53,7 +53,7 @@ src = ["vidrank"]
 
 
 [tool.ruff.lint]
-ignore = ["D203", "D213", "D407", "FIX002", "TD003"]
+ignore = ["FIX002", "TD003"]
 select = [
     "A",
     "ARG",
