@@ -1,14 +1,12 @@
-from typing import Dict, List
-
 from vidrank.lib.models.action import Action
 from vidrank.lib.models.record import Record
 from vidrank.lib.youtube.youtube_facade import YouTubeFacade
 
 
-def print_ratings_histogram(records: List[Record], youtube_facade: YouTubeFacade) -> None:
+def print_ratings_histogram(records: list[Record], youtube_facade: YouTubeFacade) -> None:
     print(f"A total of {len(records)} records have been created.")
 
-    counts: Dict[str, Dict[str, int]] = {}
+    counts: dict[str, dict[str, int]] = {}
     for record in records:
         for choice in record.choice_set.choices:
             video_id = choice.video_id

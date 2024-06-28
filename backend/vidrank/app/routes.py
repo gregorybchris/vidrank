@@ -1,5 +1,4 @@
 import logging
-from typing import List
 
 from fastapi import APIRouter
 from fastapi import HTTPException as HttpException
@@ -46,7 +45,7 @@ class PostVideosRequest(BaseModel):
 
 
 class PostVideosResponse(BaseModel):
-    videos: List[Video]
+    videos: list[Video]
 
 
 @router.post(name="Videos", path="/videos", description="Post videos.")
@@ -65,7 +64,7 @@ class PostSubmitRequest(BaseModel):
 
 class PostSubmitResponse(BaseModel):
     record_id: str
-    videos: List[Video]
+    videos: list[Video]
 
 
 @router.post(name="Submit", path="/submit", description="Post submit.")
@@ -89,7 +88,7 @@ class PostUndoRequest(BaseModel):
 
 
 class PostUndoResponse(BaseModel):
-    videos: List[Video]
+    videos: list[Video]
     choice_set: ChoiceSet
 
 
@@ -113,7 +112,7 @@ class PostSkipRequest(BaseModel):
 
 class PostSkipResponse(BaseModel):
     record_id: str
-    videos: List[Video]
+    videos: list[Video]
 
 
 @router.post(name="Skip", path="/skip", description="Post skip.")
@@ -139,7 +138,7 @@ class ResponseRanking(BaseModel):
 
 
 class GetRankingsResponse(BaseModel):
-    rankings: List[ResponseRanking]
+    rankings: list[ResponseRanking]
 
 
 @router.get(name="Rankings", path="/rankings", description="Get rankings.")

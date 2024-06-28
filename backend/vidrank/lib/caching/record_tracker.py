@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
 from vidrank.lib.models.record import Record
 
@@ -14,7 +14,7 @@ class RecordTracker:
     def ensure_exists(self) -> None:
         self.dirpath.mkdir(parents=True, exist_ok=True)
 
-    def load(self) -> List[Record]:
+    def load(self) -> list[Record]:
         if not self.filepath.exists():
             return []
         with self.filepath.open("r") as fp:

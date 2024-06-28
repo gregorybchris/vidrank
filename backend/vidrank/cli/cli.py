@@ -24,11 +24,11 @@ def main() -> None:
 @click.option("--host", "host", type=str, default=App.DEFAULT_HOST)
 @click.option("--port", "port", type=int, default=App.DEFAULT_PORT)
 @click.option("--debug", type=bool, default=False, is_flag=True)
-def serve(debug: bool = False, **kwds: Any) -> None:
+def serve(debug: bool = False, **kwargs: Any) -> None:
     if debug:
         logging.basicConfig(level=logging.INFO)
 
-    with App.context(**kwds) as app:
+    with App.context(**kwargs) as app:
         app.start()
 
 

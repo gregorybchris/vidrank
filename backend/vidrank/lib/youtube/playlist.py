@@ -1,5 +1,3 @@
-from typing import List
-
 from pydantic import BaseModel
 from pydantic_extra_types.pendulum_dt import DateTime
 
@@ -13,4 +11,4 @@ class Playlist(BaseModel):
     created_at: DateTime
     thumbnails: ThumbnailSet
     description: str
-    items: List[PlaylistItem]
+    items: list[PlaylistItem]

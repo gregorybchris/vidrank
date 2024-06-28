@@ -1,6 +1,6 @@
 import logging
 import math
-from typing import ClassVar, Dict, Iterator, List, Mapping, Optional, cast
+from typing import ClassVar, Iterator, Mapping, Optional, cast
 
 from httpx import Client as HttpClient
 from pydantic_extra_types.pendulum_dt import DateTime, Duration
@@ -45,7 +45,7 @@ class YouTubeClient:
         self.http_client = HttpClient()
         self.batch_size = batch_size
 
-    def iter_videos(self, video_ids: List[str], timeout: Optional[int] = None) -> Iterator[Video]:
+    def iter_videos(self, video_ids: list[str], timeout: Optional[int] = None) -> Iterator[Video]:
         n_chunks = math.ceil(len(video_ids) / self.batch_size)
         for chunk_i in range(0, n_chunks):
             chunk_ids = video_ids[chunk_i * self.batch_size : (chunk_i + 1) * self.batch_size]
@@ -53,7 +53,7 @@ class YouTubeClient:
             logger.debug("Requesting %d videos from the YouTube API.", len(chunk_ids))
 
             concat_ids = ",".join(chunk_ids)
-            params: Mapping[str, str | int | List[str]] = {
+            params: Mapping[str, str | int | list[str]] = {
                 "id": concat_ids,
                 "key": self.api_key,
                 "hl": "en_US",
@@ -89,7 +89,7 @@ class YouTubeClient:
                     break
 
     def get_channel(self, channel_id: str, timeout: Optional[int] = None) -> Channel:
-        params: Mapping[str, str | int | List[str]] = {
+        params: Mapping[str, str | int | list[str]] = {
             "id": channel_id,
             "key": self.api_key,
             "hl": "en_US",
@@ -117,7 +117,7 @@ class YouTubeClient:
         return ClientMarshaller.parse_channel(response_item)
 
     def get_playlist(self, playlist_id: str, timeout: Optional[int] = None) -> Playlist:
-        params: Mapping[str, str | int | List[str]] = {
+        params: Mapping[str, str | int | list[str]] = {
             "id": playlist_id,
             "key": self.api_key,
             "hl": "en_US",
@@ -146,7 +146,7 @@ class YouTubeClient:
         return ClientMarshaller.parse_playlist(response_item, items)
 
     def _iter_playlist_items(self, playlist_id: str, timeout: Optional[int] = None) -> Iterator[PlaylistItem]:
-        params: Mapping[str, str | int | List[str]] = {
+        params: Mapping[str, str | int | list[str]] = {
             "playlistId": playlist_id,
             "key": self.api_key,
             "hl": "en_US",
@@ -205,7 +205,7 @@ class ClientMarshaller:
 
     @classmethod
     def parse_thumbnail_set(cls, thumbnail_set_dict: JsonObject) -> ThumbnailSet:
-        thumbnail_set_kwargs: Dict[str, Optional[Thumbnail]] = {}
+        thumbnail_set_kwargs: dict[str, Optional[Thumbnail]] = {}
         for size in ["default", "standard", "medium", "high", "maxres"]:
             if size in thumbnail_set_dict and thumbnail_set_dict[size] is not None:
                 thumbnail_dict = thumbnail_set_dict[size]
@@ -254,7 +254,7 @@ class ClientMarshaller:
         )
 
     @classmethod
-    def parse_playlist(cls, playlist_dict: JsonObject, items: List[PlaylistItem]) -> Playlist:
+    def parse_playlist(cls, playlist_dict: JsonObject, items: list[PlaylistItem]) -> Playlist:
         playlist_id = playlist_dict["id"]
         created_at = pendulum_parse(playlist_dict["snippet"]["publishedAt"])
         return Playlist(

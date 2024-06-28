@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, Iterator, List
+from typing import Iterator
 
 from trueskill import Rating, rate
 
@@ -16,8 +16,8 @@ class Comp:
 
 class Ranker:
     @classmethod
-    def iter_rankings(cls, records: List[Record]) -> Iterator[Ranking]:
-        rating_map: Dict[str, Rating] = {}
+    def iter_rankings(cls, records: list[Record]) -> Iterator[Ranking]:
+        rating_map: dict[str, Rating] = {}
         for comp in cls._get_comps(records):
             cls._update_ratings(rating_map, comp)
 
@@ -26,7 +26,7 @@ class Ranker:
             yield Ranking(video_id=video_id, rank=i + 1, rating=rating.mu)
 
     @classmethod
-    def _update_ratings(cls, rating_map: Dict[str, Rating], comp: Comp) -> None:
+    def _update_ratings(cls, rating_map: dict[str, Rating], comp: Comp) -> None:
         for video_id in [comp.winner_id, comp.loser_id]:
             if video_id not in rating_map:
                 rating_map[video_id] = Rating()
@@ -40,7 +40,7 @@ class Ranker:
         rating_map.update(comp_ratings[1])
 
     @classmethod
-    def _get_comps(cls, records: List[Record]) -> Iterator[Comp]:
+    def _get_comps(cls, records: list[Record]) -> Iterator[Comp]:
         for record in records:
             for choice_a in record.choice_set.choices:
                 action_a = choice_a.action

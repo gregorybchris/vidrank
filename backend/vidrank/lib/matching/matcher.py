@@ -1,5 +1,5 @@
 import logging
-from typing import Iterator, List
+from typing import Iterator
 
 import numpy as np
 
@@ -106,7 +106,7 @@ class Matcher:
                 yield video
 
     @classmethod
-    def get_non_removed(cls, video_ids: List[str], records: List[Record]) -> List[str]:
+    def get_non_removed(cls, video_ids: list[str], records: list[Record]) -> list[str]:
         ids_set = set(video_ids)
         for record in records:
             ids_set -= {c.video_id for c in record.choice_set.choices if c.action == Action.REMOVE}
