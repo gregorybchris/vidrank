@@ -1,3 +1,5 @@
+"""Command-line interface for the VidRank application."""
+
 import logging
 from itertools import islice
 from typing import Any
@@ -14,10 +16,12 @@ from vidrank.lib.utilities.url_utilities import url_from_video_id
 
 logger = logging.getLogger(__name__)
 
+# ruff: noqa: T201
+
 
 @click.group()
 def main() -> None:
-    """Main CLI entrypoint."""
+    """Run main CLI entrypoint."""
 
 
 @main.command()
@@ -25,6 +29,14 @@ def main() -> None:
 @click.option("--port", "port", type=int, default=App.DEFAULT_PORT)
 @click.option("--debug", type=bool, default=False, is_flag=True)
 def serve(debug: bool = False, **kwargs: Any) -> None:
+    """Start the server.
+
+    Args:
+    ----
+    debug (bool): Whether to enable debug logging.
+    kwargs (Any): Additional keyword arguments.
+
+    """
     if debug:
         logging.basicConfig(level=logging.INFO)
 
@@ -41,6 +53,15 @@ def get_video(
     use_cache: bool,
     debug: bool = False,
 ) -> None:
+    """Get video information.
+
+    Args:
+    ----
+    video_id (str): The ID of the video to get information for.
+    use_cache (bool): Whether to use the cache.
+    debug (bool): Whether to enable debug logging.
+
+    """
     if debug:
         logging.basicConfig(level=logging.INFO)
 
@@ -57,6 +78,14 @@ def get_record(
     record_id: str,
     debug: bool = False,
 ) -> None:
+    """Get a record by ID.
+
+    Args:
+    ----
+    record_id (str): The ID of the record to get.
+    debug (bool): Whether to enable debug logging.
+
+    """
     if debug:
         logging.basicConfig(level=logging.INFO)
 
@@ -86,6 +115,16 @@ def get_playlist(
     debug: bool = False,
     n_videos: int = 0,
 ) -> None:
+    """Get playlist information.
+
+    Args:
+    ----
+    playlist_id (str): The ID of the playlist to get information for.
+    use_cache (bool): Whether to use the cache.
+    debug (bool): Whether to enable debug logging.
+    n_videos (int): The number of videos to display.
+
+    """
     if debug:
         logging.basicConfig(level=logging.INFO)
 
@@ -111,6 +150,15 @@ def get_channel(
     use_cache: bool,
     debug: bool = False,
 ) -> None:
+    """Get channel information.
+
+    Args:
+    ----
+    channel_id (str): The ID of the channel to get information for.
+    use_cache (bool): Whether to use the cache.
+    debug (bool): Whether to enable debug logging.
+
+    """
     if debug:
         logging.basicConfig(level=logging.INFO)
 
@@ -122,6 +170,7 @@ def get_channel(
 
 @main.command(name="analyze")
 def analyze_records() -> None:
+    """Analyze the distribution of records."""
     App.load_app_state()
     app_state = AppState.get()
     records = app_state.record_tracker.load()
@@ -130,6 +179,7 @@ def analyze_records() -> None:
 
 @main.command(name="cache")
 def cache_info() -> None:
+    """Print cache summary information."""
     App.load_app_state()
     app_state = AppState.get()
     records = app_state.record_tracker.load()
@@ -150,6 +200,13 @@ def cache_info() -> None:
 @main.command(name="rank")
 @click.option("--n", type=int, default=10)
 def rank_videos(n: int = 10) -> None:
+    """Rank videos.
+
+    Args:
+    ----
+    n (int): The number of videos to calculate rankings for.
+
+    """
     App.load_app_state()
     app_state = AppState.get()
     records = app_state.record_tracker.load()

@@ -1,3 +1,5 @@
+"""Vidrank FastAPI application."""
+
 import contextlib
 import logging
 import os
@@ -27,6 +29,8 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class App:
+    """Vidrank FastAPI application."""
+
     ALLOWED_ORIGINS: ClassVar[list[str]] = ["http://localhost:3000"]
     DEFAULT_HOST: ClassVar[str] = "0.0.0.0"
     DEFAULT_PORT: ClassVar[int] = 8000
@@ -48,6 +52,20 @@ class App:
         log_level: int = DEFAULT_LOG_LEVEL,
         random_seed: Optional[int] = DEFAULT_RANDOM_SEED,
     ) -> Iterator["App"]:
+        """Context manager for the application.
+
+        Args:
+        ----
+        host (str): The host for the FastAPI server.
+        port (int): The port for the FastAPI server.
+        log_level (int): The logging level.
+        random_seed (Optional[int]): The seed for random operations.
+
+        Yields:
+        ------
+        App: The application instance.
+
+        """
         fast_api = FastAPI()
         api = cls(fast_api=fast_api, host=host, port=port, log_level=log_level)
 
@@ -67,6 +85,13 @@ class App:
 
     @classmethod
     def load_app_state(cls, random_seed: Optional[int] = DEFAULT_RANDOM_SEED) -> None:
+        """Load the application state from environment variables.
+
+        Args:
+        ----
+        random_seed (Optional[int]): The seed for random operations.
+
+        """
         api_key = os.getenv("YOUTUBE_API_KEY")
         if api_key is None:
             msg = "YOUTUBE_API_KEY environment variable is not set."
@@ -104,6 +129,7 @@ class App:
         )
 
     def start(self) -> None:
+        """Start the FastAPI server."""
         uvicorn.run(
             self.fast_api,
             host=self.host,

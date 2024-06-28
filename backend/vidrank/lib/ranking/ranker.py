@@ -1,3 +1,5 @@
+"""Video ranker."""
+
 from dataclasses import dataclass
 from typing import Iterator
 
@@ -10,13 +12,31 @@ from vidrank.lib.ranking.ranking import Ranking
 
 @dataclass
 class Comp:
+    """A comparison between two videos."""
+
     winner_id: str
     loser_id: str
 
 
 class Ranker:
+    """Video ranker.
+
+    Uses treuskill scores to rank videos based on pairwise comparisons.
+    """
+
     @classmethod
     def iter_rankings(cls, records: list[Record]) -> Iterator[Ranking]:
+        """Iterate over the rankings of the videos.
+
+        Args:
+        ----
+        records (list[Record]): The records of the user choices.
+
+        Yields:
+        ------
+        Iterator[Ranking]: An iterator over the rankings of the videos.
+
+        """
         rating_map: dict[str, Rating] = {}
         for comp in cls._get_comps(records):
             cls._update_ratings(rating_map, comp)

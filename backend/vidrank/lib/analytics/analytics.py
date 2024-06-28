@@ -1,9 +1,21 @@
+"""Utilities for records analytics."""
+
 from vidrank.lib.models.action import Action
 from vidrank.lib.models.record import Record
 from vidrank.lib.youtube.youtube_facade import YouTubeFacade
 
+# ruff: noqa: T201
+
 
 def print_ratings_histogram(records: list[Record], youtube_facade: YouTubeFacade) -> None:
+    """Print a histogram of the ratings for the given records.
+
+    Args:
+    ----
+    records (list[Record]): The records to analyze.
+    youtube_facade (YouTubeFacade): The YouTube facade.
+
+    """
     print(f"A total of {len(records)} records have been created.")
 
     counts: dict[str, dict[str, int]] = {}

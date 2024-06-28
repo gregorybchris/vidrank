@@ -1,3 +1,5 @@
+"""YouTube API client."""
+
 import logging
 import math
 from typing import ClassVar, Iterator, Mapping, Optional, cast
@@ -20,6 +22,8 @@ logger = logging.getLogger(__name__)
 
 
 class YouTubeClient:
+    """Client for the YouTube API."""
+
     VIDEO_PARTS: ClassVar[list[str]] = [
         "id",
         "contentDetails",
@@ -41,11 +45,31 @@ class YouTubeClient:
     DEFAULT_BATCH_SIZE = 50
 
     def __init__(self, api_key: str, *, batch_size: int = DEFAULT_BATCH_SIZE):
+        """Initialize the YouTubeClient.
+
+        Args:
+        ----
+        api_key (str): The API key for the YouTube API.
+        batch_size (int): The number of items to request in each batch.
+
+        """
         self.api_key = api_key
-        self.http_client = HttpClient()
         self.batch_size = batch_size
+        self.http_client = HttpClient()
 
     def iter_videos(self, video_ids: list[str], timeout: Optional[int] = None) -> Iterator[Video]:
+        """Iterate over videos by their IDs.
+
+        Args:
+        ----
+        video_ids (list[str]): The IDs of the videos to fetch.
+        timeout (int): The timeout for the request.
+
+        Returns:
+        -------
+        Iterator[Video]: An iterator over the videos.
+
+        """
         n_chunks = math.ceil(len(video_ids) / self.batch_size)
         for chunk_i in range(0, n_chunks):
             chunk_ids = video_ids[chunk_i * self.batch_size : (chunk_i + 1) * self.batch_size]
@@ -89,6 +113,18 @@ class YouTubeClient:
                     break
 
     def get_channel(self, channel_id: str, timeout: Optional[int] = None) -> Channel:
+        """Get a channel by its ID.
+
+        Args:
+        ----
+        channel_id (str): The ID of the channel to fetch.
+        timeout (int): The timeout for the request.
+
+        Returns:
+        -------
+        Channel: The channel with the given ID.
+
+        """
         params: Mapping[str, str | int | list[str]] = {
             "id": channel_id,
             "key": self.api_key,
@@ -117,6 +153,18 @@ class YouTubeClient:
         return ClientMarshaller.parse_channel(response_item)
 
     def get_playlist(self, playlist_id: str, timeout: Optional[int] = None) -> Playlist:
+        """Get a playlist by its ID.
+
+        Args:
+        ----
+        playlist_id (str): The ID of the playlist to fetch.
+        timeout (int): The timeout for the request.
+
+        Returns:
+        -------
+        Playlist: The playlist with the given ID.
+
+        """
         params: Mapping[str, str | int | list[str]] = {
             "id": playlist_id,
             "key": self.api_key,
@@ -188,8 +236,21 @@ class YouTubeClient:
 
 
 class ClientMarshaller:
+    """Marshaller for YouTube API JSON."""
+
     @classmethod
     def parse_video(cls, video_dict: JsonObject) -> Video:
+        """Parse a Video from YouTube API JSON.
+
+        Args:
+        ----
+        video_dict (JsonObject): The JSON object representing the video.
+
+        Returns:
+        -------
+        Video: The parsed video.
+
+        """
         duration = pendulum_parse(video_dict["contentDetails"]["duration"])
         published_at = pendulum_parse(video_dict["snippet"]["publishedAt"])
         return Video(
@@ -205,6 +266,17 @@ class ClientMarshaller:
 
     @classmethod
     def parse_thumbnail_set(cls, thumbnail_set_dict: JsonObject) -> ThumbnailSet:
+        """Parse a ThumbnailSet from YouTube API JSON.
+
+        Args:
+        ----
+        thumbnail_set_dict (JsonObject): The JSON object representing the thumbnail set.
+
+        Returns:
+        -------
+        ThumbnailSet: The parsed thumbnail set.
+
+        """
         thumbnail_set_kwargs: dict[str, Optional[Thumbnail]] = {}
         for size in ["default", "standard", "medium", "high", "maxres"]:
             if size in thumbnail_set_dict and thumbnail_set_dict[size] is not None:
@@ -221,6 +293,17 @@ class ClientMarshaller:
 
     @classmethod
     def parse_video_stats(cls, stats_dict: JsonObject) -> VideoStats:
+        """Parse VideoStats from YouTube API JSON.
+
+        Args:
+        ----
+        stats_dict (JsonObject): The JSON object representing the video stats.
+
+        Returns:
+        -------
+        VideoStats: The parsed video stats.
+
+        """
         stats_kwargs = {}
         stat_map = {
             "favoriteCount": "n_favorites",
@@ -237,6 +320,17 @@ class ClientMarshaller:
 
     @classmethod
     def parse_channel(cls, channel_dict: JsonObject) -> Channel:
+        """Parse a Channel from YouTube API JSON.
+
+        Args:
+        ----
+        channel_dict (JsonObject): The JSON object representing the channel.
+
+        Returns:
+        -------
+        Channel: The parsed channel.
+
+        """
         channel_id = channel_dict["id"]
         return Channel(
             id=channel_id,
@@ -247,6 +341,17 @@ class ClientMarshaller:
 
     @classmethod
     def parse_channel_stats(cls, stats_dict: JsonObject) -> ChannelStats:
+        """Parse ChannelStats from YouTube API JSON.
+
+        Args:
+        ----
+        stats_dict (JsonObject): The JSON object representing the channel stats.
+
+        Returns:
+        -------
+        ChannelStats: The parsed channel stats.
+
+        """
         return ChannelStats(
             subscribers=stats_dict["subscriberCount"],
             videos=stats_dict["videoCount"],
@@ -255,6 +360,18 @@ class ClientMarshaller:
 
     @classmethod
     def parse_playlist(cls, playlist_dict: JsonObject, items: list[PlaylistItem]) -> Playlist:
+        """Parse a Playlist from YouTube API JSON.
+
+        Args:
+        ----
+        playlist_dict (JsonObject): The JSON object representing the playlist.
+        items (list[PlaylistItem]): The items in the playlist.
+
+        Returns:
+        -------
+        Playlist: The parsed playlist.
+
+        """
         playlist_id = playlist_dict["id"]
         created_at = pendulum_parse(playlist_dict["snippet"]["publishedAt"])
         return Playlist(
@@ -268,6 +385,17 @@ class ClientMarshaller:
 
     @classmethod
     def parse_playlist_item(cls, playlist_item_dict: JsonObject) -> PlaylistItem:
+        """Parse a PlaylistItem from YouTube API JSON.
+
+        Args:
+        ----
+        playlist_item_dict (JsonObject): The JSON object representing the playlist item.
+
+        Returns:
+        -------
+        PlaylistItem: The parsed playlist item.
+
+        """
         video_id = playlist_item_dict["contentDetails"]["videoId"]
         added_at = pendulum_parse(playlist_item_dict["snippet"]["publishedAt"])
         return PlaylistItem(

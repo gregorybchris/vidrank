@@ -1,3 +1,5 @@
+"""AppState singleton."""
+
 from dataclasses import dataclass
 
 import numpy as np
@@ -8,6 +10,8 @@ from vidrank.lib.youtube.youtube_facade import YouTubeFacade
 
 @dataclass
 class AppState:
+    """AppState singleton."""
+
     _INSTANCE = None
 
     youtube_facade: YouTubeFacade
@@ -24,6 +28,16 @@ class AppState:
         playlist_id: str,
         rng: np.random.Generator,
     ) -> None:
+        """Initialize the AppState singleton.
+
+        Args:
+        ----
+        youtube_facade (YouTubeFacade): The YouTubeFacade instance.
+        record_tracker (RecordTracker): The RecordTracker instance.
+        playlist_id (str): The ID of the playlist.
+        rng (np.random.Generator): The random number generator.
+
+        """
         cls._INSTANCE = cls(
             youtube_facade=youtube_facade,
             record_tracker=record_tracker,
@@ -33,6 +47,7 @@ class AppState:
 
     @classmethod
     def get(cls) -> "AppState":
+        """Get the instance of the AppState singleton."""
         if cls._INSTANCE is None:
             msg = "AppState has not been initialized"
             raise ValueError(msg)

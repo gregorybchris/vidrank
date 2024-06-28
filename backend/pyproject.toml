@@ -52,13 +52,14 @@ line-length = 120
 src = ["vidrank"]
 
 [tool.ruff.lint]
-ignore = ["D", "FIX002", "TD003", "T201"]
+ignore = ["D203", "D213", "FIX002", "TD003"]
 select = [
     "A",
     "ARG",
     "B",
     "BLE",
     "C4",
+    "D",
     "E",
     "EM",
     "ERA",

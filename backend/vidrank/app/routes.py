@@ -1,3 +1,5 @@
+"""API routes."""
+
 import logging
 
 from fastapi import APIRouter
@@ -23,33 +25,44 @@ N_VIDEOS_PER_RESPONSE = 6
 
 
 class GetStatusResponse(BaseModel):
+    """Model for the response of the status route."""
+
     status: str
 
 
 @router.get(name="Status", path="/", description="Get the API status.")
 def get_status() -> GetStatusResponse:
+    """Get the status of the API."""
     return GetStatusResponse(status="healthy")
 
 
 class GetVersionResponse(BaseModel):
+    """Model for the response of the version route."""
+
     version: str
 
 
 @router.get(name="Version", path="/version", description="Get the API version.")
 def get_version() -> GetVersionResponse:
+    """Route to get the version of the API."""
     return GetVersionResponse(version=package_version)
 
 
 class PostVideosRequest(BaseModel):
+    """Model for the request of the videos route."""
+
     settings: Settings
 
 
 class PostVideosResponse(BaseModel):
+    """Model for the response of the videos route."""
+
     videos: list[Video]
 
 
 @router.post(name="Videos", path="/videos", description="Post videos.")
 def post_videos(request: PostVideosRequest) -> PostVideosResponse:
+    """Route for posting a request for videos."""
     app_state = AppState.get()
 
     videos = list(Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, request.settings.matching_settings))
@@ -58,17 +71,22 @@ def post_videos(request: PostVideosRequest) -> PostVideosResponse:
 
 
 class PostSubmitRequest(BaseModel):
+    """Model for the request of the submit."""
+
     choice_set: ChoiceSet
     settings: Settings
 
 
 class PostSubmitResponse(BaseModel):
+    """Model for the response of the submit route."""
+
     record_id: str
     videos: list[Video]
 
 
 @router.post(name="Submit", path="/submit", description="Post submit.")
 def post_submit(request: PostSubmitRequest) -> PostSubmitResponse:
+    """Route for posting a submit request."""
     app_state = AppState.get()
     videos = list(Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, request.settings.matching_settings))
 
@@ -84,16 +102,21 @@ def post_submit(request: PostSubmitRequest) -> PostSubmitResponse:
 
 
 class PostUndoRequest(BaseModel):
+    """Model for the request of the undo route."""
+
     record_id: str
 
 
 class PostUndoResponse(BaseModel):
+    """Model for the response of the undo route."""
+
     videos: list[Video]
     choice_set: ChoiceSet
 
 
 @router.post(name="Undo", path="/undo", description="Post undo.")
 def post_undo(request: PostUndoRequest) -> PostUndoResponse:
+    """Route for posting an undo request."""
     app_state = AppState.get()
     record = app_state.record_tracker.pop(request.record_id)
     if record is None:
@@ -106,17 +129,22 @@ def post_undo(request: PostUndoRequest) -> PostUndoResponse:
 
 
 class PostSkipRequest(BaseModel):
+    """Model for the request of the skip route."""
+
     choice_set: ChoiceSet
     settings: Settings
 
 
 class PostSkipResponse(BaseModel):
+    """Model for the response of the skip route."""
+
     record_id: str
     videos: list[Video]
 
 
 @router.post(name="Skip", path="/skip", description="Post skip.")
 def post_skip(request: PostSkipRequest) -> PostSkipResponse:
+    """Route for posting a skip request."""
     app_state = AppState.get()
     videos = list(Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, request.settings.matching_settings))
 
@@ -132,17 +160,22 @@ def post_skip(request: PostSkipRequest) -> PostSkipResponse:
 
 
 class ResponseRanking(BaseModel):
+    """Model for a ranking response."""
+
     video: Video
     rank: int
     rating: float
 
 
 class GetRankingsResponse(BaseModel):
+    """Model for the response of the rankings route."""
+
     rankings: list[ResponseRanking]
 
 
 @router.get(name="Rankings", path="/rankings", description="Get rankings.")
 def get_rankings() -> GetRankingsResponse:
+    """Route for getting video rankings."""
     app_state = AppState.get()
 
     records = app_state.record_tracker.load()

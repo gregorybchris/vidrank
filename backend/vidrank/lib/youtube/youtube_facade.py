@@ -1,3 +1,5 @@
+"""Facade for the YouTube API."""
+
 import logging
 from typing import Iterable, Iterator
 
@@ -11,6 +13,8 @@ logger = logging.getLogger(__name__)
 
 
 class YouTubeFacade:
+    """Facade for the YouTube API."""
+
     def __init__(
         self,
         *,
@@ -19,12 +23,32 @@ class YouTubeFacade:
         channel_cache: PickleCache[Channel],
         playlist_cache: PickleCache[Playlist],
     ):
+        """Initialize the YouTubeFacade.
+
+        Args:
+        ----
+        youtube_client (YouTubeClient): The client for the YouTube API.
+        video_cache (PickleCache[Video]): The cache for videos.
+        channel_cache (PickleCache[Channel]): The cache for channels.
+        playlist_cache (PickleCache[Playlist]): The cache for playlists.
+
+        """
         self.youtube_client = youtube_client
         self.video_cache = video_cache
         self.channel_cache = channel_cache
         self.playlist_cache = playlist_cache
 
     def get_video(self, video_id: str, use_cache: bool = True) -> Video:
+        """Get a video by its ID.
+
+        Args:
+        ----
+        video_id (str): The ID of the video to fetch.
+        use_cache (bool): Whether to use the cache to fetch the video.
+
+        Returns: The video with the given ID.
+
+        """
         if use_cache:
             video = self.video_cache.get(video_id)
             if video is not None:
@@ -38,6 +62,16 @@ class YouTubeFacade:
         raise ValueError(msg)
 
     def iter_videos(self, video_ids: Iterable[str], use_cache: bool = True) -> Iterator[Video]:
+        """Iterate over videos with the given IDs.
+
+        Args:
+        ----
+        video_ids (Iterable[str]): The IDs of the videos to fetch.
+        use_cache (bool): Whether to use the cache to fetch the videos.
+
+        Returns: An iterator over the videos with the given IDs.
+
+        """
         video_ids_to_fetch = []
         for video_id in video_ids:
             if use_cache:
@@ -53,6 +87,16 @@ class YouTubeFacade:
                 yield video
 
     def get_channel(self, channel_id: str, use_cache: bool = True) -> Channel:
+        """Get a channel by its ID.
+
+        Args:
+        ----
+        channel_id (str): The ID of the channel to fetch.
+        use_cache (bool): Whether to use the cache to fetch the channel.
+
+        Returns: The channel with the given ID.
+
+        """
         if use_cache:
             channel = self.channel_cache.get(channel_id)
             if channel is not None:
@@ -63,6 +107,16 @@ class YouTubeFacade:
         return channel
 
     def get_playlist(self, playlist_id: str, use_cache: bool = True) -> Playlist:
+        """Get a playlist by its ID.
+
+        Args:
+        ----
+        playlist_id (str): The ID of the playlist to fetch.
+        use_cache (bool): Whether to use the cache to fetch the playlist.
+
+        Returns: The playlist with the given ID.
+
+        """
         if use_cache:
             playlist = self.playlist_cache.get(playlist_id)
             if playlist is not None:
