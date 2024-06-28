@@ -34,6 +34,7 @@ class AppState:
     @classmethod
     def get(cls) -> "AppState":
         if cls._INSTANCE is None:
-            raise ValueError("AppState has not been initialized")
+            msg = "AppState has not been initialized"
+            raise ValueError(msg)
 
         return cls._INSTANCE

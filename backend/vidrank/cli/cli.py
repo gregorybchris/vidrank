@@ -71,7 +71,8 @@ def get_record(
                     print(f"{video.id}: ({choice.action}) {video.title}")
             break
     else:
-        raise ValueError(f"Record with ID {record_id} not found")
+        msg = f"Record with ID {record_id} not found"
+        raise ValueError(msg)
 
 
 @main.command(name="playlist")

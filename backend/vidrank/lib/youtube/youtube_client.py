@@ -1,6 +1,6 @@
 import logging
 import math
-from typing import Dict, Iterator, List, Mapping, Optional, cast
+from typing import ClassVar, Dict, Iterator, List, Mapping, Optional, cast
 
 from httpx import Client as HttpClient
 from pydantic_extra_types.pendulum_dt import DateTime, Duration
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 class YouTubeClient:
-    VIDEO_PARTS = [
+    VIDEO_PARTS: ClassVar[list[str]] = [
         "id",
         "contentDetails",
         "player",
@@ -30,7 +30,7 @@ class YouTubeClient:
         "topicDetails",
     ]
 
-    PLAYLIST_PARTS = [
+    PLAYLIST_PARTS: ClassVar[list[str]] = [
         "id",
         "snippet",
         "contentDetails",
@@ -45,13 +45,12 @@ class YouTubeClient:
         self.http_client = HttpClient()
         self.batch_size = batch_size
 
-    # pylint: disable=redefined-builtin
     def iter_videos(self, video_ids: List[str], timeout: Optional[int] = None) -> Iterator[Video]:
         n_chunks = math.ceil(len(video_ids) / self.batch_size)
         for chunk_i in range(0, n_chunks):
             chunk_ids = video_ids[chunk_i * self.batch_size : (chunk_i + 1) * self.batch_size]
 
-            logger.debug(f"Requesting {len(chunk_ids)} videos from the YouTube API.")
+            logger.debug("Requesting %d videos from the YouTube API.", len(chunk_ids))
 
             concat_ids = ",".join(chunk_ids)
             params: Mapping[str, str | int | List[str]] = {
@@ -75,7 +74,7 @@ class YouTubeClient:
                     timeout=timeout,
                 )
 
-                logger.debug(f"Request URL: {response.request.url}")
+                logger.debug("Request URL: %s", response.request.url)
 
                 response_json = response.json()
                 if "error" in response_json:
@@ -105,13 +104,14 @@ class YouTubeClient:
             params=params,
             timeout=timeout,
         )
-        logger.debug(f"Request URL: {response.request.url}")
+        logger.debug("Request URL: %s", response.request.url)
 
         response_json = response.json()
         if "error" in response_json:
             raise ValueError(response_json["error"]["message"])
         if response_json["pageInfo"]["totalResults"] == 0:
-            raise ValueError(f"Channel with ID {channel_id} not found")
+            msg = f"Channel with ID {channel_id} not found"
+            raise ValueError(msg)
 
         response_item = response_json["items"][0]
         return ClientMarshaller.parse_channel(response_item)
@@ -132,13 +132,14 @@ class YouTubeClient:
             params=params,
             timeout=timeout,
         )
-        logger.debug(f"Request URL: {response.request.url}")
+        logger.debug("Request URL: %s", response.request.url)
 
         response_json = response.json()
         if "error" in response_json:
             raise ValueError(response_json["error"]["message"])
         if response_json["pageInfo"]["totalResults"] == 0:
-            raise ValueError(f"Playlist with ID {playlist_id} not found")
+            msg = f"Playlist with ID {playlist_id} not found"
+            raise ValueError(msg)
 
         items = list(self._iter_playlist_items(playlist_id, timeout=timeout))
         response_item = response_json["items"][0]
@@ -167,12 +168,14 @@ class YouTubeClient:
                 timeout=timeout,
                 params=request_params,
             )
-            logger.debug(f"Request URL: {response.request.url}")
+            logger.debug("Request URL: %s", response.request.url)
 
             response_json = response.json()
             if "error" in response_json:
-                if response_json["error"]["code"] == 404:
-                    raise ValueError(f"Playlist with ID {playlist_id} not found")
+                not_found_code = 404
+                if response_json["error"]["code"] == not_found_code:
+                    msg = f"Playlist with ID {playlist_id} not found"
+                    raise ValueError(msg)
                 raise ValueError(response_json["error"]["message"])
 
             for response_item in response_json["items"]:
@@ -185,7 +188,6 @@ class YouTubeClient:
 
 
 class ClientMarshaller:
-
     @classmethod
     def parse_video(cls, video_dict: JsonObject) -> Video:
         duration = pendulum_parse(video_dict["contentDetails"]["duration"])

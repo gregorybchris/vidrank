@@ -155,7 +155,7 @@ def get_rankings() -> GetRankingsResponse:
     response_rankings = []
     for ranking in rankings:
         if ranking.video_id not in video_map:
-            logger.debug(f"Video with ID {ranking.video_id} not found")
+            logger.debug("Video with ID %s not found", ranking.video_id)
             continue
         video = video_map[ranking.video_id]
         response_ranking = ResponseRanking(

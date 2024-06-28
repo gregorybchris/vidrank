@@ -22,13 +22,13 @@ class Matcher:
         n_videos: int,
         settings: MatchingSettings,
     ) -> Iterator[Video]:
-        logger.info(f"Using matching strategy: {settings.matching_strategy}")
+        logger.info("Using matching strategy: %s", settings.matching_strategy)
         if settings.matching_strategy == MatchingStrategy.RANDOM:
             yield from cls.match_random(app_state, n_videos)
         elif settings.matching_strategy == MatchingStrategy.BY_RATING:
             yield from cls.match_by_rating(app_state, n_videos)
         elif settings.matching_strategy in [None, MatchingStrategy.BALANCED]:
-            logger.info(f"Using random fraction: {settings.balanced_random_fraction}")
+            logger.info("Using random fraction: %s", settings.balanced_random_fraction)
             r = app_state.rng.random()
             if r < settings.balanced_random_fraction:
                 logger.info("Matching randomly")
@@ -37,7 +37,8 @@ class Matcher:
                 logger.info("Matching by ratings")
                 yield from cls.match_by_rating(app_state, n_videos)
         else:
-            raise ValueError(f"Unknown matching strategy: {settings.matching_strategy}")
+            msg = f"Unknown matching strategy: {settings.matching_strategy}"
+            raise ValueError(msg)
 
     @classmethod
     def match_random(cls, app_state: AppState, n_videos: int) -> Iterator[Video]:
@@ -56,7 +57,7 @@ class Matcher:
             if n_found == n_videos:
                 return
             for video in app_state.youtube_facade.iter_videos([video_id]):
-                logger.info(f"Selected video: ({video.id}) {video.title}")
+                logger.info("Selected video: (%s) %s", video.id, video.title)
                 n_found += 1
                 yield video
 
@@ -81,7 +82,7 @@ class Matcher:
         # Select one video randomly
         selected_index: int = app_state.rng.choice(np.arange(len(rankings)))
         selected = rankings[selected_index]
-        logger.info(f"Selecting videos similar to: rank={selected.rank}, rating={int(selected.rating)}")
+        logger.info("Selecting videos similar to: rank=%d, rating=%d", selected.rank, int(selected.rating))
 
         # Sort rankings based on distance to the selected video's rating
         sorted_rankings = sorted(rankings, key=lambda x: np.abs(selected.rating - x.rating))
@@ -95,7 +96,11 @@ class Matcher:
                 return
             for video in app_state.youtube_facade.iter_videos([ranking.video_id]):
                 logger.info(
-                    f"Selected video: rank={ranking.rank}, rating={int(ranking.rating)}: ({video.id}) {video.title}"
+                    "Selected video: rank=%d, rating=%d: (%s) %s",
+                    ranking.rank,
+                    int(ranking.rating),
+                    video.id,
+                    video.title,
                 )
                 n_found += 1
                 yield video
@@ -104,6 +109,5 @@ class Matcher:
     def get_non_removed(cls, video_ids: List[str], records: List[Record]) -> List[str]:
         ids_set = set(video_ids)
         for record in records:
-            ids_set -= set(c.video_id for c in record.choice_set.choices if c.action == Action.REMOVE)
-        non_removed_ids = list(ids_set)
-        return non_removed_ids
+            ids_set -= {c.video_id for c in record.choice_set.choices if c.action == Action.REMOVE}
+        return list(ids_set)

@@ -18,22 +18,21 @@ version = "0.1.0"
 include = "vidrank"
 
 [tool.poetry.dependencies]
-click = "^8.1.7"
-python = ">=3.12"
-numpy = "^1.26.4"
-fastapi = "^0.110.2"
-uvicorn = "^0.29.0"
-pydantic = "^2.7.1"
-pendulum = "^3.0.0"
+click = "^8.1.0"
+fastapi = "^0.111.0"
 httpx = "^0.27.0"
-trueskill = "^0.4.5"
-pydantic-extra-types = "^2.7.0"
+numpy = "^2.0.0"
+pendulum = "^3.0.0"
+pydantic = "^2.7.0"
+pydantic-extra-types = "^2.8.0"
+python = ">=3.12"
+trueskill = "^0.4.0"
+uvicorn = "^0.30.0"
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.4.2"
 mypy = "^1.10.0"
-pylint = "^3.1.0"
 pytest = "^8.2.0"
+ruff = "^0.5.0"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"
@@ -42,34 +41,52 @@ requires = ["poetry-core>=1.0.0"]
 [tool.poetry.scripts]
 vidrank = "vidrank.cli.cli:main"
 
-[tool.black]
-line-length = 120
-
-[tool.isort]
-line_length = 120
-profile = "black"
-src_paths = "*"
-
 [tool.mypy]
 disallow_incomplete_defs = true
 disallow_untyped_calls = true
 disallow_untyped_defs = true
 ignore_missing_imports = true
 
-[tool.pylint.basic]
-good-names = ["f", "i"]
-notes = ["FIXME"]
+[tool.ruff]
+line-length = 120
+src = ["vidrank"]
 
-[tool.pylint.format]
-max-line-length = 120
-
-[tool.pylint.messages_control]
-disable = [
-    "missing-function-docstring",
-    "missing-module-docstring",
-    "missing-class-docstring",
-    "logging-fstring-interpolation",
+[tool.ruff.lint]
+ignore = ["D", "FIX002", "TD003", "T201"]
+select = [
+    "A",
+    "ARG",
+    "B",
+    "BLE",
+    "C4",
+    "E",
+    "EM",
+    "ERA",
+    "F",
+    "FIX",
+    "G",
+    "I",
+    "ICN",
+    "ISC",
+    "LOG",
+    "N",
+    "PL",
+    "PT",
+    "PTH",
+    "PLR",
+    "RET",
+    "RUF",
+    "SIM",
+    "SLF",
+    "T20",
+    "TCH",
+    "TD",
+    "TID",
+    "W",
 ]
 
-[tool.pylint.reports]
-output-format = "colorized"
+[tool.ruff.lint.pycodestyle]
+max-line-length = 120
+
+[tool.ruff.lint.extend-per-file-ignores]
+"**/tests/**/*.py" = ["SLF"]

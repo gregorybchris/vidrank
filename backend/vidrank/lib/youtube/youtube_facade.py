@@ -34,7 +34,8 @@ class YouTubeFacade:
             self.video_cache.add(video.id, video)
             return video
 
-        raise ValueError(f"Video with ID {video_id} not found")
+        msg = f"Video with ID {video_id} not found"
+        raise ValueError(msg)
 
     def iter_videos(self, video_ids: Iterable[str], use_cache: bool = True) -> Iterator[Video]:
         video_ids_to_fetch = []

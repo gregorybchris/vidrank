@@ -3,7 +3,7 @@ import logging
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterator, Optional
+from typing import TYPE_CHECKING, ClassVar, Iterator, Optional
 
 import numpy as np
 import uvicorn
@@ -14,22 +14,24 @@ from vidrank.app.app_state import AppState
 from vidrank.app.routes import router
 from vidrank.lib.caching.pickle_cache import PickleCache
 from vidrank.lib.caching.record_tracker import RecordTracker
-from vidrank.lib.youtube.channel import Channel
-from vidrank.lib.youtube.playlist import Playlist
-from vidrank.lib.youtube.video import Video
 from vidrank.lib.youtube.youtube_client import YouTubeClient
 from vidrank.lib.youtube.youtube_facade import YouTubeFacade
+
+if TYPE_CHECKING:
+    from vidrank.lib.youtube.channel import Channel
+    from vidrank.lib.youtube.playlist import Playlist
+    from vidrank.lib.youtube.video import Video
 
 logger = logging.getLogger(__name__)
 
 
 @dataclass
 class App:
-    ALLOWED_ORIGINS = ["http://localhost:3000"]
-    DEFAULT_HOST = "0.0.0.0"
-    DEFAULT_PORT = 8000
-    DEFAULT_LOG_LEVEL = logging.INFO
-    DEFAULT_RANDOM_SEED = None
+    ALLOWED_ORIGINS: ClassVar[list[str]] = ["http://localhost:3000"]
+    DEFAULT_HOST: ClassVar[str] = "0.0.0.0"
+    DEFAULT_PORT: ClassVar[int] = 8000
+    DEFAULT_LOG_LEVEL: ClassVar[int] = logging.INFO
+    DEFAULT_RANDOM_SEED: ClassVar[Optional[int]] = None
 
     fast_api: FastAPI
     host: str
@@ -44,7 +46,7 @@ class App:
         host: str = DEFAULT_HOST,
         port: int = DEFAULT_PORT,
         log_level: int = DEFAULT_LOG_LEVEL,
-        random_seed: Optional[int] = DEFAULT_RANDOM_SEED
+        random_seed: Optional[int] = DEFAULT_RANDOM_SEED,
     ) -> Iterator["App"]:
         fast_api = FastAPI()
         api = cls(fast_api=fast_api, host=host, port=port, log_level=log_level)
@@ -67,15 +69,18 @@ class App:
     def load_app_state(cls, random_seed: Optional[int] = DEFAULT_RANDOM_SEED) -> None:
         api_key = os.getenv("YOUTUBE_API_KEY")
         if api_key is None:
-            raise ValueError("YOUTUBE_API_KEY environment variable is not set.")
+            msg = "YOUTUBE_API_KEY environment variable is not set."
+            raise ValueError(msg)
 
         cache_dir_str = os.getenv("VIDRANK_CACHE_DIR")
         if cache_dir_str is None:
-            raise ValueError("VIDRANK_CACHE_DIR environment variable is not set.")
+            msg = "VIDRANK_CACHE_DIR environment variable is not set."
+            raise ValueError(msg)
 
         playlist_id = os.getenv("VIDRANK_PLAYLIST_ID")
         if playlist_id is None:
-            raise ValueError("VIDRANK_PLAYLIST_ID environment variable is not set.")
+            msg = "VIDRANK_PLAYLIST_ID environment variable is not set."
+            raise ValueError(msg)
 
         cache_dirpath = Path(cache_dir_str)
         youtube_client = YouTubeClient(api_key)

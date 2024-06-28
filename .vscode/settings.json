@@ -2,24 +2,23 @@
   "[html]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[markdown]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
-  "[python]": { "editor.defaultFormatter": "ms-python.black-formatter" },
+  "[python]": { "editor.defaultFormatter": "charliermarsh.ruff" },
   "[toml]": { "editor.defaultFormatter": "tamasfe.even-better-toml" },
   "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[typescriptreact]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "editor.codeActionsOnSave": {
-    "source.organizeImports": "explicit"
+    "source.organizeImports": "explicit",
+    "source.fixAll": "explicit"
   },
-  "black-formatter.args": ["--config", "backend/pyproject.toml"],
   "cSpell.words": ["Vidrank"],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.detectIndentation": true,
   "editor.formatOnSave": true,
   "editor.insertSpaces": true,
   "editor.rulers": [120],
-  "isort.args": ["--settings-file", "backend/pyproject.toml"],
   "mypy-type-checker.args": ["--config-file", "backend/pyproject.toml"],
   "prettier.printWidth": 120,
-  "pylint.path": ["pylint"],
-  "pylint.args": ["--rcfile", "backend/pyproject.toml"],
-  "python.analysis.extraPaths": ["backend"]
+  "python.analysis.extraPaths": ["backend"],
+  "ruff.format.args": ["--config", "backend/pyproject.toml"],
+  "ruff.nativeServer": true
 }

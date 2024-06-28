@@ -5,7 +5,6 @@ from vidrank.lib.youtube.thumbnail_set import ThumbnailSet
 from vidrank.lib.youtube.video_stats import VideoStats
 
 
-# pylint: disable=redefined-builtin
 class Video(BaseModel):
     id: str
     title: str
