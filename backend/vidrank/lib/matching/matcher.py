@@ -29,14 +29,15 @@ class Matcher:
         """Match videos based on the settings.
 
         Args:
-        ----
-        app_state (AppState): The application state.
-        n_videos (int): The number of videos to return.
-        settings (MatchingSettings): The matching settings.
+            app_state (AppState): The application state.
+            n_videos (int): The number of videos to return.
+            settings (MatchingSettings): The matching settings.
 
         Yields:
-        ------
-        Iterator[Video]: An iterator over the matched videos
+            Iterator[Video]: An iterator over the matched videos
+
+        Raises:
+            ValueError: If the matching strategy is unknown.
 
         """
         logger.info("Using matching strategy: %s", settings.matching_strategy)
@@ -62,13 +63,11 @@ class Matcher:
         """Match videos using a random strategy.
 
         Args:
-        ----
-        app_state (AppState): The application state.
-        n_videos (int): The number of videos to return.
+            app_state (AppState): The application state.
+            n_videos (int): The number of videos to return.
 
         Yields:
-        ------
-        Iterator[Video]: An iterator over the matched videos
+            Iterator[Video]: An iterator over the matched videos
 
         """
         playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
@@ -95,13 +94,11 @@ class Matcher:
         """Match videos based on their ratings.
 
         Args:
-        ----
-        app_state (AppState): The application state.
-        n_videos (int): The number of videos to return.
+            app_state (AppState): The application state.
+            n_videos (int): The number of videos to return.
 
         Yields:
-        ------
-        Iterator[Video]: An iterator over the matched videos
+            Iterator[Video]: An iterator over the matched videos
 
         """
         playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
@@ -151,13 +148,11 @@ class Matcher:
         """Return the video IDs that are not removed in the records.
 
         Args:
-        ----
-        video_ids (list[str]): The video IDs to check.
-        records (list[Record]): The records to check against.
+            video_ids (list[str]): The video IDs to check.
+            records (list[Record]): The records to check against.
 
         Returns:
-        -------
-        list[str]: The video IDs that are not removed in the records.
+            list[str]: The video IDs that are not removed in the records.
 
         """
         ids_set = set(video_ids)

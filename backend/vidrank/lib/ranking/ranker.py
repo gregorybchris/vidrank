@@ -29,12 +29,10 @@ class Ranker:
         """Iterate over the rankings of the videos.
 
         Args:
-        ----
-        records (list[Record]): The records of the user choices.
+            records (list[Record]): The records of the user choices.
 
         Yields:
-        ------
-        Iterator[Ranking]: An iterator over the rankings of the videos.
+            Iterator[Ranking]: An iterator over the rankings of the videos.
 
         """
         rating_map: dict[str, Rating] = {}

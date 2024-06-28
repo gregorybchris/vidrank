@@ -48,9 +48,8 @@ class YouTubeClient:
         """Initialize the YouTubeClient.
 
         Args:
-        ----
-        api_key (str): The API key for the YouTube API.
-        batch_size (int): The number of items to request in each batch.
+            api_key (str): The API key for the YouTube API.
+            batch_size (int): The number of items to request in each batch.
 
         """
         self.api_key = api_key
@@ -61,13 +60,14 @@ class YouTubeClient:
         """Iterate over videos by their IDs.
 
         Args:
-        ----
-        video_ids (list[str]): The IDs of the videos to fetch.
-        timeout (int): The timeout for the request.
+            video_ids (list[str]): The IDs of the videos to fetch.
+            timeout (int): The timeout for the request.
 
         Returns:
-        -------
-        Iterator[Video]: An iterator over the videos.
+            Iterator[Video]: An iterator over the videos.
+
+        Raises:
+            ValueError: If the API request fails.
 
         """
         n_chunks = math.ceil(len(video_ids) / self.batch_size)
@@ -116,13 +116,14 @@ class YouTubeClient:
         """Get a channel by its ID.
 
         Args:
-        ----
-        channel_id (str): The ID of the channel to fetch.
-        timeout (int): The timeout for the request.
+            channel_id (str): The ID of the channel to fetch.
+            timeout (int): The timeout for the request.
 
         Returns:
-        -------
-        Channel: The channel with the given ID.
+            Channel: The channel with the given ID.
+
+        Raises:
+            ValueError: If the API request fails.
 
         """
         params: Mapping[str, str | int | list[str]] = {
@@ -156,13 +157,14 @@ class YouTubeClient:
         """Get a playlist by its ID.
 
         Args:
-        ----
-        playlist_id (str): The ID of the playlist to fetch.
-        timeout (int): The timeout for the request.
+            playlist_id (str): The ID of the playlist to fetch.
+            timeout (int): The timeout for the request.
 
         Returns:
-        -------
-        Playlist: The playlist with the given ID.
+            Playlist: The playlist with the given ID.
+
+        Raises:
+            ValueError: If the API request fails.
 
         """
         params: Mapping[str, str | int | list[str]] = {
@@ -243,12 +245,10 @@ class ClientMarshaller:
         """Parse a Video from YouTube API JSON.
 
         Args:
-        ----
-        video_dict (JsonObject): The JSON object representing the video.
+            video_dict (JsonObject): The JSON object representing the video.
 
         Returns:
-        -------
-        Video: The parsed video.
+            Video: The parsed video.
 
         """
         duration = pendulum_parse(video_dict["contentDetails"]["duration"])
@@ -269,12 +269,10 @@ class ClientMarshaller:
         """Parse a ThumbnailSet from YouTube API JSON.
 
         Args:
-        ----
-        thumbnail_set_dict (JsonObject): The JSON object representing the thumbnail set.
+            thumbnail_set_dict (JsonObject): The JSON object representing the thumbnail set.
 
         Returns:
-        -------
-        ThumbnailSet: The parsed thumbnail set.
+            ThumbnailSet: The parsed thumbnail set.
 
         """
         thumbnail_set_kwargs: dict[str, Optional[Thumbnail]] = {}
@@ -296,12 +294,10 @@ class ClientMarshaller:
         """Parse VideoStats from YouTube API JSON.
 
         Args:
-        ----
-        stats_dict (JsonObject): The JSON object representing the video stats.
+            stats_dict (JsonObject): The JSON object representing the video stats.
 
         Returns:
-        -------
-        VideoStats: The parsed video stats.
+            VideoStats: The parsed video stats.
 
         """
         stats_kwargs = {}
@@ -323,12 +319,10 @@ class ClientMarshaller:
         """Parse a Channel from YouTube API JSON.
 
         Args:
-        ----
-        channel_dict (JsonObject): The JSON object representing the channel.
+            channel_dict (JsonObject): The JSON object representing the channel.
 
         Returns:
-        -------
-        Channel: The parsed channel.
+            Channel: The parsed channel.
 
         """
         channel_id = channel_dict["id"]
@@ -344,12 +338,10 @@ class ClientMarshaller:
         """Parse ChannelStats from YouTube API JSON.
 
         Args:
-        ----
-        stats_dict (JsonObject): The JSON object representing the channel stats.
+            stats_dict (JsonObject): The JSON object representing the channel stats.
 
         Returns:
-        -------
-        ChannelStats: The parsed channel stats.
+            ChannelStats: The parsed channel stats.
 
         """
         return ChannelStats(
@@ -363,13 +355,11 @@ class ClientMarshaller:
         """Parse a Playlist from YouTube API JSON.
 
         Args:
-        ----
-        playlist_dict (JsonObject): The JSON object representing the playlist.
-        items (list[PlaylistItem]): The items in the playlist.
+            playlist_dict (JsonObject): The JSON object representing the playlist.
+            items (list[PlaylistItem]): The items in the playlist.
 
         Returns:
-        -------
-        Playlist: The parsed playlist.
+            Playlist: The parsed playlist.
 
         """
         playlist_id = playlist_dict["id"]
@@ -388,12 +378,10 @@ class ClientMarshaller:
         """Parse a PlaylistItem from YouTube API JSON.
 
         Args:
-        ----
-        playlist_item_dict (JsonObject): The JSON object representing the playlist item.
+            playlist_item_dict (JsonObject): The JSON object representing the playlist item.
 
         Returns:
-        -------
-        PlaylistItem: The parsed playlist item.
+            PlaylistItem: The parsed playlist item.
 
         """
         video_id = playlist_item_dict["contentDetails"]["videoId"]

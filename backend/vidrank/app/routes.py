@@ -62,7 +62,15 @@ class PostVideosResponse(BaseModel):
 
 @router.post(name="Videos", path="/videos", description="Post videos.")
 def post_videos(request: PostVideosRequest) -> PostVideosResponse:
-    """Route for posting a request for videos."""
+    """Route for posting a request for videos.
+
+    Args:
+        request (PostVideosRequest): The request for videos.
+
+    Returns:
+        PostVideosResponse: The response to the request for videos.
+
+    """
     app_state = AppState.get()
 
     videos = list(Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, request.settings.matching_settings))
@@ -86,7 +94,14 @@ class PostSubmitResponse(BaseModel):
 
 @router.post(name="Submit", path="/submit", description="Post submit.")
 def post_submit(request: PostSubmitRequest) -> PostSubmitResponse:
-    """Route for posting a submit request."""
+    """Route for posting a submit request.
+
+    Args:
+        request (PostSubmitRequest): The request to submit a choice.
+
+    Returns:
+        PostSubmitResponse: The response to the submit request.
+    """
     app_state = AppState.get()
     videos = list(Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, request.settings.matching_settings))
 
@@ -116,7 +131,17 @@ class PostUndoResponse(BaseModel):
 
 @router.post(name="Undo", path="/undo", description="Post undo.")
 def post_undo(request: PostUndoRequest) -> PostUndoResponse:
-    """Route for posting an undo request."""
+    """Route for posting an undo request.
+
+    Args:
+        request (PostUndoRequest): The request to undo a choice.
+
+    Returns:
+        PostUndoResponse: The response to the undo request.
+
+    Raises:
+        HttpException: If the record ID is not found.
+    """
     app_state = AppState.get()
     record = app_state.record_tracker.pop(request.record_id)
     if record is None:
@@ -144,7 +169,15 @@ class PostSkipResponse(BaseModel):
 
 @router.post(name="Skip", path="/skip", description="Post skip.")
 def post_skip(request: PostSkipRequest) -> PostSkipResponse:
-    """Route for posting a skip request."""
+    """Route for posting a skip request.
+
+    Args:
+        request (PostSkipRequest): The request to skip a choice.
+
+    Returns:
+        PostSkipResponse: The response to the skip request.
+
+    """
     app_state = AppState.get()
     videos = list(Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, request.settings.matching_settings))
 

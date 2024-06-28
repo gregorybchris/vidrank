@@ -19,9 +19,8 @@ class ThumbnailSet(BaseModel):
     def get_highest_resolution(self) -> Optional[Thumbnail]:
         """Get the thumbnail with the highest resolution.
 
-        Returns
-        -------
-        Optional[Thumbnail]: The thumbnail with the highest resolution.
+        Returns:
+            Optional[Thumbnail]: The thumbnail with the highest resolution.
 
         """
         if self.maxres is not None:

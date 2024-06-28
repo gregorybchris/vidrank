@@ -14,8 +14,7 @@ class RecordTracker:
         """Initialize the record tracker.
 
         Args:
-        ----
-        cache_dirpath (Path): The path to the cache directory.
+            cache_dirpath (Path): The path to the cache directory.
 
         """
         self.dirpath = cache_dirpath / "records"
@@ -29,9 +28,8 @@ class RecordTracker:
     def load(self) -> list[Record]:
         """Load the records from the cache.
 
-        Returns
-        -------
-        list[Record]: The records loaded from the cache.
+        Returns:
+            list[Record]: The records loaded from the cache.
 
         """
         if not self.filepath.exists():
@@ -44,8 +42,7 @@ class RecordTracker:
         """Add a record to the cache.
 
         Args:
-        ----
-        record (Record): The record to add to the cache.
+            record (Record): The record to add to the cache.
 
         """
         self.ensure_exists()
@@ -59,12 +56,10 @@ class RecordTracker:
         """Pop a record from the cache.
 
         Args:
-        ----
-        record_id (str): The ID of the record to pop from the cache.
+            record_id (str): The ID of the record to pop from the cache.
 
         Returns:
-        -------
-        Optional[Record]: The record popped from the cache, or None if not found.
+            Optional[Record]: The record popped from the cache, or None if not found.
 
         """
         self.ensure_exists()

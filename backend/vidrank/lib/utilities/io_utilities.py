@@ -12,8 +12,7 @@ def print_video(video: Video) -> None:
     """Print YouTube video details to the console.
 
     Args:
-    ----
-    video (Video): The video to print.
+        video (Video): The video to print.
 
     """
     print(f"ID: {video.id}")
@@ -38,8 +37,7 @@ def print_channel(channel: Channel) -> None:
     """Print YouTube channel details to the console.
 
     Args:
-    ----
-    channel (Channel): The channel to print.
+        channel (Channel): The channel to print.
 
     """
     print(f"ID: {channel.id}")
@@ -58,8 +56,7 @@ def print_playlist(playlist: Playlist) -> None:
     """Print YouTube playlist details to the console.
 
     Args:
-    ----
-    playlist (Playlist): The playlist to print.
+        playlist (Playlist): The playlist to print.
 
     """
     print(f"ID: {playlist.id}")

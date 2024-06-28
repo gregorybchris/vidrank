@@ -26,11 +26,10 @@ class YouTubeFacade:
         """Initialize the YouTubeFacade.
 
         Args:
-        ----
-        youtube_client (YouTubeClient): The client for the YouTube API.
-        video_cache (PickleCache[Video]): The cache for videos.
-        channel_cache (PickleCache[Channel]): The cache for channels.
-        playlist_cache (PickleCache[Playlist]): The cache for playlists.
+            youtube_client (YouTubeClient): The client for the YouTube API.
+            video_cache (PickleCache[Video]): The cache for videos.
+            channel_cache (PickleCache[Channel]): The cache for channels.
+            playlist_cache (PickleCache[Playlist]): The cache for playlists.
 
         """
         self.youtube_client = youtube_client
@@ -42,11 +41,14 @@ class YouTubeFacade:
         """Get a video by its ID.
 
         Args:
-        ----
-        video_id (str): The ID of the video to fetch.
-        use_cache (bool): Whether to use the cache to fetch the video.
+            video_id (str): The ID of the video to fetch.
+            use_cache (bool): Whether to use the cache to fetch the video.
 
-        Returns: The video with the given ID.
+        Returns:
+            Video: The video with the given ID.
+
+        Raises:
+            ValueError: If the video with the given ID is not found.
 
         """
         if use_cache:
@@ -65,11 +67,11 @@ class YouTubeFacade:
         """Iterate over videos with the given IDs.
 
         Args:
-        ----
-        video_ids (Iterable[str]): The IDs of the videos to fetch.
-        use_cache (bool): Whether to use the cache to fetch the videos.
+            video_ids (Iterable[str]): The IDs of the videos to fetch.
+            use_cache (bool): Whether to use the cache to fetch the videos.
 
-        Returns: An iterator over the videos with the given IDs.
+        Returns:
+            Iterator[Video]: An iterator over the videos with the given IDs.
 
         """
         video_ids_to_fetch = []
@@ -90,11 +92,11 @@ class YouTubeFacade:
         """Get a channel by its ID.
 
         Args:
-        ----
-        channel_id (str): The ID of the channel to fetch.
-        use_cache (bool): Whether to use the cache to fetch the channel.
+            channel_id (str): The ID of the channel to fetch.
+            use_cache (bool): Whether to use the cache to fetch the channel.
 
-        Returns: The channel with the given ID.
+        Returns:
+            Channel: The channel with the given ID.
 
         """
         if use_cache:
@@ -110,11 +112,11 @@ class YouTubeFacade:
         """Get a playlist by its ID.
 
         Args:
-        ----
-        playlist_id (str): The ID of the playlist to fetch.
-        use_cache (bool): Whether to use the cache to fetch the playlist.
+            playlist_id (str): The ID of the playlist to fetch.
+            use_cache (bool): Whether to use the cache to fetch the playlist.
 
-        Returns: The playlist with the given ID.
+        Returns:
+            Playlist: The playlist with the given ID.
 
         """
         if use_cache:

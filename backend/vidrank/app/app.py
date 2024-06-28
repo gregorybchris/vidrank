@@ -55,15 +55,13 @@ class App:
         """Context manager for the application.
 
         Args:
-        ----
-        host (str): The host for the FastAPI server.
-        port (int): The port for the FastAPI server.
-        log_level (int): The logging level.
-        random_seed (Optional[int]): The seed for random operations.
+            host (str): The host for the FastAPI server.
+            port (int): The port for the FastAPI server.
+            log_level (int): The logging level.
+            random_seed (Optional[int]): The seed for random operations.
 
         Yields:
-        ------
-        App: The application instance.
+            App: The application instance.
 
         """
         fast_api = FastAPI()
@@ -88,9 +86,10 @@ class App:
         """Load the application state from environment variables.
 
         Args:
-        ----
-        random_seed (Optional[int]): The seed for random operations.
+            random_seed (Optional[int]): The seed for random operations.
 
+        Raises:
+            ValueError: If any of the required environment variables are not set.
         """
         api_key = os.getenv("YOUTUBE_API_KEY")
         if api_key is None:

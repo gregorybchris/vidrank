@@ -11,9 +11,8 @@ def print_ratings_histogram(records: list[Record], youtube_facade: YouTubeFacade
     """Print a histogram of the ratings for the given records.
 
     Args:
-    ----
-    records (list[Record]): The records to analyze.
-    youtube_facade (YouTubeFacade): The YouTube facade.
+        records (list[Record]): The records to analyze.
+        youtube_facade (YouTubeFacade): The YouTube facade.
 
     """
     print(f"A total of {len(records)} records have been created.")

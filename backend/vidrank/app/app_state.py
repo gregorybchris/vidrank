@@ -31,11 +31,10 @@ class AppState:
         """Initialize the AppState singleton.
 
         Args:
-        ----
-        youtube_facade (YouTubeFacade): The YouTubeFacade instance.
-        record_tracker (RecordTracker): The RecordTracker instance.
-        playlist_id (str): The ID of the playlist.
-        rng (np.random.Generator): The random number generator.
+            youtube_facade (YouTubeFacade): The YouTubeFacade instance.
+            record_tracker (RecordTracker): The RecordTracker instance.
+            playlist_id (str): The ID of the playlist.
+            rng (np.random.Generator): The random number generator.
 
         """
         cls._INSTANCE = cls(
@@ -47,7 +46,14 @@ class AppState:
 
     @classmethod
     def get(cls) -> "AppState":
-        """Get the instance of the AppState singleton."""
+        """Get the instance of the AppState singleton.
+
+        Returns:
+            AppState: The AppState instance.
+
+        Raises:
+            ValueError: If the AppState has not been initialized.
+        """
         if cls._INSTANCE is None:
             msg = "AppState has not been initialized"
             raise ValueError(msg)

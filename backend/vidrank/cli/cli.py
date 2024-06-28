@@ -32,9 +32,8 @@ def serve(debug: bool = False, **kwargs: Any) -> None:
     """Start the server.
 
     Args:
-    ----
-    debug (bool): Whether to enable debug logging.
-    kwargs (Any): Additional keyword arguments.
+        debug (bool): Whether to enable debug logging.
+        kwargs (Any): Additional keyword arguments.
 
     """
     if debug:
@@ -56,10 +55,9 @@ def get_video(
     """Get video information.
 
     Args:
-    ----
-    video_id (str): The ID of the video to get information for.
-    use_cache (bool): Whether to use the cache.
-    debug (bool): Whether to enable debug logging.
+        video_id (str): The ID of the video to get information for.
+        use_cache (bool): Whether to use the cache.
+        debug (bool): Whether to enable debug logging.
 
     """
     if debug:
@@ -81,9 +79,11 @@ def get_record(
     """Get a record by ID.
 
     Args:
-    ----
-    record_id (str): The ID of the record to get.
-    debug (bool): Whether to enable debug logging.
+        record_id (str): The ID of the record to get.
+        debug (bool): Whether to enable debug logging.
+
+    Raises:
+        ValueError: If the record with the given ID is not found.
 
     """
     if debug:
@@ -118,11 +118,10 @@ def get_playlist(
     """Get playlist information.
 
     Args:
-    ----
-    playlist_id (str): The ID of the playlist to get information for.
-    use_cache (bool): Whether to use the cache.
-    debug (bool): Whether to enable debug logging.
-    n_videos (int): The number of videos to display.
+        playlist_id (str): The ID of the playlist to get information for.
+        use_cache (bool): Whether to use the cache.
+        debug (bool): Whether to enable debug logging.
+        n_videos (int): The number of videos to display.
 
     """
     if debug:
@@ -153,10 +152,9 @@ def get_channel(
     """Get channel information.
 
     Args:
-    ----
-    channel_id (str): The ID of the channel to get information for.
-    use_cache (bool): Whether to use the cache.
-    debug (bool): Whether to enable debug logging.
+        channel_id (str): The ID of the channel to get information for.
+        use_cache (bool): Whether to use the cache.
+        debug (bool): Whether to enable debug logging.
 
     """
     if debug:
@@ -203,8 +201,7 @@ def rank_videos(n: int = 10) -> None:
     """Rank videos.
 
     Args:
-    ----
-    n (int): The number of videos to calculate rankings for.
+        n (int): The number of videos to calculate rankings for.
 
     """
     App.load_app_state()
