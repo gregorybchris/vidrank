@@ -1,5 +1,3 @@
-"""Cache that stores items on disk using pickle."""
-
 import logging
 import pickle
 from pathlib import Path

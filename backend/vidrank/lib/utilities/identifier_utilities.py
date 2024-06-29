@@ -1,5 +1,3 @@
-"""Unique identifier utilities."""
-
 from uuid import uuid4
 
 

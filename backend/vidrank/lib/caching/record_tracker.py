@@ -1,5 +1,3 @@
-"""Local cache for saving records on disk."""
-
 import json
 from pathlib import Path
 from typing import Optional

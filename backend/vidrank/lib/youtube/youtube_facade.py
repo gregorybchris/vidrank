@@ -1,5 +1,3 @@
-"""Facade for the YouTube API."""
-
 import logging
 from typing import Iterable, Iterator
 

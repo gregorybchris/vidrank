@@ -1,5 +1,3 @@
-"""YouTube API client."""
-
 import logging
 import math
 from typing import ClassVar, Iterator, Mapping, Optional, cast

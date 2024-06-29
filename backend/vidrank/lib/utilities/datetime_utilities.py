@@ -1,5 +1,3 @@
-"""Datetime utilities."""
-
 import time
 
 

@@ -1,6 +1,3 @@
-"""Utility functions for YouTube URLs."""
-
-
 def url_from_video_id(video_id: str) -> str:
     """Return the URL for a YouTube video given its ID.
 

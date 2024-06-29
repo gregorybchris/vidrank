@@ -1,5 +1,3 @@
-"""Matching settings model."""
-
 from pydantic import BaseModel
 
 from vidrank.lib.models.matching_strategy import MatchingStrategy

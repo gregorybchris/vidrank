@@ -1,5 +1,3 @@
-"""Choice model."""
-
 from pydantic import BaseModel
 
 from vidrank.lib.models.action import Action

@@ -1,5 +1,3 @@
-"""Enum for different matching strategies."""
-
 from enum import StrEnum, auto
 
 

@@ -1,5 +1,3 @@
-"""YouTube channel stats model."""
-
 from pydantic import BaseModel
 
 

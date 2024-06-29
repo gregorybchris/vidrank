@@ -1,5 +1,3 @@
-"""Video ranker."""
-
 from dataclasses import dataclass
 from typing import Iterator
 

@@ -1,5 +1,3 @@
-"""YouTube channel model."""
-
 from pydantic import BaseModel
 
 from vidrank.lib.youtube.channel_stats import ChannelStats

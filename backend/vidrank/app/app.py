@@ -1,5 +1,3 @@
-"""Vidrank FastAPI application."""
-
 import contextlib
 import logging
 import os

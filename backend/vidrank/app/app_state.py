@@ -1,5 +1,3 @@
-"""AppState singleton."""
-
 from dataclasses import dataclass
 
 import numpy as np

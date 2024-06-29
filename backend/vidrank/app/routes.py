@@ -1,5 +1,3 @@
-"""API routes."""
-
 import logging
 
 from fastapi import APIRouter

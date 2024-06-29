@@ -1,5 +1,3 @@
-"""YouTube video thumbnail model."""
-
 from pydantic import BaseModel
 
 

@@ -1,5 +1,3 @@
-"""Ranking model."""
-
 from pydantic import BaseModel
 
 

@@ -1,5 +1,3 @@
-"""Thumbnail set for a YouTube video."""
-
 from typing import Optional
 
 from pydantic import BaseModel

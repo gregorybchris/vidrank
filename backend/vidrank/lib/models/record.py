@@ -1,5 +1,3 @@
-"""Record model."""
-
 from pydantic import BaseModel
 
 from vidrank.lib.models.choice_set import ChoiceSet

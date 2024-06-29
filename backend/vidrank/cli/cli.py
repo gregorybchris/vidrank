@@ -1,5 +1,3 @@
-"""Command-line interface for the VidRank application."""
-
 import logging
 from itertools import islice
 from typing import Any

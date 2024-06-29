@@ -1,5 +1,3 @@
-"""Enum for different actions."""
-
 from enum import StrEnum, auto
 
 

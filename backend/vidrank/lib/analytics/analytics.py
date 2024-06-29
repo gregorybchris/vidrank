@@ -1,5 +1,3 @@
-"""Utilities for records analytics."""
-
 from vidrank.lib.models.action import Action
 from vidrank.lib.models.record import Record
 from vidrank.lib.youtube.youtube_facade import YouTubeFacade

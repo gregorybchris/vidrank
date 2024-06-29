@@ -1,5 +1,3 @@
-"""Determine which videos to return for comparison."""
-
 import logging
 from typing import Iterator
 

@@ -1,5 +1,3 @@
-"""Video stats model."""
-
 from pydantic import BaseModel
 
 
