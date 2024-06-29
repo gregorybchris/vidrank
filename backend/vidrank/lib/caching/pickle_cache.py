@@ -16,7 +16,6 @@ class PickleCache(Generic[T]):
 
         Args:
             cache_dirpath (Path): The path to the cache directory.
-
         """
         self.dirpath = cache_dirpath
 
@@ -31,7 +30,6 @@ class PickleCache(Generic[T]):
 
         Returns:
             Optional[T]: The item with the given ID, or None if it does not exist.
-
         """
         filepath = self.dirpath / f"{item_id}.pkl"
         if not filepath.exists():
@@ -46,7 +44,6 @@ class PickleCache(Generic[T]):
         Args:
             item_id (str): The ID of the item to add.
             item (T): The item to add to the cache.
-
         """
         self._ensure_exists()
         filepath = self.dirpath / f"{item_id}.pkl"
@@ -61,7 +58,6 @@ class PickleCache(Generic[T]):
 
         Returns:
             bool: True if the item is in the cache, False otherwise.
-
         """
         filepath = self.dirpath / f"{item_id}.pkl"
         return filepath.exists()
@@ -71,6 +67,5 @@ class PickleCache(Generic[T]):
 
         Returns:
             int: The number of items in the cache.
-
         """
         return len(list(self.dirpath.glob("*.pkl")))

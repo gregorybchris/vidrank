@@ -19,7 +19,6 @@ class ThumbnailSet(BaseModel):
 
         Returns:
             Optional[Thumbnail]: The thumbnail with the highest resolution.
-
         """
         if self.maxres is not None:
             return self.maxres

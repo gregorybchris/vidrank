@@ -60,7 +60,6 @@ class App:
 
         Yields:
             App: The application instance.
-
         """
         fast_api = FastAPI()
         api = cls(fast_api=fast_api, host=host, port=port, log_level=log_level)

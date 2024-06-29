@@ -36,7 +36,6 @@ class Matcher:
 
         Raises:
             ValueError: If the matching strategy is unknown.
-
         """
         logger.info("Using matching strategy: %s", settings.matching_strategy)
         if settings.matching_strategy == MatchingStrategy.RANDOM:
@@ -66,7 +65,6 @@ class Matcher:
 
         Yields:
             Iterator[Video]: An iterator over the matched videos
-
         """
         playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
 
@@ -97,7 +95,6 @@ class Matcher:
 
         Yields:
             Iterator[Video]: An iterator over the matched videos
-
         """
         playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
         records = app_state.record_tracker.load()
@@ -151,7 +148,6 @@ class Matcher:
 
         Returns:
             list[str]: The video IDs that are not removed in the records.
-
         """
         ids_set = set(video_ids)
         for record in records:

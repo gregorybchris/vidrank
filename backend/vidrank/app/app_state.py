@@ -33,7 +33,6 @@ class AppState:
             record_tracker (RecordTracker): The RecordTracker instance.
             playlist_id (str): The ID of the playlist.
             rng (np.random.Generator): The random number generator.
-
         """
         cls._INSTANCE = cls(
             youtube_facade=youtube_facade,

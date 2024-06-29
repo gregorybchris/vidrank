@@ -48,7 +48,6 @@ class YouTubeClient:
         Args:
             api_key (str): The API key for the YouTube API.
             batch_size (int): The number of items to request in each batch.
-
         """
         self.api_key = api_key
         self.batch_size = batch_size
@@ -66,7 +65,6 @@ class YouTubeClient:
 
         Raises:
             ValueError: If the API request fails.
-
         """
         n_chunks = math.ceil(len(video_ids) / self.batch_size)
         for chunk_i in range(0, n_chunks):
@@ -122,7 +120,6 @@ class YouTubeClient:
 
         Raises:
             ValueError: If the API request fails.
-
         """
         params: Mapping[str, str | int | list[str]] = {
             "id": channel_id,
@@ -163,7 +160,6 @@ class YouTubeClient:
 
         Raises:
             ValueError: If the API request fails.
-
         """
         params: Mapping[str, str | int | list[str]] = {
             "id": playlist_id,
@@ -247,7 +243,6 @@ class ClientMarshaller:
 
         Returns:
             Video: The parsed video.
-
         """
         duration = pendulum_parse(video_dict["contentDetails"]["duration"])
         published_at = pendulum_parse(video_dict["snippet"]["publishedAt"])
@@ -271,7 +266,6 @@ class ClientMarshaller:
 
         Returns:
             ThumbnailSet: The parsed thumbnail set.
-
         """
         thumbnail_set_kwargs: dict[str, Optional[Thumbnail]] = {}
         for size in ["default", "standard", "medium", "high", "maxres"]:
@@ -296,7 +290,6 @@ class ClientMarshaller:
 
         Returns:
             VideoStats: The parsed video stats.
-
         """
         stats_kwargs = {}
         stat_map = {
@@ -321,7 +314,6 @@ class ClientMarshaller:
 
         Returns:
             Channel: The parsed channel.
-
         """
         channel_id = channel_dict["id"]
         return Channel(
@@ -340,7 +332,6 @@ class ClientMarshaller:
 
         Returns:
             ChannelStats: The parsed channel stats.
-
         """
         return ChannelStats(
             subscribers=stats_dict["subscriberCount"],
@@ -358,7 +349,6 @@ class ClientMarshaller:
 
         Returns:
             Playlist: The parsed playlist.
-
         """
         playlist_id = playlist_dict["id"]
         created_at = pendulum_parse(playlist_dict["snippet"]["publishedAt"])
@@ -380,7 +370,6 @@ class ClientMarshaller:
 
         Returns:
             PlaylistItem: The parsed playlist item.
-
         """
         video_id = playlist_item_dict["contentDetails"]["videoId"]
         added_at = pendulum_parse(playlist_item_dict["snippet"]["publishedAt"])

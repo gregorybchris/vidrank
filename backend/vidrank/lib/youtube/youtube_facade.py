@@ -28,7 +28,6 @@ class YouTubeFacade:
             video_cache (PickleCache[Video]): The cache for videos.
             channel_cache (PickleCache[Channel]): The cache for channels.
             playlist_cache (PickleCache[Playlist]): The cache for playlists.
-
         """
         self.youtube_client = youtube_client
         self.video_cache = video_cache
@@ -47,7 +46,6 @@ class YouTubeFacade:
 
         Raises:
             ValueError: If the video with the given ID is not found.
-
         """
         if use_cache:
             video = self.video_cache.get(video_id)
@@ -70,7 +68,6 @@ class YouTubeFacade:
 
         Returns:
             Iterator[Video]: An iterator over the videos with the given IDs.
-
         """
         video_ids_to_fetch = []
         for video_id in video_ids:
@@ -95,7 +92,6 @@ class YouTubeFacade:
 
         Returns:
             Channel: The channel with the given ID.
-
         """
         if use_cache:
             channel = self.channel_cache.get(channel_id)
@@ -115,7 +111,6 @@ class YouTubeFacade:
 
         Returns:
             Playlist: The playlist with the given ID.
-
         """
         if use_cache:
             playlist = self.playlist_cache.get(playlist_id)

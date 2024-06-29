@@ -13,7 +13,6 @@ class RecordTracker:
 
         Args:
             cache_dirpath (Path): The path to the cache directory.
-
         """
         self.dirpath = cache_dirpath / "records"
         self.filepath = self.dirpath / "records.json"
@@ -28,7 +27,6 @@ class RecordTracker:
 
         Returns:
             list[Record]: The records loaded from the cache.
-
         """
         if not self.filepath.exists():
             return []
@@ -41,7 +39,6 @@ class RecordTracker:
 
         Args:
             record (Record): The record to add to the cache.
-
         """
         self.ensure_exists()
         records = self.load()
@@ -58,7 +55,6 @@ class RecordTracker:
 
         Returns:
             Optional[Record]: The record popped from the cache, or None if not found.
-
         """
         self.ensure_exists()
         records = self.load()

@@ -31,7 +31,6 @@ class Ranker:
 
         Yields:
             Iterator[Ranking]: An iterator over the rankings of the videos.
-
         """
         rating_map: dict[str, Rating] = {}
         for comp in cls._get_comps(records):
