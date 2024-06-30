@@ -1,6 +1,7 @@
 import logging
+from typing import Annotated
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi import HTTPException as HttpException
 from pydantic import BaseModel
 
@@ -18,6 +19,14 @@ from vidrank.lib.youtube.video import Video
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
+
+async def app_state_dep() -> AppState:
+    """Application state dependency."""
+    return AppState.get()
+
+
+AppStateDep = Annotated[AppState, Depends(app_state_dep)]
 
 N_VIDEOS_PER_RESPONSE = 6
 
@@ -59,18 +68,17 @@ class PostVideosResponse(BaseModel):
 
 
 @router.post(name="Videos", path="/videos", description="Post videos.")
-def post_videos(request: PostVideosRequest) -> PostVideosResponse:
+def post_videos(request: PostVideosRequest, app_state: AppStateDep) -> PostVideosResponse:
     """Route for posting a request for videos.
 
     Args:
         request (PostVideosRequest): The request for videos.
+        app_state (AppStateDep): The application state.
 
     Returns:
         PostVideosResponse: The response to the request for videos.
 
     """
-    app_state = AppState.get()
-
     videos = list(Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, request.settings.matching_settings))
 
     return PostVideosResponse(videos=videos)
@@ -91,16 +99,16 @@ class PostSubmitResponse(BaseModel):
 
 
 @router.post(name="Submit", path="/submit", description="Post submit.")
-def post_submit(request: PostSubmitRequest) -> PostSubmitResponse:
+def post_submit(request: PostSubmitRequest, app_state: AppStateDep) -> PostSubmitResponse:
     """Route for posting a submit request.
 
     Args:
         request (PostSubmitRequest): The request to submit a choice.
+        app_state (AppStateDep): The application state.
 
     Returns:
         PostSubmitResponse: The response to the submit request.
     """
-    app_state = AppState.get()
     videos = list(Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, request.settings.matching_settings))
 
     record_id = get_identifier()
@@ -128,11 +136,12 @@ class PostUndoResponse(BaseModel):
 
 
 @router.post(name="Undo", path="/undo", description="Post undo.")
-def post_undo(request: PostUndoRequest) -> PostUndoResponse:
+def post_undo(request: PostUndoRequest, app_state: AppStateDep) -> PostUndoResponse:
     """Route for posting an undo request.
 
     Args:
         request (PostUndoRequest): The request to undo a choice.
+        app_state (AppStateDep): The application state.
 
     Returns:
         PostUndoResponse: The response to the undo request.
@@ -140,7 +149,6 @@ def post_undo(request: PostUndoRequest) -> PostUndoResponse:
     Raises:
         HttpException: If the record ID is not found.
     """
-    app_state = AppState.get()
     record = app_state.record_tracker.pop(request.record_id)
     if record is None:
         raise HttpException(status_code=404, detail="Videos no longer available")
@@ -166,17 +174,17 @@ class PostSkipResponse(BaseModel):
 
 
 @router.post(name="Skip", path="/skip", description="Post skip.")
-def post_skip(request: PostSkipRequest) -> PostSkipResponse:
+def post_skip(request: PostSkipRequest, app_state: AppStateDep) -> PostSkipResponse:
     """Route for posting a skip request.
 
     Args:
         request (PostSkipRequest): The request to skip a choice.
+        app_state (AppStateDep): The application state.
 
     Returns:
         PostSkipResponse: The response to the skip request.
 
     """
-    app_state = AppState.get()
     videos = list(Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, request.settings.matching_settings))
 
     record_id = get_identifier()
@@ -205,10 +213,8 @@ class GetRankingsResponse(BaseModel):
 
 
 @router.get(name="Rankings", path="/rankings", description="Get rankings.")
-def get_rankings() -> GetRankingsResponse:
+def get_rankings(app_state: AppStateDep) -> GetRankingsResponse:
     """Route for getting video rankings."""
-    app_state = AppState.get()
-
     records = app_state.record_tracker.load()
     rankings = list(Ranker.iter_rankings(records))
     video_ids = [ranking.video_id for ranking in rankings]

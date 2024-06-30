@@ -45,7 +45,7 @@ export VIDRANK_PLAYLIST_ID="<youtube-playlist-id>"
 Start the backend
 
 ```bash
-fastapi dev backend/vidrank/app/app.py
+fastapi dev backend/vidrank/app/app.py --reload
 ```
 
 Start the frontend

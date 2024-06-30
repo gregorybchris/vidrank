@@ -38,6 +38,10 @@ class AppState:
         Raises:
             ValueError: If any of the required environment variables are not set.
         """
+        if cls._INSTANCE is not None:
+            msg = "AppState has already been initialized"
+            raise ValueError(msg)
+
         api_key = os.getenv("YOUTUBE_API_KEY")
         if api_key is None:
             msg = "YOUTUBE_API_KEY environment variable is not set."
