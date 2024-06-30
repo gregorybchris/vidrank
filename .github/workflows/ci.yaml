@@ -27,6 +27,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install Python dependencies
+        working-directory: backend
         shell: bash
         run: |
           pip install poetry
@@ -36,17 +37,20 @@ jobs:
           poetry install
 
       - name: Run ruff
+        working-directory: backend
         shell: bash
         run: |
           poetry run ruff check .
           poetry run ruff format . --check
 
       - name: Run mypy
+        working-directory: backend
         shell: bash
         run: |
           poetry run mypy vidrank --config pyproject.toml
 
       - name: Run pytest
+        working-directory: backend
         shell: bash
         run: |
           poetry run pytest tests --cov=vidrank --cov-report=html --cov-report=xml --cov-branch
@@ -55,15 +59,16 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: vidrank-unit-coverage-html
-          path: vidrank/htmlcov
+          path: backend/htmlcov
 
       - name: Upload XML coverage
         uses: actions/upload-artifact@v2
         with:
           name: vidrank-unit-coverage-xml
-          path: vidrank/coverage.xml
+          path: backend/coverage.xml
 
       - name: Check coverage
+        working-directory: backend
         shell: bash
         run: |
           poetry run covcheck coverage.xml --config pyproject.toml
