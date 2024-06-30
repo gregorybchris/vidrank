@@ -1,0 +1,69 @@
+name: Package CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version:
+          - "3.12"
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Python ${{ matrix.python-version }} Setup
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Python dependencies
+        shell: bash
+        run: |
+          pip install poetry
+
+          if [ -d /poetryenvs ]; then rm -rf ~/poetryenvs; fi
+          poetry config virtualenvs.path ~/poetryenvs
+          poetry install
+
+      - name: Run ruff
+        shell: bash
+        run: |
+          poetry run ruff check .
+          poetry run ruff format . --check
+
+      - name: Run mypy
+        shell: bash
+        run: |
+          poetry run mypy vidrank --config pyproject.toml
+
+      - name: Run pytest
+        shell: bash
+        run: |
+          poetry run pytest tests --cov=vidrank --cov-report=html --cov-report=xml --cov-branch
+
+      - name: Upload HTML coverage
+        uses: actions/upload-artifact@v2
+        with:
+          name: vidrank-unit-coverage-html
+          path: vidrank/htmlcov
+
+      - name: Upload XML coverage
+        uses: actions/upload-artifact@v2
+        with:
+          name: vidrank-unit-coverage-xml
+          path: vidrank/coverage.xml
+
+      - name: Check coverage
+        shell: bash
+        run: |
+          poetry run covcheck coverage.xml --config pyproject.toml
