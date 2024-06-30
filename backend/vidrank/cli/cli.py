@@ -1,10 +1,8 @@
 import logging
 from itertools import islice
-from typing import Any
 
 import click
 
-from vidrank.app.app import App
 from vidrank.app.app_state import AppState
 from vidrank.lib.analytics.analytics import print_ratings_histogram
 from vidrank.lib.models.action import Action
@@ -20,25 +18,6 @@ logger = logging.getLogger(__name__)
 @click.group()
 def main() -> None:
     """Run main CLI entrypoint."""
-
-
-@main.command()
-@click.option("--host", "host", type=str, default=App.DEFAULT_HOST)
-@click.option("--port", "port", type=int, default=App.DEFAULT_PORT)
-@click.option("--debug", type=bool, default=False, is_flag=True)
-def serve(debug: bool = False, **kwargs: Any) -> None:
-    """Start the server.
-
-    Args:
-        debug (bool): Whether to enable debug logging.
-        kwargs (Any): Additional keyword arguments.
-
-    """
-    if debug:
-        logging.basicConfig(level=logging.INFO)
-
-    with App.context(**kwargs) as app:
-        app.start()
 
 
 @main.command(name="video")
@@ -61,7 +40,6 @@ def get_video(
     if debug:
         logging.basicConfig(level=logging.INFO)
 
-    App.load_app_state()
     app_state = AppState.get()
     video = app_state.youtube_facade.get_video(video_id, use_cache=use_cache)
     print_video(video)
@@ -87,7 +65,6 @@ def get_record(
     if debug:
         logging.basicConfig(level=logging.INFO)
 
-    App.load_app_state()
     app_state = AppState.get()
     records = app_state.record_tracker.load()
     for record in records:
@@ -125,7 +102,6 @@ def get_playlist(
     if debug:
         logging.basicConfig(level=logging.INFO)
 
-    App.load_app_state()
     app_state = AppState.get()
     playlist = app_state.youtube_facade.get_playlist(playlist_id, use_cache=use_cache)
     print_playlist(playlist)
@@ -158,7 +134,6 @@ def get_channel(
     if debug:
         logging.basicConfig(level=logging.INFO)
 
-    App.load_app_state()
     app_state = AppState.get()
     channel = app_state.youtube_facade.get_channel(channel_id, use_cache=use_cache)
     print_channel(channel)
@@ -167,7 +142,6 @@ def get_channel(
 @main.command(name="analyze")
 def analyze_records() -> None:
     """Analyze the distribution of records."""
-    App.load_app_state()
     app_state = AppState.get()
     records = app_state.record_tracker.load()
     print_ratings_histogram(records, app_state.youtube_facade)
@@ -176,7 +150,6 @@ def analyze_records() -> None:
 @main.command(name="cache")
 def cache_info() -> None:
     """Print cache summary information."""
-    App.load_app_state()
     app_state = AppState.get()
     records = app_state.record_tracker.load()
     print(f"Total records: {len(records)}")
@@ -202,7 +175,6 @@ def rank_videos(n: int = 10) -> None:
         n (int): The number of videos to calculate rankings for.
 
     """
-    App.load_app_state()
     app_state = AppState.get()
     records = app_state.record_tracker.load()
     rankings = Ranker.iter_rankings(records)
