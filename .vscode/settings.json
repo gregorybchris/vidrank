@@ -20,5 +20,8 @@
   "prettier.printWidth": 120,
   "python.analysis.extraPaths": ["backend"],
   "ruff.format.args": ["--config", "backend/pyproject.toml"],
-  "ruff.nativeServer": true
+  "ruff.nativeServer": true,
+  "python.testing.pytestArgs": ["backend/tests"],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true
 }
