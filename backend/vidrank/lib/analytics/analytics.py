@@ -15,15 +15,22 @@ def print_ratings_histogram(records: list[Record], youtube_facade: YouTubeFacade
     """
     print(f"A total of {len(records)} records have been created.")
 
+    video_ids = set()
+
     counts: dict[str, dict[str, int]] = {}
     for record in records:
         for choice in record.choice_set.choices:
             video_id = choice.video_id
+
+            video_ids.add(video_id)
+
             if video_id not in counts:
                 counts[video_id] = {}
             if choice.action not in counts[video_id]:
                 counts[video_id][choice.action] = 0
             counts[video_id][choice.action] += 1
+
+    print(f"A total of {len(video_ids)} unique videos have been rated.")
 
     for video_id, ratings in sorted(counts.items(), key=lambda x: x[1].get(Action.SELECT, 0), reverse=True):
         select_count = ratings.get(Action.SELECT, 0)
