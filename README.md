@@ -53,3 +53,11 @@ Start the frontend
 ```bash
 pnpm run dev
 ```
+
+### Debug Mode
+
+Start the backend
+
+```bash
+LOG_LEVEL=DEBUG fastapi dev backend/vidrank/app/app.py --reload
+```

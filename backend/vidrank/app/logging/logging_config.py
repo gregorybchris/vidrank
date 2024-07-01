@@ -1,19 +1,16 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, computed_field
 
 
-class LogConfig(BaseModel):
+class LoggingConfig(BaseModel):
     """Logging configuration for the application."""
 
-    LOGGER_NAME: str = "vidrank"
-    LOG_FORMAT: str = "%(levelprefix)s | %(asctime)s | %(message)s"
-    LOG_LEVEL: str = "DEBUG"
-
     version: int = 1
+    log_level: str = "INFO"
     disable_existing_loggers: bool = False
     formatters: dict = {
         "default": {
             "()": "uvicorn.logging.DefaultFormatter",
-            "fmt": LOG_FORMAT,
+            "fmt": "%(levelprefix)s | %(asctime)s | %(message)s",
             "datefmt": "%Y-%m-%d %H:%M:%S",
         },
     }
@@ -24,6 +21,13 @@ class LogConfig(BaseModel):
             "stream": "ext://sys.stderr",
         },
     }
-    loggers: dict = {
-        LOGGER_NAME: {"handlers": ["default"], "level": LOG_LEVEL},
-    }
+
+    @computed_field
+    def loggers(self) -> dict:
+        """Loggers configuration."""
+        return {
+            "vidrank": {
+                "handlers": ["default"],
+                "level": self.log_level,
+            },
+        }
