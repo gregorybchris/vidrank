@@ -16,8 +16,9 @@ export function useSettings() {
     if (settings === null && storage === null) {
       const defaultSettings: Settings = {
         matching_settings: {
-          matching_strategy: "balanced",
-          balanced_random_fraction: 0.5,
+          random_strategy: null,
+          by_rating_strategy: null,
+          finetune_strategy: null,
         },
       };
       setSettings(defaultSettings);

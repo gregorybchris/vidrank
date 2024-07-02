@@ -268,12 +268,6 @@ export function Selector() {
 
   function offsetCurrentVideo(direction: Direction) {
     console.log("Offsetting current video: ", direction);
-    const offset = match(direction)
-      .with("up", () => -1)
-      .with("down", () => 1)
-      .with("left", () => -1)
-      .with("right", () => 1)
-      .exhaustive();
 
     if (videos.length === 0) {
       console.log("No videos");
@@ -291,6 +285,14 @@ export function Selector() {
       setCurrentId(videos[0].id);
       return;
     }
+
+    const verticalOffset = 3; // nVideos / nRows = nCols = 3
+    const offset = match(direction)
+      .with("up", () => -verticalOffset)
+      .with("down", () => verticalOffset)
+      .with("left", () => -1)
+      .with("right", () => 1)
+      .exhaustive();
 
     let nextIndex = (currentIndex + offset + videos.length) % videos.length;
     setCurrentId(videos[nextIndex].id);

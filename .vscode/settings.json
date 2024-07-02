@@ -10,7 +10,7 @@
     "source.organizeImports": "explicit",
     "source.fixAll": "explicit"
   },
-  "cSpell.words": ["treuskill", "Vidrank"],
+  "cSpell.words": ["finetune", "treuskill", "Vidrank"],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.detectIndentation": true,
   "editor.formatOnSave": true,

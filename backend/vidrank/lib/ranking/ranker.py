@@ -58,11 +58,9 @@ class Ranker:
     def _get_comps(cls, records: list[Record]) -> Iterator[Comp]:
         for record in records:
             for choice_a in record.choice_set.choices:
-                action_a = choice_a.action
                 for choice_b in record.choice_set.choices:
+                    action_a = choice_a.action
                     action_b = choice_b.action
 
                     if (action_a, action_b) == (Action.SELECT, Action.NOTHING):
                         yield Comp(choice_a.video_id, choice_b.video_id)
-                    if (action_a, action_b) == (Action.NOTHING, Action.SELECT):
-                        yield Comp(choice_b.video_id, choice_a.video_id)

@@ -1,10 +1,11 @@
 import logging
 from itertools import islice
+from typing import Optional
 
 import click
 
 from vidrank.app.app_state import AppState
-from vidrank.lib.analytics.analytics import print_ratings_histogram
+from vidrank.lib.analytics.analytics import print_ratings_stats
 from vidrank.lib.models.action import Action
 from vidrank.lib.ranking.ranker import Ranker
 from vidrank.lib.utilities.io_utilities import print_channel, print_playlist, print_video
@@ -144,43 +145,75 @@ def analyze_records() -> None:
     """Analyze the distribution of records."""
     app_state = AppState.get()
     records = app_state.record_tracker.load()
-    print_ratings_histogram(records, app_state.youtube_facade)
+    print_ratings_stats(records, app_state.youtube_facade)
 
 
 @main.command(name="cache")
 def cache_info() -> None:
     """Print cache summary information."""
     app_state = AppState.get()
-    records = app_state.record_tracker.load()
-    print(f"Total records: {len(records)}")
-
-    video_ids = set()
-    for record in records:
-        for choice in record.choice_set.choices:
-            if choice.action in [Action.SELECT, Action.NOTHING]:
-                video_ids.add(choice.video_id)
-    print(f"Unique videos processed: {len(video_ids)}")
-
     print(f"Cached videos: {len(app_state.youtube_facade.video_cache)}")
     print(f"Cached channels: {len(app_state.youtube_facade.channel_cache)}")
     print(f"Cached playlists: {len(app_state.youtube_facade.playlist_cache)}")
 
 
-@main.command(name="rank")
+# rGOOLC8cIO4
+@main.command(name="rankings")
 @click.option("--n", type=int, default=10)
-def rank_videos(n: int = 10) -> None:
+@click.option("--video-id", type=str)
+def get_video_rankings(n: int = 10, video_id: Optional[str] = None) -> None:
     """Rank videos.
 
     Args:
         n (int): The number of videos to calculate rankings for.
+        video_id (Optional[str]): The ID of the video to calculate rankings for.
 
     """
     app_state = AppState.get()
     records = app_state.record_tracker.load()
     rankings = Ranker.iter_rankings(records)
 
-    for ranking in islice(rankings, n):
-        video = app_state.youtube_facade.get_video(ranking.video_id)
+    if video_id is not None:
+        for ranking in rankings:
+            if ranking.video_id == video_id:
+                video = app_state.youtube_facade.get_video(ranking.video_id)
+                print(f"{video.title}: {ranking.rating}")
+                break
+        else:
+            print("Video not found")
+    else:
+        for ranking in islice(rankings, n):
+            video = app_state.youtube_facade.get_video(ranking.video_id)
+
+            print(f"{video.title}")
+            print(f"{url_from_video_id(video.id)}")
+            print("= = = = = = = = = = = =")
+            print()
+
+
+@main.command(name="removed")
+@click.option("--n", type=int, default=10)
+def list_removed_videos(n: int = 10) -> None:
+    """List removed videos.
+
+    Args:
+        n (int): The number of videos to list.
+
+    """
+    app_state = AppState.get()
+    records = app_state.record_tracker.load()
+
+    playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
+    playlist_video_ids = {item.video_id for item in playlist.items}
+
+    removed_video_ids = []
+    for record in records:
+        for choice in record.choice_set.choices:
+            if choice.action == Action.REMOVE and choice.video_id in playlist_video_ids:
+                removed_video_ids.append(choice.video_id)
+
+    for video_id in islice(removed_video_ids, n):
+        video = app_state.youtube_facade.get_video(video_id)
 
         print(f"{video.title}")
         print(f"{url_from_video_id(video.id)}")

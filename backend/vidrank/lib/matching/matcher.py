@@ -1,15 +1,17 @@
 import logging
-from typing import Iterator
+from typing import TYPE_CHECKING, Iterator
 
 import numpy as np
 
 from vidrank.app.app_state import AppState
 from vidrank.lib.models.action import Action
-from vidrank.lib.models.matching_settings import MatchingSettings
-from vidrank.lib.models.matching_strategy import MatchingStrategy
+from vidrank.lib.models.matching_settings import FinetuneStrategySettings, MatchingSettings
 from vidrank.lib.models.record import Record
 from vidrank.lib.ranking.ranker import Ranker
 from vidrank.lib.youtube.video import Video
+
+if TYPE_CHECKING:
+    from vidrank.lib.ranking.ranking import Ranking
 
 logger = logging.getLogger(__name__)
 
@@ -37,22 +39,17 @@ class Matcher:
         Raises:
             ValueError: If the matching strategy is unknown.
         """
-        logger.info("Using matching strategy: %s", settings.matching_strategy)
-        if settings.matching_strategy == MatchingStrategy.RANDOM:
+        if settings.random_strategy is not None:
+            logger.info("Using matching strategy: random")
             yield from cls.match_random(app_state, n_videos)
-        elif settings.matching_strategy == MatchingStrategy.BY_RATING:
+        elif settings.by_rating_strategy is not None:
+            logger.info("Using matching strategy: by_rating")
             yield from cls.match_by_rating(app_state, n_videos)
-        elif settings.matching_strategy in [None, MatchingStrategy.BALANCED]:
-            logger.info("Using random fraction: %s", settings.balanced_random_fraction)
-            r = app_state.rng.random()
-            if r < settings.balanced_random_fraction:
-                logger.info("Matching randomly")
-                yield from cls.match_random(app_state, n_videos)
-            else:
-                logger.info("Matching by ratings")
-                yield from cls.match_by_rating(app_state, n_videos)
+        elif settings.finetune_strategy is not None:
+            logger.info("Using matching strategy: finetune")
+            yield from cls.match_finetune(app_state, n_videos, settings.finetune_strategy)
         else:
-            msg = f"Unknown matching strategy: {settings.matching_strategy}"
+            msg = "No matching strategy configured"
             raise ValueError(msg)
 
     @classmethod
@@ -94,7 +91,7 @@ class Matcher:
             n_videos (int): The number of videos to return.
 
         Yields:
-            Iterator[Video]: An iterator over the matched videos
+            Iterator[Video]: An iterator over the matched videos.
         """
         playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
         records = app_state.record_tracker.load()
@@ -125,6 +122,58 @@ class Matcher:
         # or we run out of videos in the rankings
         n_found = 0
         for ranking in sorted_rankings:
+            if n_found == n_videos:
+                return
+            for video in app_state.youtube_facade.iter_videos([ranking.video_id]):
+                logger.info(
+                    "Selected video: rank=%d, rating=%d: (%s) %s",
+                    ranking.rank,
+                    int(ranking.rating),
+                    video.id,
+                    video.title,
+                )
+                n_found += 1
+                yield video
+
+    @classmethod
+    def match_finetune(cls, app_state: AppState, n_videos: int, settings: FinetuneStrategySettings) -> Iterator[Video]:
+        """Match videos from the upper part of rankings.
+
+        Args:
+            app_state (AppState): The application state.
+            n_videos (int): The number of videos to return.
+            settings (FinetuneStrategySettings): The finetune strategy settings.
+
+        Yields:
+            Iterator[Video]: An iterator over the matched videos.
+        """
+        playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
+        records = app_state.record_tracker.load()
+
+        # Rate all videos
+        rankings = list(Ranker.iter_rankings(records))
+
+        # Filter for rankings for videos that are not removed
+        playlist_video_ids = [item.video_id for item in playlist.items]
+        non_removed_ids = cls.get_non_removed(playlist_video_ids, records)
+        rankings = [r for r in rankings if r.video_id in non_removed_ids]
+
+        n_top_rankings = int(len(rankings) * settings.fraction)
+
+        # If there are not enough ranked videos, return a random selection
+        if n_top_rankings < n_videos:
+            logger.warning("Not enough ranked videos, will use random match")
+            yield from cls.match_random(app_state, n_videos)
+
+        # Randomly sample from the top half of videos
+        selected_indices: np.ndarray = app_state.rng.choice(n_top_rankings, n_top_rankings, replace=False)
+        top_rankings: list[Ranking] = [rankings[i] for i in selected_indices]
+
+        # Fetch video metadata for the most similar videos
+        # NOTE: iter_videos can fail to find videos, so iterate until we have enough
+        # or we run out of videos in the rankings
+        n_found = 0
+        for ranking in top_rankings:
             if n_found == n_videos:
                 return
             for video in app_state.youtube_facade.iter_videos([ranking.video_id]):

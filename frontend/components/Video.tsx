@@ -6,6 +6,7 @@ import {
 } from "@/lib/utilities/formatUtilities";
 import {
   CheckCircle,
+  Clipboard,
   LinkSimpleHorizontal,
   XCircle,
 } from "@phosphor-icons/react";
@@ -86,7 +87,7 @@ export function Video({
                 {video.title}
               </div>
               <Link href={urlFromChannelId(video.channel_id)} target="_blank">
-                <div className="truncate text-xs text-stone-500 transition-all hover:text-stone-800">
+                <div className="inline-block truncate text-xs text-stone-500 transition-all hover:text-stone-800">
                   {video.channel}
                 </div>
               </Link>
@@ -101,10 +102,24 @@ export function Video({
                   </div>
                 </div>
 
-                <div className="align-center rounded-md bg-stone-900/10 px-2 text-sm text-stone-200 transition-all hover:bg-stone-900/20">
-                  <Link href={urlFromVideoId(video.id)} target="_blank">
-                    <LinkSimpleHorizontal size={20} color="#404040" />
-                  </Link>
+                <Link
+                  href={urlFromVideoId(video.id)}
+                  target="_blank"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="flex flex-col items-center justify-center rounded-md bg-stone-900/10 px-2 py-1 text-sm text-stone-200 transition-all hover:bg-stone-900/20 active:bg-stone-900/30">
+                    <LinkSimpleHorizontal size={16} color="#404040" />
+                  </div>
+                </Link>
+
+                <div
+                  className="flex flex-col items-center justify-center rounded-md bg-stone-900/10 px-2 py-1 text-sm text-stone-200 transition-all hover:bg-stone-900/20 active:bg-stone-900/30"
+                  onClick={(e) => {
+                    navigator.clipboard.writeText(video.id);
+                    e.stopPropagation();
+                  }}
+                >
+                  <Clipboard size={16} color="#404040" />
                 </div>
               </div>
             </div>
