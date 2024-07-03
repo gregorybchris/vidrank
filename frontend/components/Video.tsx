@@ -113,7 +113,7 @@ export function Video({
                 </Link>
 
                 <div
-                  className="flex flex-col items-center justify-center rounded-md bg-stone-900/10 px-2 py-1 text-sm text-stone-200 transition-all hover:bg-stone-900/20 active:bg-stone-900/30"
+                  className="flex cursor-pointer flex-col items-center justify-center rounded-md bg-stone-900/10 px-2 py-1 text-sm text-stone-200 transition-all hover:bg-stone-900/20 active:bg-stone-900/30"
                   onClick={(e) => {
                     navigator.clipboard.writeText(video.id);
                     e.stopPropagation();
