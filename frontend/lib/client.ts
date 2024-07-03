@@ -45,10 +45,16 @@ export type GetRankingsResponseBody = {
 };
 
 export class Client {
+  apiBaseUrl: string;
+
+  constructor() {
+    this.apiBaseUrl = process.env.API_BASE_URL || "http://localhost:8000";
+  }
+
   async postVideos(settings: Settings): Promise<PostVideosResponseBody> {
     console.log("Posting videos with settings", settings);
     const requestBody: PostVideosRequestBody = { settings: settings };
-    const response = await fetch("http://localhost:8000/videos?", {
+    const response = await fetch(`${this.apiBaseUrl}/videos`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestBody),
@@ -66,7 +72,7 @@ export class Client {
       choice_set: choiceSet,
       settings: settings,
     };
-    const response = await fetch("http://localhost:8000/submit", {
+    const response = await fetch(`${this.apiBaseUrl}/submit`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestBody),
@@ -78,7 +84,7 @@ export class Client {
 
   async postUndo(recordId: string): Promise<PostUndoResponseBody> {
     const requestBody: PostUndoRequestBody = { record_id: recordId };
-    const response = await fetch("http://localhost:8000/undo", {
+    const response = await fetch(`${this.apiBaseUrl}/undo`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestBody),
@@ -96,7 +102,7 @@ export class Client {
       choice_set: choiceSet,
       settings: settings,
     };
-    const response = await fetch("http://localhost:8000/skip", {
+    const response = await fetch(`${this.apiBaseUrl}/skip`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestBody),
@@ -107,7 +113,7 @@ export class Client {
   }
 
   async getRankings(): Promise<GetRankingsResponseBody> {
-    const response = await fetch("http://localhost:8000/rankings", {
+    const response = await fetch(`${this.apiBaseUrl}/rankings`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
