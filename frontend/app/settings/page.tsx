@@ -11,8 +11,8 @@ import { SettingsButton } from "widgets/SettingsButton";
 
 export default function SettingsPage() {
   const [settings, setSettings] = useSettings();
-  const [matchingStrategy, setMatchingStrategy] =
-    useState<MatchingStrategy>("random");
+  // const [matchingStrategy, setMatchingStrategy] =
+  //   useState<MatchingStrategy>("random");
   const [finetuneFractionInput, setFinetuneFractionInput] =
     useState<number>(0.25);
 
@@ -35,7 +35,7 @@ export default function SettingsPage() {
   // }, [matchingStrategy, finetuneFractionInput]);
 
   function updateMatchingSettings(strategy: MatchingStrategy) {
-    setMatchingStrategy(strategy);
+    // setMatchingStrategy(strategy);
     setSettings((settings) => {
       if (settings === null) return settings;
       const settingsCopy = { ...settings };
