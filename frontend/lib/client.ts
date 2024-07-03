@@ -48,7 +48,11 @@ export class Client {
   apiBaseUrl: string;
 
   constructor() {
-    this.apiBaseUrl = process.env.API_BASE_URL || "http://localhost:8000";
+    const baseUrl = process.env.API_BASE_URL;
+    if (baseUrl === undefined) {
+      throw Error("Environment variable API_BASE_URL is not set");
+    }
+    this.apiBaseUrl = baseUrl;
   }
 
   async postVideos(settings: Settings): Promise<PostVideosResponseBody> {
