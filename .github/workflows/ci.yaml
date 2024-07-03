@@ -1,4 +1,4 @@
-name: Package CI
+name: API CI
 
 on:
   workflow_dispatch:
