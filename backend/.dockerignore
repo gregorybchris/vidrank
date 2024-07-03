@@ -1,0 +1,67 @@
+# flyctl launch added from .gitignore
+# Byte-compiled / optimized / DLL files
+**/__pycache__
+
+# Distribution / packaging
+**/.Python
+**/build
+**/develop-eggs
+**/dist
+**/downloads
+**/eggs
+**/.eggs
+**/lib64
+**/parts
+**/sdist
+**/var
+**/wheels
+**/share/python-wheels
+**/*.egg-info
+**/.installed.cfg
+**/*.egg
+
+# Unit test / coverage reports
+**/htmlcov
+**/.tox
+**/.nox
+**/.coverage
+**/.coverage.*
+**/.cache
+**/nosetests.xml
+**/coverage.xml
+**/*.cover
+**/*.py,cover
+**/.hypothesis
+**/.pytest_cache
+**/cover
+
+# Environments
+**/.env
+**/.venv
+**/env
+**/venv
+**/ENV
+**/env.bak
+**/venv.bak
+
+# mypy
+**/.mypy_cache
+**/.dmypy.json
+**/dmypy.json
+
+# flyctl launch added from .pytest_cache/.gitignore
+# Created by pytest automatically.
+.pytest_cache/**/*
+
+# flyctl launch added from .ruff_cache/.gitignore
+# Automatically created by ruff.
+.ruff_cache/**/*
+
+# flyctl launch added from htmlcov/.gitignore
+# Created by coverage.py
+htmlcov/**/*
+
+# flyctl launch added from tests/.pytest_cache/.gitignore
+# Created by pytest automatically.
+tests/.pytest_cache/**/*
+fly.toml
