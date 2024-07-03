@@ -48,10 +48,11 @@ export class Client {
   apiBaseUrl: string;
 
   constructor() {
-    if (process.env.API_BASE_URL === undefined) {
-      console.error("API_BASE_URL is not set");
+    if (process.env.NEXT_PUBLIC_API_BASE_URL === undefined) {
+      console.error("NEXT_PUBLIC_API_BASE_URL is not set");
     }
-    this.apiBaseUrl = process.env.API_BASE_URL || "https://vidrank.fly.dev";
+    this.apiBaseUrl =
+      process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
   }
 
   async postVideos(settings: Settings): Promise<PostVideosResponseBody> {
