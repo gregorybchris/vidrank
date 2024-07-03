@@ -49,8 +49,8 @@ class Matcher:
             logger.info("Using matching strategy: finetune")
             yield from cls.match_finetune(app_state, n_videos, settings.finetune_strategy)
         else:
-            msg = "No matching strategy configured"
-            raise ValueError(msg)
+            logger.info("No matching strategy specified, using default: random")
+            yield from cls.match_random(app_state, n_videos)
 
     @classmethod
     def match_random(cls, app_state: AppState, n_videos: int) -> Iterator[Video]:
