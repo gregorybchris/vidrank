@@ -1,0 +1,23 @@
+services:
+  vidrank-backend:
+    build:
+      context: ../backend
+      dockerfile: ../backend/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ../backend:/app
+      - ../.cache:/app/.cache
+  vidrank-frontend:
+    build:
+      context: ../frontend
+      dockerfile: ../frontend/Dockerfile
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    depends_on:
+      - vidrank-backend
