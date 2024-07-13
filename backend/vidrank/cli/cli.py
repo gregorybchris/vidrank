@@ -36,7 +36,6 @@ def get_video(
         video_id (str): The ID of the video to get information for.
         use_cache (bool): Whether to use the cache.
         debug (bool): Whether to enable debug logging.
-
     """
     if debug:
         logging.basicConfig(level=logging.INFO)
@@ -61,7 +60,6 @@ def get_record(
 
     Raises:
         ValueError: If the record with the given ID is not found.
-
     """
     if debug:
         logging.basicConfig(level=logging.INFO)
@@ -98,7 +96,6 @@ def get_playlist(
         use_cache (bool): Whether to use the cache.
         debug (bool): Whether to enable debug logging.
         n_videos (int): The number of videos to display.
-
     """
     if debug:
         logging.basicConfig(level=logging.INFO)
@@ -130,7 +127,6 @@ def get_channel(
         channel_id (str): The ID of the channel to get information for.
         use_cache (bool): Whether to use the cache.
         debug (bool): Whether to enable debug logging.
-
     """
     if debug:
         logging.basicConfig(level=logging.INFO)
@@ -157,7 +153,6 @@ def cache_info() -> None:
     print(f"Cached playlists: {len(app_state.youtube_facade.playlist_cache)}")
 
 
-# rGOOLC8cIO4
 @main.command(name="rankings")
 @click.option("--n", type=int, default=10)
 @click.option("--video-id", type=str)
@@ -167,7 +162,6 @@ def get_video_rankings(n: int = 10, video_id: Optional[str] = None) -> None:
     Args:
         n (int): The number of videos to calculate rankings for.
         video_id (Optional[str]): The ID of the video to calculate rankings for.
-
     """
     app_state = AppState.get()
     records = app_state.record_tracker.load()
@@ -198,7 +192,6 @@ def list_removed_videos(n: int = 10) -> None:
 
     Args:
         n (int): The number of videos to list.
-
     """
     app_state = AppState.get()
     records = app_state.record_tracker.load()

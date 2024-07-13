@@ -11,7 +11,6 @@ def print_video(video: Video) -> None:
 
     Args:
         video (Video): The video to print.
-
     """
     print(f"ID: {video.id}")
     print(f"URL: {url_from_video_id(video.id)}")
@@ -36,7 +35,6 @@ def print_channel(channel: Channel) -> None:
 
     Args:
         channel (Channel): The channel to print.
-
     """
     print(f"ID: {channel.id}")
     print(f"URL: {url_from_channel_id(channel.id)}")
@@ -55,7 +53,6 @@ def print_playlist(playlist: Playlist) -> None:
 
     Args:
         playlist (Playlist): The playlist to print.
-
     """
     print(f"ID: {playlist.id}")
     print(f"URL: {url_from_playlist_id(playlist.id)}")

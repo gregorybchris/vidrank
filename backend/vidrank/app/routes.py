@@ -77,7 +77,6 @@ def post_videos(request: PostVideosRequest, app_state: AppStateDep) -> PostVideo
 
     Returns:
         PostVideosResponse: The response to the request for videos.
-
     """
     videos = list(Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, request.settings.matching_settings))
 
@@ -183,7 +182,6 @@ def post_skip(request: PostSkipRequest, app_state: AppStateDep) -> PostSkipRespo
 
     Returns:
         PostSkipResponse: The response to the skip request.
-
     """
     videos = list(Matcher.match(app_state, N_VIDEOS_PER_RESPONSE, request.settings.matching_settings))
 

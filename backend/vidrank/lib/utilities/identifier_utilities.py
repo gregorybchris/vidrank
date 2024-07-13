@@ -6,6 +6,5 @@ def get_identifier() -> str:
 
     Returns:
         str: The unique identifier.
-
     """
     return str(uuid4()).replace("-", "")

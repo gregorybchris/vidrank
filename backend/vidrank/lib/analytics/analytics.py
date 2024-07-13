@@ -11,7 +11,6 @@ def print_ratings_stats(records: list[Record], youtube_facade: YouTubeFacade) ->
     Args:
         records (list[Record]): The records to analyze.
         youtube_facade (YouTubeFacade): The YouTube facade.
-
     """
     print(f"A total of {len(records)} records have been created.")
 

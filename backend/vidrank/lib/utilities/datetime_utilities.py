@@ -6,6 +6,5 @@ def get_timestamp() -> int:
 
     Returns:
         int: The current timestamp in milliseconds
-
     """
     return time.time_ns() // int(1e6)
