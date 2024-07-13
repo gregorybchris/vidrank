@@ -1,9 +1,8 @@
+# ruff: noqa: T201
 from vidrank.lib.utilities.url_utilities import url_from_channel_id, url_from_playlist_id, url_from_video_id
 from vidrank.lib.youtube.channel import Channel
 from vidrank.lib.youtube.playlist import Playlist
 from vidrank.lib.youtube.video import Video
-
-# ruff: noqa: T201
 
 
 def print_video(video: Video) -> None:

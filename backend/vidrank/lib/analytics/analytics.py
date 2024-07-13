@@ -1,8 +1,7 @@
+# ruff: noqa: T201
 from vidrank.lib.models.action import Action
 from vidrank.lib.models.record import Record
 from vidrank.lib.youtube.youtube_facade import YouTubeFacade
-
-# ruff: noqa: T201
 
 
 def print_ratings_stats(records: list[Record], youtube_facade: YouTubeFacade) -> None:

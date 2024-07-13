@@ -1,3 +1,4 @@
+# ruff: noqa: T201
 import logging
 from itertools import islice
 from typing import Optional
@@ -12,8 +13,6 @@ from vidrank.lib.utilities.io_utilities import print_channel, print_playlist, pr
 from vidrank.lib.utilities.url_utilities import url_from_video_id
 
 logger = logging.getLogger(__name__)
-
-# ruff: noqa: T201
 
 
 @click.group()
