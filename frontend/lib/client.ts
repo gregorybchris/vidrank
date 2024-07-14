@@ -3,49 +3,49 @@ import { Ranking } from "@/lib/models/ranking";
 import { Settings } from "@/lib/models/settings";
 import { Video } from "@/lib/models/video";
 
-export type PostVideosRequestBody = {
+export type PostVideosRequest = {
   settings: Settings;
 };
 
-export type PostVideosResponseBody = {
+export type PostVideosResponse = {
   videos: Video[];
 };
 
-export type PostSubmitRequestBody = {
+export type PostSubmitRequest = {
   choice_set: ChoiceSet;
   settings: Settings;
 };
 
-export type PostSubmitResponseBody = {
+export type PostSubmitResponse = {
   record_id: string;
   videos: Video[];
 };
 
-export type PostUndoRequestBody = {
+export type PostUndoRequest = {
   record_id: string;
 };
 
-export type PostUndoResponseBody = {
+export type PostUndoResponse = {
   videos: Video[];
   choice_set: ChoiceSet;
 };
 
-export type PostSkipRequestBody = {
+export type PostSkipRequest = {
   choice_set: ChoiceSet;
   settings: Settings;
 };
 
-export type PostSkipResponseBody = {
+export type PostSkipResponse = {
   record_id: string;
   videos: Video[];
 };
 
-export type PostRankingsRequestBody = {
+export type PostRankingsRequest = {
   page_number: number;
   page_size: number;
 };
 
-export type PostRankingsResponseBody = {
+export type PostRankingsResponse = {
   n_pages: number;
   page_number: number;
   rankings_page: Ranking[];
@@ -62,79 +62,63 @@ export class Client {
       process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
   }
 
-  async postVideos(settings: Settings): Promise<PostVideosResponseBody> {
-    console.log("Posting videos with settings", settings);
-    const requestBody: PostVideosRequestBody = { settings: settings };
-    const response = await fetch(`${this.apiBaseUrl}/videos`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(requestBody),
-    });
-
-    await this.throwOnError(response);
-    return await response.json();
+  async postVideos(settings: Settings): Promise<PostVideosResponse> {
+    const requestBody: PostVideosRequest = { settings: settings };
+    return await this.post("/videos", requestBody);
   }
 
   async postSubmit(
     choiceSet: ChoiceSet,
     settings: Settings,
-  ): Promise<PostSubmitResponseBody> {
-    const requestBody: PostSubmitRequestBody = {
+  ): Promise<PostSubmitResponse> {
+    const requestBody: PostSubmitRequest = {
       choice_set: choiceSet,
       settings: settings,
     };
-    const response = await fetch(`${this.apiBaseUrl}/submit`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(requestBody),
-    });
-
-    await this.throwOnError(response);
-    return await response.json();
+    return await this.post("/submit", requestBody);
   }
 
-  async postUndo(recordId: string): Promise<PostUndoResponseBody> {
-    const requestBody: PostUndoRequestBody = { record_id: recordId };
-    const response = await fetch(`${this.apiBaseUrl}/undo`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(requestBody),
-    });
-
-    await this.throwOnError(response);
-    return await response.json();
+  async postUndo(recordId: string): Promise<PostUndoResponse> {
+    const requestBody: PostUndoRequest = { record_id: recordId };
+    return await this.post("/undo", requestBody);
   }
 
   async postSkip(
     choiceSet: ChoiceSet,
     settings: Settings,
-  ): Promise<PostSkipResponseBody> {
-    const requestBody: PostSkipRequestBody = {
+  ): Promise<PostSkipResponse> {
+    const requestBody: PostSkipRequest = {
       choice_set: choiceSet,
       settings: settings,
     };
-    const response = await fetch(`${this.apiBaseUrl}/skip`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(requestBody),
-    });
-
-    await this.throwOnError(response);
-    return await response.json();
+    return await this.post("/skip", requestBody);
   }
 
   async postRankings(
     pageNumber: number,
     pageSize: number,
-  ): Promise<PostRankingsResponseBody> {
-    const requestBody: PostRankingsRequestBody = {
+  ): Promise<PostRankingsResponse> {
+    const requestBody: PostRankingsRequest = {
       page_number: pageNumber,
       page_size: pageSize,
     };
-    const response = await fetch(`${this.apiBaseUrl}/rankings`, {
+    return await this.post("/rankings", requestBody);
+  }
+
+  async get<ResT>(path: string): Promise<ResT> {
+    const response = await fetch(`${this.apiBaseUrl}${path}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    await this.throwOnError(response);
+    return await response.json();
+  }
+
+  async post<ReqT, ResT>(path: string, body: ReqT): Promise<ResT> {
+    const response = await fetch(`${this.apiBaseUrl}${path}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(body),
     });
 
     await this.throwOnError(response);
