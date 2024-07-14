@@ -1,6 +1,6 @@
 import logging
 import math
-from typing import ClassVar, Iterator, Mapping, Optional
+from typing import ClassVar, Iterator, Mapping, Optional, Union
 
 from httpx import Client as HttpClient
 
@@ -11,6 +11,8 @@ from vidrank.lib.youtube.video import Video
 from vidrank.lib.youtube.youtube_marshaller import YouTubeMarshaller
 
 logger = logging.getLogger(__name__)
+
+QueryParams = Mapping[str, Union[str, int, list[str]]]
 
 
 class YouTubeClient:
@@ -67,7 +69,7 @@ class YouTubeClient:
             logger.debug("Requesting %d videos from the YouTube API.", len(chunk_ids))
 
             concat_ids = ",".join(chunk_ids)
-            params: Mapping[str, str | int | list[str]] = {
+            params: QueryParams = {
                 "id": concat_ids,
                 "key": self.api_key,
                 "hl": "en_US",
@@ -115,7 +117,7 @@ class YouTubeClient:
         Raises:
             ValueError: If the API request fails.
         """
-        params: Mapping[str, str | int | list[str]] = {
+        params: QueryParams = {
             "id": channel_id,
             "key": self.api_key,
             "hl": "en_US",
@@ -155,7 +157,7 @@ class YouTubeClient:
         Raises:
             ValueError: If the API request fails.
         """
-        params: Mapping[str, str | int | list[str]] = {
+        params: QueryParams = {
             "id": playlist_id,
             "key": self.api_key,
             "hl": "en_US",
@@ -184,7 +186,7 @@ class YouTubeClient:
         return YouTubeMarshaller.parse_playlist(response_item, items)
 
     def _iter_playlist_items(self, playlist_id: str, timeout: Optional[int] = None) -> Iterator[PlaylistItem]:
-        params: Mapping[str, str | int | list[str]] = {
+        params: QueryParams = {
             "playlistId": playlist_id,
             "key": self.api_key,
             "hl": "en_US",
