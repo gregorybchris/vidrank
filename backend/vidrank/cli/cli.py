@@ -24,11 +24,7 @@ def main() -> None:
 @click.argument("video_id", type=str)
 @click.option("--use-cache/--no-cache", default=True)
 @click.option("--debug", type=bool, default=False, is_flag=True)
-def get_video(
-    video_id: str,
-    use_cache: bool,
-    debug: bool = False,
-) -> None:
+def get_video(video_id: str, use_cache: bool, debug: bool) -> None:
     """Get video information.
 
     Args:
@@ -47,10 +43,7 @@ def get_video(
 @main.command(name="record")
 @click.argument("record_id", type=str)
 @click.option("--debug", type=bool, default=False, is_flag=True)
-def get_record(
-    record_id: str,
-    debug: bool = False,
-) -> None:
+def get_record(record_id: str, debug: bool) -> None:
     """Get a record by ID.
 
     Args:
@@ -82,12 +75,7 @@ def get_record(
 @click.option("--use-cache/--no-cache", default=True)
 @click.option("--debug", type=bool, default=False, is_flag=True)
 @click.option("--n-videos", type=int, default=0)
-def get_playlist(
-    playlist_id: str,
-    use_cache: bool,
-    debug: bool = False,
-    n_videos: int = 0,
-) -> None:
+def get_playlist(playlist_id: str, use_cache: bool, debug: bool, n_videos: int) -> None:
     """Get playlist information.
 
     Args:
@@ -115,11 +103,7 @@ def get_playlist(
 @click.argument("channel_id", type=str)
 @click.option("--use-cache/--no-cache", default=True)
 @click.option("--debug", type=bool, default=False, is_flag=True)
-def get_channel(
-    channel_id: str,
-    use_cache: bool,
-    debug: bool = False,
-) -> None:
+def get_channel(channel_id: str, use_cache: bool, debug: bool) -> None:
     """Get channel information.
 
     Args:
@@ -155,7 +139,7 @@ def cache_info() -> None:
 @main.command(name="rankings")
 @click.option("--n", type=int, default=10)
 @click.option("--video-id", type=str)
-def get_video_rankings(n: int = 10, video_id: Optional[str] = None) -> None:
+def get_video_rankings(n: int, video_id: Optional[str] = None) -> None:
     """Rank videos.
 
     Args:
@@ -184,7 +168,7 @@ def get_video_rankings(n: int = 10, video_id: Optional[str] = None) -> None:
 
 @main.command(name="removed")
 @click.option("--n", type=int, default=10)
-def list_removed_videos(n: int = 10) -> None:
+def list_removed_videos(n: int) -> None:
     """List removed videos.
 
     Args:
