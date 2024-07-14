@@ -15,7 +15,7 @@ export default function SettingsPage() {
   //   useState<MatchingStrategy>("random");
   const [finetuneFractionInput, setFinetuneFractionInput] =
     useState<number>(0.25);
-  const [byDateDaysInput, setByDateDaysInput] = useState<number>(14);
+  const [byDateDaysInput, setByDateDaysInput] = useState<number>(30);
 
   const loading = settings === null;
 
@@ -188,12 +188,12 @@ export default function SettingsPage() {
                   <input
                     className="w-16 rounded bg-transparent px-2 py-1 outline-none"
                     type="number"
-                    step={0.05}
-                    min={0}
-                    max={1}
+                    step={1}
+                    min={1}
                     value={byDateDaysInput}
                     onChange={(e) => {
-                      const newValue = parseFloat(e.target.value);
+                      let newValue = parseInt(e.target.value);
+                      if (newValue < 1) newValue = 1;
                       setByDateDaysInput(newValue);
                       updateByDateDaysInput(newValue);
                     }}
