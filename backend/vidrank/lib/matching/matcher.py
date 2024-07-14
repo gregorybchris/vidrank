@@ -7,7 +7,6 @@ import pendulum
 from vidrank.app.app_state import AppState
 from vidrank.lib.models.action import Action
 from vidrank.lib.models.matching_settings import ByDateStrategySettings, FinetuneStrategySettings, MatchingSettings
-from vidrank.lib.models.record import Record
 from vidrank.lib.ranking.ranker import Ranker
 from vidrank.lib.youtube.video import Video
 
@@ -68,11 +67,7 @@ class Matcher:
         Yields:
             Iterator[Video]: An iterator over the matched videos
         """
-        playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
-
-        records = app_state.record_tracker.load()
-        playlist_video_ids = [item.video_id for item in playlist.items]
-        non_removed_ids = cls.get_non_removed(playlist_video_ids, records)
+        non_removed_ids = cls.get_non_removed_video_ids(app_state)
 
         # Find videos that can be found in the YouTube API
         # NOTE: iter_videos can fail to find videos, so iterate until we have enough
@@ -98,15 +93,13 @@ class Matcher:
         Yields:
             Iterator[Video]: An iterator over the matched videos.
         """
-        playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
         records = app_state.record_tracker.load()
 
         # Rate all videos
         rankings = list(Ranker.iter_rankings(records))
 
         # Filter for rankings for videos that are not removed
-        playlist_video_ids = [item.video_id for item in playlist.items]
-        non_removed_ids = cls.get_non_removed(playlist_video_ids, records)
+        non_removed_ids = cls.get_non_removed_video_ids(app_state)
         rankings = [r for r in rankings if r.video_id in non_removed_ids]
 
         # If there are not enough ranked videos, return a random selection
@@ -152,15 +145,13 @@ class Matcher:
         Yields:
             Iterator[Video]: An iterator over the matched videos.
         """
-        playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
         records = app_state.record_tracker.load()
 
         # Rate all videos
         rankings = list(Ranker.iter_rankings(records))
 
         # Filter for rankings for videos that are not removed
-        playlist_video_ids = [item.video_id for item in playlist.items]
-        non_removed_ids = cls.get_non_removed(playlist_video_ids, records)
+        non_removed_ids = cls.get_non_removed_video_ids(app_state)
         rankings = [r for r in rankings if r.video_id in non_removed_ids]
 
         n_top_rankings = int(len(rankings) * settings.fraction)
@@ -205,14 +196,12 @@ class Matcher:
             Iterator[Video]: An iterator over the matched videos.
         """
         playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
-        records = app_state.record_tracker.load()
 
         # Sort items by date added
         items = sorted(playlist.items, key=lambda x: x.added_at, reverse=True)
 
         # Filter for videos that have not been removed
-        playlist_video_ids = [item.video_id for item in playlist.items]
-        non_removed_ids = cls.get_non_removed(playlist_video_ids, records)
+        non_removed_ids = cls.get_non_removed_video_ids(app_state)
         items = [item for item in items if item.video_id in non_removed_ids]
 
         # Filter for items within the date range
@@ -243,17 +232,19 @@ class Matcher:
                 yield video
 
     @classmethod
-    def get_non_removed(cls, video_ids: list[str], records: list[Record]) -> list[str]:
+    def get_non_removed_video_ids(cls, app_state: AppState) -> list[str]:
         """Return the video IDs that are not removed in the records.
 
         Args:
-            video_ids (list[str]): The video IDs to check.
-            records (list[Record]): The records to check against.
+            app_state (AppState): The application state.
 
         Returns:
             list[str]: The video IDs that are not removed in the records.
         """
-        ids_set = set(video_ids)
+        playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
+        records = app_state.record_tracker.load()
+        ids_set = {item.video_id for item in playlist.items}
         for record in records:
-            ids_set -= {c.video_id for c in record.choice_set.choices if c.action == Action.REMOVE}
+            choices = record.choice_set.choices
+            ids_set -= {c.video_id for c in choices if c.action == Action.REMOVE}
         return list(ids_set)
