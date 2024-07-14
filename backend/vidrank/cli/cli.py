@@ -6,7 +6,7 @@ from typing import Optional
 import click
 
 from vidrank.app.app_state import AppState
-from vidrank.lib.analytics.analytics import print_ratings_stats
+from vidrank.lib.analytics.analytics import print_analysis
 from vidrank.lib.models.action import Action
 from vidrank.lib.ranking.ranker import Ranker
 from vidrank.lib.utilities.io_utilities import print_channel, print_playlist, print_video, print_video_simple
@@ -120,11 +120,22 @@ def get_channel(channel_id: str, use_cache: bool, debug: bool) -> None:
 
 
 @main.command(name="analyze")
-def analyze_records() -> None:
-    """Analyze the distribution of records."""
+@click.option("--use-cache/--no-cache", default=True)
+@click.option("--debug", type=bool, default=False, is_flag=True)
+def analyze_results(use_cache: bool, debug: bool) -> None:
+    """Analyze the results.
+
+    Args:
+        use_cache (bool): Whether to use the cache.
+        debug (bool): Whether to enable debug logging.
+    """
+    if debug:
+        logging.basicConfig(level=logging.INFO)
+
     app_state = AppState.get()
     records = app_state.record_tracker.load()
-    print_ratings_stats(records, app_state.youtube_facade)
+    playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id, use_cache=use_cache)
+    print_analysis(records, playlist, app_state.youtube_facade)
 
 
 @main.command(name="cache")

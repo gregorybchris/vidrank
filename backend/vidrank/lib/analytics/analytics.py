@@ -1,16 +1,21 @@
 # ruff: noqa: T201
 from vidrank.lib.models.action import Action
 from vidrank.lib.models.record import Record
+from vidrank.lib.youtube.playlist import Playlist
 from vidrank.lib.youtube.youtube_facade import YouTubeFacade
 
 
-def print_ratings_stats(records: list[Record], youtube_facade: YouTubeFacade) -> None:
-    """Print stats about the stored records.
+def print_analysis(records: list[Record], playlist: Playlist, youtube_facade: YouTubeFacade) -> None:
+    """Print stats about the completed records.
 
     Args:
         records (list[Record]): The records to analyze.
+        playlist (Playlist): The YouTube playlist.
         youtube_facade (YouTubeFacade): The YouTube facade.
     """
+    n_videos = len(playlist.items)
+    print(f"A total of {n_videos} videos are in the playlist.")
+
     print(f"A total of {len(records)} records have been created.")
 
     video_ids = set()
