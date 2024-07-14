@@ -38,7 +38,6 @@ export function Rankings() {
     client
       .postRankings(currentPageNumber, PAGE_SIZE)
       .then((response) => {
-        console.log("Fetched rankings: ", response.rankings_page);
         setRankingsPage(response.rankings_page);
         setNumPages(response.n_pages);
         setLoading(false);
