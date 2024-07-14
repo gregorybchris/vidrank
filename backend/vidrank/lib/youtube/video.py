@@ -10,6 +10,7 @@ class Video(BaseModel):
 
     id: str
     title: str
+    description: str
     duration: Duration
     channel_id: str
     channel: str

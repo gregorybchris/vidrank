@@ -29,6 +29,17 @@ def print_video(video: Video) -> None:
     print(f"\tComments: {video.stats.n_comments}")
 
 
+def print_video_simple(video: Video) -> None:
+    """Print simplified YouTube video details to the console.
+
+    Args:
+        video (Video): The video to print.
+    """
+    print(f"URL: {url_from_video_id(video.id)}")
+    print(f"Title: {video.title}")
+    print(f"Channel: {video.channel}")
+
+
 def print_channel(channel: Channel) -> None:
     """Print YouTube channel details to the console.
 

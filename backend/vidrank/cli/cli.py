@@ -9,8 +9,8 @@ from vidrank.app.app_state import AppState
 from vidrank.lib.analytics.analytics import print_ratings_stats
 from vidrank.lib.models.action import Action
 from vidrank.lib.ranking.ranker import Ranker
-from vidrank.lib.utilities.io_utilities import print_channel, print_playlist, print_video
-from vidrank.lib.utilities.url_utilities import url_from_video_id
+from vidrank.lib.utilities.io_utilities import print_channel, print_playlist, print_video, print_video_simple
+from vidrank.lib.utilities.search_utilities import iter_filtered_playlist_items
 
 logger = logging.getLogger(__name__)
 
@@ -177,9 +177,7 @@ def get_video_rankings(n: int = 10, video_id: Optional[str] = None) -> None:
     else:
         for ranking in islice(rankings, n):
             video = app_state.youtube_facade.get_video(ranking.video_id)
-
-            print(f"{video.title}")
-            print(f"{url_from_video_id(video.id)}")
+            print_video_simple(video)
             print("= = = = = = = = = = = =")
             print()
 
@@ -206,8 +204,27 @@ def list_removed_videos(n: int = 10) -> None:
 
     for video_id in islice(removed_video_ids, n):
         video = app_state.youtube_facade.get_video(video_id)
+        print_video_simple(video)
+        print("= = = = = = = = = = = =")
+        print()
 
-        print(f"{video.title}")
-        print(f"{url_from_video_id(video.id)}")
+
+@main.command(name="search")
+@click.argument("query", type=str)
+@click.option("--n", type=int, default=5)
+def search_videos(query: str, n: int) -> None:
+    """Search for videos.
+
+    Args:
+        query (str): The search query.
+        n (int): The number of videos to list.
+    """
+    app_state = AppState.get()
+
+    playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
+
+    for item in islice(iter_filtered_playlist_items(playlist.items, query), n):
+        video = app_state.youtube_facade.get_video(item.video_id)
+        print_video_simple(video)
         print("= = = = = = = = = = = =")
         print()

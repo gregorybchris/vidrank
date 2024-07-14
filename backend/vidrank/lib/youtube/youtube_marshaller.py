@@ -35,6 +35,7 @@ class YouTubeMarshaller:
         return Video(
             id=video_dict["id"],
             title=video_dict["snippet"]["title"],
+            description=video_dict["snippet"]["description"],
             duration=cast(Duration, duration),
             channel_id=video_dict["snippet"]["channelId"],
             channel=video_dict["snippet"]["channelTitle"],
@@ -162,4 +163,8 @@ class YouTubeMarshaller:
         return PlaylistItem(
             video_id=video_id,
             added_at=cast(DateTime, added_at),
+            position=playlist_item_dict["snippet"]["position"],
+            title=playlist_item_dict["snippet"]["title"],
+            description=playlist_item_dict["snippet"]["description"],
+            thumbnails=cls.parse_thumbnail_set(playlist_item_dict["snippet"]["thumbnails"]),
         )
