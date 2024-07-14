@@ -3,13 +3,14 @@ import { Settings } from "@/lib/models/settings";
 import { deepEqual } from "@/lib/utilities/objectUtilities";
 import { useEffect, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
+import { Nullable } from "../utilities/typeUtilities";
 
 export function useSettings() {
-  const [storage, setStorage] = useLocalStorage<Settings | null>(
+  const [storage, setStorage] = useLocalStorage<Nullable<Settings>>(
     "vidrank-settings",
     null,
   );
-  const [settings, setSettings] = useState<Settings | null>(null);
+  const [settings, setSettings] = useState<Nullable<Settings>>(null);
 
   useEffect(() => {
     // Initialize settings and storage
