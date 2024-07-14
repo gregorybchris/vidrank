@@ -42,16 +42,16 @@ class Matcher:
             ValueError: If the matching strategy is unknown.
         """
         if settings.by_date_strategy is not None:
-            logger.info("Using matching strategy: by_date")
+            logger.info("Using matching strategy: by_date with settings: %s", settings.by_date_strategy)
             yield from cls.match_by_date(app_state, n_videos, settings.by_date_strategy)
         elif settings.by_rating_strategy is not None:
-            logger.info("Using matching strategy: by_rating")
+            logger.info("Using matching strategy: by_rating with settings: %s", settings.by_rating_strategy)
             yield from cls.match_by_rating(app_state, n_videos)
         elif settings.finetune_strategy is not None:
-            logger.info("Using matching strategy: finetune")
+            logger.info("Using matching strategy: finetune with settings: %s", settings.finetune_strategy)
             yield from cls.match_finetune(app_state, n_videos, settings.finetune_strategy)
         elif settings.random_strategy is not None:
-            logger.info("Using matching strategy: random")
+            logger.info("Using matching strategy: random with settings: %s", settings.random_strategy)
             yield from cls.match_random(app_state, n_videos)
         else:
             logger.info("No matching strategy specified, using default: random")
