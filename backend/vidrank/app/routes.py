@@ -1,4 +1,5 @@
 import logging
+import math
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
@@ -204,21 +205,40 @@ class ResponseRanking(BaseModel):
     rating: float
 
 
-class GetRankingsResponse(BaseModel):
+class PostRankingsRequest(BaseModel):
+    """Model for the request of the rankings route."""
+
+    page_number: int
+    page_size: int
+
+
+class PostRankingsResponse(BaseModel):
     """Model for the response of the rankings route."""
 
-    rankings: list[ResponseRanking]
+    page_number: int
+    n_pages: int
+    rankings_page: list[ResponseRanking]
 
 
-@router.get(name="Rankings", path="/rankings", description="Get rankings.")
-def get_rankings(app_state: AppStateDep) -> GetRankingsResponse:
+@router.post(name="Rankings", path="/rankings", description="Get rankings.")
+def get_rankings(request: PostRankingsRequest, app_state: AppStateDep) -> PostRankingsResponse:
     """Route for getting video rankings."""
+    page_number = request.page_number
+    if page_number < 1:
+        raise HttpException(status_code=400, detail="Page number must be greater than zero")
+
+    page_size = request.page_size
+    if page_size < 1:
+        raise HttpException(status_code=400, detail="Page size must be greater than zero")
+
     records = app_state.record_tracker.load()
     rankings = list(Ranker.iter_rankings(records))
     video_ids = [ranking.video_id for ranking in rankings]
     videos = list(app_state.youtube_facade.iter_videos(video_ids))
     video_map = {video.id: video for video in videos}
 
+    # NOTE: We have to fetch all videos in the rankings to find out if any videos
+    # are missing from YouTube, otherwise pagination could be incorrect.
     response_rankings = []
     for ranking in rankings:
         if ranking.video_id not in video_map:
@@ -232,4 +252,16 @@ def get_rankings(app_state: AppStateDep) -> GetRankingsResponse:
         )
         response_rankings.append(response_ranking)
 
-    return GetRankingsResponse(rankings=response_rankings)
+    n_pages = math.ceil(len(response_rankings) / page_size)
+    if page_number > n_pages:
+        raise HttpException(status_code=404, detail="Page not found")
+
+    page_start = (page_number - 1) * page_size
+    page_end = page_start + page_size
+    rankings_page = response_rankings[page_start:page_end]
+
+    return PostRankingsResponse(
+        page_number=page_number,
+        n_pages=n_pages,
+        rankings_page=rankings_page,
+    )

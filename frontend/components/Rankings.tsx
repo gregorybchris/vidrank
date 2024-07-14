@@ -23,24 +23,24 @@ type PageVisibility = {
 
 export function Rankings() {
   const client = new Client();
-  const [rankings, setRankings] = useState<Ranking[]>([]);
+  const [rankingsPage, setRankingsPage] = useState<Ranking[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [currentPage, setCurrentPage] = useState<number>(0);
-
-  const numPages = Math.ceil(rankings.length / PAGE_SIZE);
+  const [currentPageNumber, setCurrentPageNumber] = useState<number>(1);
+  const [numPages, setNumPages] = useState<number>(0);
 
   useEffect(() => {
     fetchRankings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [currentPageNumber]);
 
   function fetchRankings() {
     setLoading(true);
     client
-      .getRankings()
+      .postRankings(currentPageNumber, PAGE_SIZE)
       .then((response) => {
-        console.log("Fetched rankings: ", response.rankings);
-        setRankings(response.rankings);
+        console.log("Fetched rankings: ", response.rankings_page);
+        setRankingsPage(response.rankings_page);
+        setNumPages(response.n_pages);
         setLoading(false);
       })
       .catch((error) => {
@@ -49,12 +49,8 @@ export function Rankings() {
       });
   }
 
-  function getPageRankings(page: number): Ranking[] {
-    return rankings.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
-  }
-
-  function getPageVisibility(page: number): PageVisibility {
-    const dist = Math.abs(page - currentPage);
+  function getPageVisibility(pageNumber: number): PageVisibility {
+    const dist = Math.abs(pageNumber - currentPageNumber);
     const maxDist = 6.0;
     return {
       visible: dist < maxDist,
@@ -63,8 +59,8 @@ export function Rankings() {
   }
 
   function canPageToOffset(offset: number) {
-    const newPage = currentPage + offset;
-    if (newPage < 0 || newPage >= numPages) {
+    const newPageNumber = currentPageNumber + offset;
+    if (newPageNumber < 1 || newPageNumber >= numPages) {
       return false;
     }
     return true;
@@ -72,7 +68,7 @@ export function Rankings() {
 
   function offsetPage(offset: number) {
     if (!canPageToOffset(offset)) return;
-    setCurrentPage((currentPage) => currentPage + offset);
+    setCurrentPageNumber((currentPageNumber) => currentPageNumber + offset);
   }
 
   return (
@@ -84,17 +80,17 @@ export function Rankings() {
         </div>
       )}
 
-      {!loading && rankings.length === 0 && (
+      {!loading && rankingsPage.length === 0 && (
         <div className="flex h-full flex-col items-center justify-center space-y-5 text-stone-600">
           <div className="text-4xl font-bold">Failed to fetch videos</div>
           <WarningOctagon size={80} color="#f08080" />
         </div>
       )}
 
-      {!loading && rankings.length > 0 && (
+      {!loading && rankingsPage.length > 0 && (
         <div className="flex h-full flex-col justify-center space-y-10">
           <div className="flex flex-wrap justify-center">
-            {getPageRankings(currentPage).map((ranking, i) => (
+            {rankingsPage.map((ranking, i) => (
               <div key={i} className="relative">
                 <Video
                   video={ranking.video}
@@ -112,23 +108,24 @@ export function Rankings() {
             <div className="flex flex-row justify-center space-x-[2px]">
               {new Array(numPages)
                 .fill(0)
-                .map((_, x) => x)
-                .map((page) => {
-                  const pageVisibility = getPageVisibility(page);
+                .map((_, x) => x + 1)
+                .map((pageNumber) => {
+                  const pageVisibility = getPageVisibility(pageNumber);
                   return (
                     <Button
                       className={cn(
                         "px-3",
-                        page === currentPage && "bg-stone-300 text-stone-800",
+                        pageNumber === currentPageNumber &&
+                          "bg-stone-300 text-stone-800",
                         !pageVisibility.visible && "hidden",
                         pageVisibility.opacity < 1.0 && "opacity-90",
                         pageVisibility.opacity < 0.8 && "opacity-70",
                         pageVisibility.opacity < 0.6 && "opacity-50",
                         pageVisibility.opacity < 0.4 && "opacity-30",
                       )}
-                      key={page}
-                      text={`${page + 1}`}
-                      onClick={() => setCurrentPage(page)}
+                      key={pageNumber}
+                      text={`${pageNumber}`}
+                      onClick={() => setCurrentPageNumber(pageNumber)}
                     />
                   );
                 })}

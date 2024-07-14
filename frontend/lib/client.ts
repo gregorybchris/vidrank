@@ -40,8 +40,15 @@ export type PostSkipResponseBody = {
   videos: Video[];
 };
 
-export type GetRankingsResponseBody = {
-  rankings: Ranking[];
+export type PostRankingsRequestBody = {
+  page_number: number;
+  page_size: number;
+};
+
+export type PostRankingsResponseBody = {
+  n_pages: number;
+  page_number: number;
+  rankings_page: Ranking[];
 };
 
 export class Client {
@@ -116,10 +123,18 @@ export class Client {
     return await response.json();
   }
 
-  async getRankings(): Promise<GetRankingsResponseBody> {
+  async postRankings(
+    pageNumber: number,
+    pageSize: number,
+  ): Promise<PostRankingsResponseBody> {
+    const requestBody: PostRankingsRequestBody = {
+      page_number: pageNumber,
+      page_size: pageSize,
+    };
     const response = await fetch(`${this.apiBaseUrl}/rankings`, {
-      method: "GET",
+      method: "POST",
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestBody),
     });
 
     await this.throwOnError(response);
