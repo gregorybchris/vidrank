@@ -1,1 +1,1 @@
-export type MatchingStrategy = "random" | "by_rating" | "finetune";
+export type MatchingStrategy = "by_date" | "by_rating" | "finetune" | "random";

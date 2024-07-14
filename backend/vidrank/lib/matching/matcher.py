@@ -2,16 +2,18 @@ import logging
 from typing import TYPE_CHECKING, Iterator
 
 import numpy as np
+import pendulum
 
 from vidrank.app.app_state import AppState
 from vidrank.lib.models.action import Action
-from vidrank.lib.models.matching_settings import FinetuneStrategySettings, MatchingSettings
+from vidrank.lib.models.matching_settings import ByDateStrategySettings, FinetuneStrategySettings, MatchingSettings
 from vidrank.lib.models.record import Record
 from vidrank.lib.ranking.ranker import Ranker
 from vidrank.lib.youtube.video import Video
 
 if TYPE_CHECKING:
     from vidrank.lib.ranking.ranking import Ranking
+    from vidrank.lib.youtube.playlist_item import PlaylistItem
 
 logger = logging.getLogger(__name__)
 
@@ -39,15 +41,18 @@ class Matcher:
         Raises:
             ValueError: If the matching strategy is unknown.
         """
-        if settings.random_strategy is not None:
-            logger.info("Using matching strategy: random")
-            yield from cls.match_random(app_state, n_videos)
+        if settings.by_date_strategy is not None:
+            logger.info("Using matching strategy: by_date")
+            yield from cls.match_by_date(app_state, n_videos, settings.by_date_strategy)
         elif settings.by_rating_strategy is not None:
             logger.info("Using matching strategy: by_rating")
             yield from cls.match_by_rating(app_state, n_videos)
         elif settings.finetune_strategy is not None:
             logger.info("Using matching strategy: finetune")
             yield from cls.match_finetune(app_state, n_videos, settings.finetune_strategy)
+        elif settings.random_strategy is not None:
+            logger.info("Using matching strategy: random")
+            yield from cls.match_random(app_state, n_videos)
         else:
             logger.info("No matching strategy specified, using default: random")
             yield from cls.match_random(app_state, n_videos)
@@ -184,6 +189,51 @@ class Matcher:
                     video.id,
                     video.title,
                 )
+                n_found += 1
+                yield video
+
+    @classmethod
+    def match_by_date(cls, app_state: AppState, n_videos: int, settings: ByDateStrategySettings) -> Iterator[Video]:
+        """Match videos added to the playlist most recently.
+
+        Args:
+            app_state (AppState): The application state.
+            n_videos (int): The number of videos to return.
+            settings (ByDateStrategySettings): The by date strategy settings.
+
+        Yields:
+            Iterator[Video]: An iterator over the matched videos.
+        """
+        playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
+        items = playlist.items
+
+        # Sort items by date added
+        sorted_items = sorted(items, key=lambda x: x.added_at, reverse=True)
+
+        # Filter for items within the date range
+        n_days = settings.days
+        now = pendulum.now()
+        filtered_items = [item for item in sorted_items if (now - item.added_at).days <= n_days]
+        n_within_range = len(filtered_items)
+
+        # If there are not enough videos within the date range, return a random selection
+        if n_within_range < n_videos:
+            logger.warning("Not enough videos within the date range, will use random match")
+            yield from cls.match_random(app_state, n_videos)
+
+        # Randomly sample from the most recently added videos
+        selected_indices: np.ndarray = app_state.rng.choice(n_within_range, n_within_range, replace=False)
+        latest_items: list[PlaylistItem] = [filtered_items[i] for i in selected_indices]
+
+        # Fetch video metadata for the most recently added videos
+        # NOTE: iter_videos can fail to find videos, so iterate until we have enough
+        # or we run out of videos in the rankings
+        n_found = 0
+        for item in latest_items:
+            if n_found == n_videos:
+                return
+            for video in app_state.youtube_facade.iter_videos([item.video_id]):
+                logger.info("Selected video: (%s) %s", video.id, video.title)
                 n_found += 1
                 yield video
 

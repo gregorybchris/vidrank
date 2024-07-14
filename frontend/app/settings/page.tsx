@@ -15,6 +15,7 @@ export default function SettingsPage() {
   //   useState<MatchingStrategy>("random");
   const [finetuneFractionInput, setFinetuneFractionInput] =
     useState<number>(0.25);
+  const [byDateDaysInput, setByDateDaysInput] = useState<number>(14);
 
   const loading = settings === null;
 
@@ -26,13 +27,16 @@ export default function SettingsPage() {
         settings.matching_settings.finetune_strategy.fraction,
       );
     }
+    if (settings.matching_settings.by_date_strategy !== null) {
+      setByDateDaysInput(settings.matching_settings.by_date_strategy.days);
+    }
   }, [settings]);
 
   // TODO: This might help with the issue updating both settings and React inputs at the same time
   // useEffect(() => {
   //   updateMatchingSettings(matchingStrategy);
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [matchingStrategy, finetuneFractionInput]);
+  // }, [matchingStrategy, finetuneFractionInput, byDateDays]);
 
   function updateMatchingSettings(strategy: MatchingStrategy) {
     // setMatchingStrategy(strategy);
@@ -41,25 +45,37 @@ export default function SettingsPage() {
       const settingsCopy = { ...settings };
 
       // Update the matching settings based on the React input state variables
-      if (strategy === "random") {
+      if (strategy === "by_date") {
         settingsCopy.matching_settings = {
-          random_strategy: {},
+          by_date_strategy: {
+            days: byDateDaysInput,
+          },
           by_rating_strategy: null,
           finetune_strategy: null,
+          random_strategy: null,
         };
       } else if (strategy === "by_rating") {
         settingsCopy.matching_settings = {
-          random_strategy: null,
+          by_date_strategy: null,
           by_rating_strategy: {},
           finetune_strategy: null,
+          random_strategy: null,
         };
       } else if (strategy === "finetune") {
         settingsCopy.matching_settings = {
-          random_strategy: null,
+          by_date_strategy: null,
           by_rating_strategy: null,
           finetune_strategy: {
             fraction: finetuneFractionInput,
           },
+          random_strategy: null,
+        };
+      } else if (strategy === "random") {
+        settingsCopy.matching_settings = {
+          by_date_strategy: null,
+          by_rating_strategy: null,
+          finetune_strategy: null,
+          random_strategy: {},
         };
       }
       return settingsCopy;
@@ -76,6 +92,19 @@ export default function SettingsPage() {
       if (!settingsCopy.matching_settings.finetune_strategy) return settings;
       settingsCopy.matching_settings.finetune_strategy.fraction =
         finetuneFractionInput;
+      return settingsCopy;
+    });
+  }
+
+  function updateByDateDaysInput(byDateDays: number) {
+    // Update the settings directly based on an updated by date days
+    // TODO: Figure out how to remove this
+    // We want to set the settings at the same time as the React input state variables
+    setSettings((settings) => {
+      if (settings === null) return settings;
+      const settingsCopy = { ...settings };
+      if (!settingsCopy.matching_settings.by_date_strategy) return settings;
+      settingsCopy.matching_settings.by_date_strategy.days = byDateDays;
       return settingsCopy;
     });
   }
@@ -117,6 +146,15 @@ export default function SettingsPage() {
                 <Button
                   className={cn(
                     "text-sm transition-all",
+                    settings.matching_settings.by_date_strategy !== null &&
+                      "bg-stone-300 text-stone-800",
+                  )}
+                  text="By date"
+                  onClick={() => updateMatchingSettings("by_date")}
+                />
+                <Button
+                  className={cn(
+                    "text-sm transition-all",
                     settings.matching_settings.finetune_strategy !== null &&
                       "bg-stone-300 text-stone-800",
                   )}
@@ -139,6 +177,25 @@ export default function SettingsPage() {
                       const newValue = parseFloat(e.target.value);
                       setFinetuneFractionInput(newValue);
                       updateFinetuneFractionInput(newValue);
+                    }}
+                  />
+                </div>
+              )}
+
+              {settings.matching_settings.by_date_strategy !== null && (
+                <div className="flex flex-row items-center space-x-2 text-sm">
+                  <div className="font-bold">Days:</div>
+                  <input
+                    className="w-16 rounded bg-transparent px-2 py-1 outline-none"
+                    type="number"
+                    step={0.05}
+                    min={0}
+                    max={1}
+                    value={byDateDaysInput}
+                    onChange={(e) => {
+                      const newValue = parseFloat(e.target.value);
+                      setByDateDaysInput(newValue);
+                      updateByDateDaysInput(newValue);
                     }}
                   />
                 </div>

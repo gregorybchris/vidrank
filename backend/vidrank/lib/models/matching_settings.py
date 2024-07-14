@@ -3,6 +3,12 @@ from typing import Optional
 from pydantic import BaseModel
 
 
+class ByDateStrategySettings(BaseModel):
+    """By date strategy settings model."""
+
+    days: int
+
+
 class ByRatingStrategySettings(BaseModel):
     """By rating strategy settings model."""
 
@@ -20,6 +26,7 @@ class RandomStrategySettings(BaseModel):
 class MatchingSettings(BaseModel):
     """Matching settings model."""
 
+    by_date_strategy: Optional[ByDateStrategySettings]
     by_rating_strategy: Optional[ByRatingStrategySettings]
     finetune_strategy: Optional[FinetuneStrategySettings]
     random_strategy: Optional[RandomStrategySettings]

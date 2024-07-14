@@ -16,9 +16,10 @@ export function useSettings() {
     if (settings === null && storage === null) {
       const defaultSettings: Settings = {
         matching_settings: {
-          random_strategy: {},
+          by_date_strategy: null,
           by_rating_strategy: null,
           finetune_strategy: null,
+          random_strategy: {},
         },
       };
       setSettings(defaultSettings);
