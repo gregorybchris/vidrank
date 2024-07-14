@@ -205,16 +205,21 @@ class Matcher:
             Iterator[Video]: An iterator over the matched videos.
         """
         playlist = app_state.youtube_facade.get_playlist(app_state.playlist_id)
-        items = playlist.items
+        records = app_state.record_tracker.load()
 
         # Sort items by date added
-        sorted_items = sorted(items, key=lambda x: x.added_at, reverse=True)
+        items = sorted(playlist.items, key=lambda x: x.added_at, reverse=True)
+
+        # Filter for videos that have not been removed
+        playlist_video_ids = [item.video_id for item in playlist.items]
+        non_removed_ids = cls.get_non_removed(playlist_video_ids, records)
+        items = [item for item in items if item.video_id in non_removed_ids]
 
         # Filter for items within the date range
         n_days = settings.days
         now = pendulum.now()
-        filtered_items = [item for item in sorted_items if (now - item.added_at).days <= n_days]
-        n_within_range = len(filtered_items)
+        items = [item for item in items if (now - item.added_at).days <= n_days]
+        n_within_range = len(items)
 
         # If there are not enough videos within the date range, return a random selection
         if n_within_range < n_videos:
@@ -223,7 +228,7 @@ class Matcher:
 
         # Randomly sample from the most recently added videos
         selected_indices: np.ndarray = app_state.rng.choice(n_within_range, n_within_range, replace=False)
-        latest_items: list[PlaylistItem] = [filtered_items[i] for i in selected_indices]
+        latest_items: list[PlaylistItem] = [items[i] for i in selected_indices]
 
         # Fetch video metadata for the most recently added videos
         # NOTE: iter_videos can fail to find videos, so iterate until we have enough
