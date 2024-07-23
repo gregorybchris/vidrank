@@ -3,15 +3,15 @@
 import { ClockCountdown, WarningOctagon } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 
-import { Video } from "@/components/Video";
+import { Video } from "@/components/video";
 import { Client } from "@/lib/client";
 import { useKeyCombos } from "@/lib/hooks/keys";
 import { useSettings } from "@/lib/hooks/settings";
-import { ChoiceSet } from "@/lib/models/choiceSet";
+import { ChoiceSet } from "@/lib/models/choice-set";
 import { Video as VideoModel } from "@/lib/models/video";
 import { match } from "ts-pattern";
-import { Button } from "widgets/Button";
-import { Toast } from "widgets/Toast";
+import { Button } from "widgets/button";
+import { Toast } from "widgets/toast";
 
 type Direction = "up" | "down" | "left" | "right";
 type SubmitStatus = { canSubmit: boolean; message: string };

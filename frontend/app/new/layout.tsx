@@ -1,5 +1,5 @@
+import { Nav } from "@/app/new/nav";
 import "@/styles/globals.css";
-import { Nav } from "./nav";
 
 type RootLayoutProps = {
   children: React.ReactNode;

@@ -1,4 +1,4 @@
-import { ChoiceSet } from "@/lib/models/choiceSet";
+import { ChoiceSet } from "@/lib/models/choice-set";
 import { Ranking } from "@/lib/models/ranking";
 import { Settings } from "@/lib/models/settings";
 import { Video } from "@/lib/models/video";

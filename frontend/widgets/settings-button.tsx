@@ -2,7 +2,7 @@
 
 import { Gear } from "@phosphor-icons/react";
 
-import { cn } from "@/lib/utilities/styleUtilities";
+import { cn } from "@/lib/utilities/style-utilities";
 import Link from "next/link";
 
 type SettingsButtonProps = {

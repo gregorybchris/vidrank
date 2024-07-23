@@ -1,6 +1,6 @@
-import { Rankings } from "@/components/Rankings";
-import { Dogear } from "widgets/Dogear";
-import { SettingsButton } from "widgets/SettingsButton";
+import { Rankings } from "@/components/rankings";
+import { Dogear } from "widgets/dogear";
+import { SettingsButton } from "widgets/settings-button";
 
 export default function RankPage() {
   return (

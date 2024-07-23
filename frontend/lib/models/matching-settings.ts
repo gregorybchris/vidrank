@@ -1,4 +1,4 @@
-import { Nullable } from "../utilities/typeUtilities";
+import { Nullable } from "@/lib/utilities/type-utilities";
 
 export type ByDateStrategySettings = {
   days: number;

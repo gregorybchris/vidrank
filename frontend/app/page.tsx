@@ -1,6 +1,6 @@
-import { Selector } from "@/components/Selector";
-import { Dogear } from "widgets/Dogear";
-import { SettingsButton } from "widgets/SettingsButton";
+import { Selector } from "@/components/selector";
+import { Dogear } from "widgets/dogear";
+import { SettingsButton } from "widgets/settings-button";
 
 export default function HomePage() {
   return (

@@ -1,5 +1,5 @@
-import { ThumbnailSet } from "@/lib/models/thumbnailSet";
-import { VideoStats } from "@/lib/models/videoStats";
+import { ThumbnailSet } from "@/lib/models/thumbnail-set";
+import { VideoStats } from "@/lib/models/video-stats";
 
 export type Video = {
   id: string;

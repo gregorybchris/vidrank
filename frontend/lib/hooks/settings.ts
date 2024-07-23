@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Settings } from "@/lib/models/settings";
-import { deepEqual } from "@/lib/utilities/objectUtilities";
+import { deepEqual } from "@/lib/utilities/object-utilities";
+import { Nullable } from "@/lib/utilities/type-utilities";
 import { useEffect, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
-import { Nullable } from "../utilities/typeUtilities";
 
 export function useSettings() {
   const [storage, setStorage] = useLocalStorage<Nullable<Settings>>(

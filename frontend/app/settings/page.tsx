@@ -1,13 +1,13 @@
 "use client";
 
 import { useSettings } from "@/lib/hooks/settings";
-import { MatchingStrategy } from "@/lib/models/matchingStrategy";
-import { cn } from "@/lib/utilities/styleUtilities";
+import { MatchingStrategy } from "@/lib/models/matching-strategy";
+import { cn } from "@/lib/utilities/style-utilities";
 import { ClockCountdown } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
-import { Button } from "widgets/Button";
-import { Dogear } from "widgets/Dogear";
-import { SettingsButton } from "widgets/SettingsButton";
+import { Button } from "widgets/button";
+import { Dogear } from "widgets/dogear";
+import { SettingsButton } from "widgets/settings-button";
 
 export default function SettingsPage() {
   const [settings, setSettings] = useSettings();

@@ -3,7 +3,7 @@ import {
   formatDateDiff,
   formatDuration,
   formatNumberCompact,
-} from "@/lib/utilities/formatUtilities";
+} from "@/lib/utilities/format-utilities";
 import {
   CheckCircle,
   Clipboard,
@@ -11,10 +11,13 @@ import {
   XCircle,
 } from "@phosphor-icons/react";
 
-import { getLargestThumbnail } from "@/lib/models/thumbnailSet";
+import { getLargestThumbnail } from "@/lib/models/thumbnail-set";
 import { Video as VideoModel } from "@/lib/models/video";
-import { cn } from "@/lib/utilities/styleUtilities";
-import { urlFromChannelId, urlFromVideoId } from "@/lib/utilities/urlUtilities";
+import { cn } from "@/lib/utilities/style-utilities";
+import {
+  urlFromChannelId,
+  urlFromVideoId,
+} from "@/lib/utilities/url-utilities";
 import styles from "@/styles/video.module.css";
 import Link from "next/link";
 
