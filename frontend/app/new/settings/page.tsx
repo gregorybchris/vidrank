@@ -1,3 +1,3 @@
 export default async function SettingsPage() {
-  return <div>Settings page</div>;
+  return <div className="p-5">Settings page</div>;
 }

@@ -1,3 +1,3 @@
 export default async function SelectionPage() {
-  return <div>Selection page</div>;
+  return <div className="p-5">Selection page</div>;
 }
