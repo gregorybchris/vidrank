@@ -19,7 +19,7 @@ export function Nav({ children }: NavProps) {
       <div className="absolute h-full w-full">
         <div
           className={cn(
-            "tracking-light absolute bg-white",
+            "tracking-light absolute",
             !menuOpen && "invisible opacity-0",
           )}
         >
@@ -39,9 +39,7 @@ export function Nav({ children }: NavProps) {
           </div>
         </div>
 
-        <div
-          className={cn("w-full bg-white", menuOpen && "invisible opacity-0")}
-        >
+        <div className={cn("w-full", menuOpen && "invisible opacity-0")}>
           {children}
         </div>
       </div>

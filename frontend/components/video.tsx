@@ -40,10 +40,7 @@ export function Video({
   const length = formatDuration(video.duration);
 
   return (
-    <div
-      className={cn("max-w-[300px]", className)}
-      onClick={() => onClick(video)}
-    >
+    <div className={cn("w-[300px]", className)} onClick={() => onClick(video)}>
       <div
         className={cn(
           "rounded-lg p-2 transition-all",
@@ -57,7 +54,7 @@ export function Video({
               {!!thumbnailUrl && (
                 <div className="relative">
                   <img
-                    className="h-[150px] w-[400px] rounded-lg object-cover"
+                    className="h-[160px] w-[400px] rounded-lg object-cover"
                     src={thumbnailUrl}
                     alt="Video thumbnail"
                   />
