@@ -48,7 +48,7 @@ export function Video({
         )}
       >
         <div className="group select-none">
-          <div className="flex flex-col items-start space-y-3 align-top">
+          <div className="flex flex-col items-start gap-3 align-top">
             <div>
               {!thumbnailUrl && <div>No thumbnail found!</div>}
               {!!thumbnailUrl && (
@@ -91,8 +91,8 @@ export function Video({
                   {video.channel}
                 </div>
               </Link>
-              <div className="flex items-center space-x-2">
-                <div className="flex items-center space-x-1">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <div className="text-xs text-stone-500">
                     {formatNumberCompact(video.stats.n_views)} views
                   </div>

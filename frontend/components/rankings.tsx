@@ -73,21 +73,21 @@ export function Rankings() {
   return (
     <>
       {loading && (
-        <div className="flex h-full flex-col items-center justify-center space-y-5 text-stone-600">
+        <div className="flex h-full flex-col items-center justify-center gap-5 text-stone-600">
           <div className="text-4xl font-bold">Loading</div>
           <ClockCountdown size={80} color="#3e8fda" />
         </div>
       )}
 
       {!loading && rankingsPage.length === 0 && (
-        <div className="flex h-full flex-col items-center justify-center space-y-5 text-stone-600">
+        <div className="flex h-full flex-col items-center justify-center gap-5 text-stone-600">
           <div className="text-4xl font-bold">Failed to fetch videos</div>
           <WarningOctagon size={80} color="#f08080" />
         </div>
       )}
 
       {!loading && rankingsPage.length > 0 && (
-        <div className="flex h-full flex-col justify-center space-y-10">
+        <div className="flex h-full flex-col justify-center gap-10">
           <div className="flex flex-wrap justify-center">
             {rankingsPage.map((ranking, i) => (
               <div key={i} className="relative">
@@ -103,8 +103,8 @@ export function Rankings() {
               </div>
             ))}
           </div>
-          <div className="flex w-full flex-col items-center justify-center space-y-1">
-            <div className="flex flex-row justify-center space-x-[2px]">
+          <div className="flex w-full flex-col items-center justify-center gap-1">
+            <div className="flex flex-row justify-center gap-[2px]">
               {new Array(numPages)
                 .fill(0)
                 .map((_, x) => x + 1)
@@ -129,7 +129,7 @@ export function Rankings() {
                   );
                 })}
             </div>
-            <div className="flex flex-row space-x-1">
+            <div className="flex flex-row gap-1">
               <div
                 className={cn(
                   "p-1",

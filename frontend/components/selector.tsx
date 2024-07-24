@@ -301,21 +301,21 @@ export function Selector() {
   return (
     <>
       {loading && (
-        <div className="flex flex-col items-center space-y-5 text-stone-600">
+        <div className="flex flex-col items-center gap-5 text-stone-600">
           <div className="text-4xl font-bold">Loading</div>
           <ClockCountdown size={80} color="#3e8fda" />
         </div>
       )}
 
       {!loading && videos.length === 0 && (
-        <div className="flex flex-col items-center space-y-5 text-stone-600">
+        <div className="flex flex-col items-center gap-5 text-stone-600">
           <div className="text-4xl font-bold">Failed to fetch videos</div>
           <WarningOctagon size={80} color="#f08080" />
         </div>
       )}
 
       {!loading && videos.length > 0 && (
-        <div className="flex flex-col justify-center space-y-10 lg:px-[150px]">
+        <div className="flex flex-col justify-center gap-10 lg:px-[150px]">
           <div className="flex flex-wrap justify-center">
             {videos.map((video, i) => (
               <div key={i} className="cursor-pointer">
@@ -329,12 +329,12 @@ export function Selector() {
             ))}
           </div>
 
-          <div className="flex flex-col justify-center space-y-3">
+          <div className="flex flex-col justify-center gap-3">
             <div className="flex w-full flex-row justify-center">
               <div className="w-[450px] border-t border-stone-900/20"></div>
             </div>
 
-            <div className="flex flex-row justify-center space-x-2">
+            <div className="flex flex-row justify-center gap-2">
               <Button text="Skip" onClick={skipVideoSet} />
               <Button
                 text="Undo"

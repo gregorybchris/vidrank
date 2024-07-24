@@ -111,9 +111,9 @@ export default function SettingsPage() {
 
   return (
     <div className="flex h-screen bg-stone-100">
-      <div className="flex h-screen w-screen flex-col items-center justify-center space-y-8 font-manrope text-stone-800">
+      <div className="flex h-screen w-screen flex-col items-center justify-center gap-8 font-manrope text-stone-800">
         {loading && (
-          <div className="flex h-full flex-col items-center justify-center space-y-5 text-stone-600">
+          <div className="flex h-full flex-col items-center justify-center gap-5 text-stone-600">
             <div className="text-4xl font-bold">Loading</div>
             <ClockCountdown size={80} color="#3e8fda" />
           </div>
@@ -121,10 +121,10 @@ export default function SettingsPage() {
         {!loading && (
           <>
             <div className="text-3xl text-stone-600">Settings</div>
-            <div className="flex flex-col items-center space-y-2">
+            <div className="flex flex-col items-center gap-2">
               <div className="text-lg font-bold">Matching strategy</div>
 
-              <div className="flex flex-row justify-center space-x-2">
+              <div className="flex flex-row justify-center gap-2">
                 <Button
                   className={cn(
                     "text-sm transition-all",
@@ -164,7 +164,7 @@ export default function SettingsPage() {
               </div>
 
               {settings.matching_settings.finetune_strategy !== null && (
-                <div className="flex flex-row items-center space-x-2 text-sm">
+                <div className="flex flex-row items-center gap-2 text-sm">
                   <div className="font-bold">Fraction:</div>
                   <input
                     className="w-16 rounded bg-transparent px-2 py-1 outline-none"
@@ -183,7 +183,7 @@ export default function SettingsPage() {
               )}
 
               {settings.matching_settings.by_date_strategy !== null && (
-                <div className="flex flex-row items-center space-x-2 text-sm">
+                <div className="flex flex-row items-center gap-2 text-sm">
                   <div className="font-bold">Days:</div>
                   <input
                     className="w-16 rounded bg-transparent px-2 py-1 outline-none"
