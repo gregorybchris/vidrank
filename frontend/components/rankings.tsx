@@ -89,18 +89,15 @@ export function Rankings() {
       {!loading && rankingsPage.length > 0 && (
         <div className="flex h-full flex-col justify-center gap-10">
           <div className="flex flex-wrap justify-center">
-            {rankingsPage.map((ranking, i) => (
-              <div key={i} className="relative">
-                <Video
-                  video={ranking.video}
-                  onClick={() => {}}
-                  action="nothing"
-                  isCurrent={false}
-                />
-                <div className="absolute right-3 top-3 flex h-8 w-8 flex-col items-center justify-center rounded-full bg-stone-900/70 text-center text-sm text-stone-100">
-                  {Math.round(ranking.rating)}
-                </div>
-              </div>
+            {rankingsPage.map((ranking) => (
+              <Video
+                key={ranking.video.id}
+                video={ranking.video}
+                onClick={() => {}}
+                action="nothing"
+                isCurrent={false}
+                rating={ranking.rating}
+              />
             ))}
           </div>
           <div className="flex w-full flex-col items-center justify-center gap-1">
@@ -129,7 +126,7 @@ export function Rankings() {
                   );
                 })}
             </div>
-            <div className="flex flex-row gap-1">
+            <div className="flex flex-row gap-1 pb-8">
               <div
                 className={cn(
                   "p-1",

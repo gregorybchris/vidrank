@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utilities/style-utilities";
-import { List, X } from "@phosphor-icons/react";
+import { List, MonitorPlay, X } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -19,11 +19,11 @@ export function Nav({ children }: NavProps) {
       <div className="absolute h-full w-full">
         <div
           className={cn(
-            "tracking-light absolute",
+            "tracking-light absolute w-full px-5",
             !menuOpen && "invisible opacity-0",
           )}
         >
-          <div className="flex flex-col gap-1 px-5 text-2xl md:text-3xl">
+          <div className="flex flex-col gap-1 pt-10 text-2xl md:text-center md:text-3xl">
             <Link href="/new" onClick={() => setMenuOpen(false)}>
               <div className="px-1 py-2 hover:underline">Home</div>
             </Link>
@@ -54,13 +54,19 @@ type NavBarProps = {
 
 export function NavBar({ menuOpen, setMenuOpen }: NavBarProps) {
   return (
-    <div className="flex flex-row justify-end">
+    <div className="flex flex-row items-center justify-between">
+      <Link href="/new" onClick={() => setMenuOpen(false)}>
+        <div className="p-4">
+          <MonitorPlay size={40} color="#5086C9" />
+        </div>
+      </Link>
+
       {menuOpen ? (
-        <div className="cursor-pointer p-3" onClick={() => setMenuOpen(false)}>
+        <div className="cursor-pointer p-5" onClick={() => setMenuOpen(false)}>
           <X size={32} />
         </div>
       ) : (
-        <div className="cursor-pointer p-3" onClick={() => setMenuOpen(true)}>
+        <div className="cursor-pointer p-5" onClick={() => setMenuOpen(true)}>
           <List size={32} />
         </div>
       )}
