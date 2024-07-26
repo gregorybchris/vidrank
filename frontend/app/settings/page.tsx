@@ -109,6 +109,18 @@ export default function SettingsPage() {
     });
   }
 
+  function resetSettings() {
+    // Reset the settings to the default values
+    setSettings({
+      matching_settings: {
+        random_strategy: {},
+        by_rating_strategy: null,
+        by_date_strategy: null,
+        finetune_strategy: null,
+      },
+    });
+  }
+
   return (
     <div className="flex h-screen bg-stone-100">
       <div className="flex h-screen w-screen flex-col items-center justify-center gap-8 font-manrope text-stone-800">
@@ -200,6 +212,12 @@ export default function SettingsPage() {
                   />
                 </div>
               )}
+
+              <Button
+                className="mt-10 text-sm transition-all"
+                text="Reset all settings"
+                onClick={() => resetSettings()}
+              />
             </div>
           </>
         )}
