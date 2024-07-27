@@ -212,12 +212,6 @@ export default function SettingsPage() {
                   />
                 </div>
               )}
-
-              <Button
-                className="mt-10 text-sm transition-all"
-                text="Reset all settings"
-                onClick={() => resetSettings()}
-              />
             </div>
           </>
         )}
